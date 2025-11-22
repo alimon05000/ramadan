@@ -2326,5 +2326,93 @@
             Notification.requestPermission();
         }
     </script>
+    <script>
+// Принудительное обновление кэша
+if ('serviceWorker' in navigator) {
+  // Удаляем старый Service Worker
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
+  
+  // Очищаем кэш
+  caches.keys().then(function(names) {
+    for (let name of names) {
+      caches.delete(name);
+    }
+  });
+}
+
+// Принудительное обновление страницы при загрузке
+window.addEventListener('load', function() {
+  // Проверяем, есть ли новая версия
+  if (window.performance) {
+    console.log('Время загрузки: ' + performance.getEntriesByType("navigation")[0].loadEventEnd);
+  }
+  
+  // Показываем кнопку обновления если приложение установлено
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('Запущено как PWA');
+  }
+});
+
+// Функция для принудительного обновления
+function hardReload() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      registrations.forEach(function(registration) {
+        registration.unregister();
+      });
+    });
+  }
+  caches.keys().then(function(names) {
+    names.forEach(function(name) {
+      caches.delete(name);
+    });
+  });
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.reload(true);
+}
+
+// Добавляем скрытую кнопку обновления (удерживать 3 секунды)
+let reloadTimer;
+document.addEventListener('DOMContentLoaded', function() {
+  const hiddenReloadBtn = document.createElement('button');
+  hiddenReloadBtn.innerHTML = '🔄';
+  hiddenReloadBtn.style.cssText = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: var(--primary-main);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0.3;
+    z-index: 10000;
+    font-size: 16px;
+  `;
+  hiddenReloadBtn.addEventListener('mousedown', startReloadTimer);
+  hiddenReloadBtn.addEventListener('touchstart', startReloadTimer);
+  hiddenReloadBtn.addEventListener('mouseup', cancelReloadTimer);
+  hiddenReloadBtn.addEventListener('touchend', cancelReloadTimer);
+  
+  document.body.appendChild(hiddenReloadBtn);
+  
+  function startReloadTimer() {
+    reloadTimer = setTimeout(() => {
+      hardReload();
+    }, 3000);
+  }
+  
+  function cancelReloadTimer() {
+    clearTimeout(reloadTimer);
+  }
+});
+</script>
 </body>
 </html>
