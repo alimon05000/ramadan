@@ -2,15 +2,15 @@
 <html lang="ru" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Путь к Рамадану - Ваш духовный спутник</title>
     <meta name="description" content="Подготовка к Рамадану 2026 - Коран, намаз, азкары, трекер привычек">
     <meta name="theme-color" content="#0B5B3F"/>
     
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="./manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕌</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕌</text></svg>">
+    <link rel="icon" type="image/png" href="icons/icon-512.png">
+    <link rel="apple-touch-icon" href="icons/icon-512.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,6 +52,16 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html {
+            touch-action: manipulation;
+            overflow: hidden;
+            height: 100%;
         }
 
         body {
@@ -61,6 +71,10 @@
             line-height: 1.6;
             min-height: 100vh;
             transition: var(--transition);
+            overflow: hidden;
+            height: 100%;
+            position: fixed;
+            width: 100%;
         }
 
         body.dark-theme {
@@ -76,6 +90,8 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            overflow: hidden;
+            height: 100vh;
         }
 
         /* === Tab Content === */
@@ -84,6 +100,8 @@
             overflow-y: auto;
             padding-bottom: 80px;
             display: none;
+            -webkit-overflow-scrolling: touch;
+            height: calc(100vh - 80px);
         }
 
         .tab-content.active {
@@ -654,6 +672,7 @@
             background: var(--bg-light);
             border-radius: var(--radius-md);
             transition: var(--transition);
+            cursor: pointer;
         }
 
         body.dark-theme .task-item {
@@ -1337,6 +1356,117 @@
             50% { opacity: 0.6; }
             100% { opacity: 1; }
         }
+
+        /* === Modal Styles === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card-light);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        body.dark-theme .modal-content {
+            background: var(--bg-card-dark);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .modal-title {
+            color: var(--accent-gold);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary-light);
+        }
+
+        body.dark-theme .modal-close {
+            color: var(--text-secondary-dark);
+        }
+
+        .surah-content {
+            text-align: right;
+            direction: rtl;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.5rem;
+            line-height: 2.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .surah-translation {
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: var(--text-secondary-light);
+        }
+
+        body.dark-theme .surah-translation {
+            color: var(--text-secondary-dark);
+        }
+
+        .surah-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .nav-button {
+            background: var(--primary-main);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .nav-button:disabled {
+            background: var(--text-secondary-light);
+            cursor: not-allowed;
+        }
+
+        body.dark-theme .nav-button:disabled {
+            background: var(--text-secondary-dark);
+        }
     </style>
 </head>
 <body>
@@ -1674,6 +1804,26 @@
         </nav>
     </div>
 
+    <!-- Modal for Surah Reading -->
+    <div class="modal" id="surah-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="surah-modal-title">Сура Аль-Фатиха</h3>
+                <button class="modal-close" onclick="closeSurahModal()">×</button>
+            </div>
+            <div class="surah-content" id="surah-content">
+                <!-- Surah content will be loaded here -->
+            </div>
+            <div class="surah-translation" id="surah-translation">
+                <!-- Translation will be loaded here -->
+            </div>
+            <div class="surah-navigation">
+                <button class="nav-button" id="prev-surah" onclick="navigateSurah(-1)">Предыдущая</button>
+                <button class="nav-button" id="next-surah" onclick="navigateSurah(1)">Следующая</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Точная дата Рамадана 2026 (18 февраля 2026 по расчетам для Махачкалы)
         const RAMADAN_2026 = new Date('2026-02-18T00:00:00+03:00');
@@ -1685,6 +1835,7 @@
         let currentTheme = localStorage.getItem('theme') || 'light';
         let dailyTasks = JSON.parse(localStorage.getItem('dailyTasks')) || {};
         let weeklyTasks = JSON.parse(localStorage.getItem('weeklyTasks')) || {};
+        let currentSurah = 1;
 
         // Данные для подготовки
         const preparationData = [
@@ -1906,6 +2057,62 @@
             ]
         };
 
+        // Данные сур Корана
+        const surahData = {
+            1: {
+                name: "Аль-Фатиха",
+                arabicName: "الفاتحة",
+                verses: [
+                    {
+                        arabic: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+                        translation: "Во имя Аллаха, Милостивого, Милосердного!"
+                    },
+                    {
+                        arabic: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+                        translation: "Хвала Аллаху, Господу миров,"
+                    },
+                    {
+                        arabic: "الرَّحْمَٰنِ الرَّحِيمِ",
+                        translation: "Милостивому, Милосердному,"
+                    },
+                    {
+                        arabic: "مَالِكِ يَوْمِ الدِّينِ",
+                        translation: "Властелину Дня воздаяния!"
+                    },
+                    {
+                        arabic: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+                        translation: "Тебе одному мы поклоняемся и Тебя одного молим о помощи."
+                    },
+                    {
+                        arabic: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+                        translation: "Веди нас прямым путем,"
+                    },
+                    {
+                        arabic: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+                        translation: "путем тех, кого Ты облагодетельствовал, не тех, на кого пал гнев, и не заблудших."
+                    }
+                ]
+            },
+            2: {
+                name: "Аль-Бакара",
+                arabicName: "البقرة",
+                verses: [
+                    {
+                        arabic: "الم",
+                        translation: "Алиф. Лам. Мим."
+                    },
+                    {
+                        arabic: "ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ",
+                        translation: "Это Писание, в котором нет сомнения, является верным руководством для богобоязненных,"
+                    },
+                    {
+                        arabic: "الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنفِقُونَ",
+                        translation: "которые веруют в сокровенное, совершают намаз и расходуют из того, чем Мы их наделили,"
+                    }
+                ]
+            }
+        };
+
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
             initApp();
@@ -1924,6 +2131,7 @@
             loadAzkarsData();
             updateDailyTask();
             calculateProgress();
+            setupPrayerNotifications();
         }
 
         function setupTheme() {
@@ -1934,6 +2142,12 @@
                     toggle.textContent = '☀️';
                 });
                 if (darkThemeSwitch) darkThemeSwitch.checked = true;
+            } else {
+                document.body.classList.remove('dark-theme');
+                document.querySelectorAll('.theme-toggle').forEach(toggle => {
+                    toggle.textContent = '🌙';
+                });
+                if (darkThemeSwitch) darkThemeSwitch.checked = false;
             }
         }
 
@@ -1981,6 +2195,27 @@
                     setupTheme();
                 });
             }
+
+            // Настройки уведомлений
+            const notificationsSwitch = document.getElementById('notificationsSwitch');
+            if (notificationsSwitch) {
+                notificationsSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        requestNotificationPermission();
+                    }
+                });
+            }
+
+            // Предотвращение масштабирования
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                if (e.scale !== 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         }
 
         function toggleTheme() {
@@ -2030,7 +2265,7 @@
         }
 
         function calculateProgress() {
-            // Рассчитываем прогресс на основе выполненных задач
+            // Рассчитываем прогресс на основе выполненных задач и времени
             const today = new Date().toDateString();
             const startDate = new Date(RAMADAN_2026);
             startDate.setDate(startDate.getDate() - TOTAL_DAYS);
@@ -2039,8 +2274,12 @@
             const maxPossibleProgress = Math.min(100, Math.floor((daysPassed / TOTAL_DAYS) * 100));
             
             // Базовая прогрессия + бонусы за выполненные задачи
-            const taskBonus = Object.keys(dailyTasks).filter(date => dailyTasks[date]).length * 0.5;
-            currentProgress = Math.min(maxPossibleProgress + taskBonus, 100);
+            const taskBonus = Object.keys(dailyTasks).filter(date => dailyTasks[date]).length * 2;
+            const weeklyBonus = Object.keys(weeklyTasks).reduce((sum, week) => {
+                return sum + (weeklyTasks[week] ? weeklyTasks[week].filter(task => task).length : 0);
+            }, 0) * 1.5;
+            
+            currentProgress = Math.min(maxPossibleProgress + taskBonus + weeklyBonus, 100);
             
             updateProgress();
         }
@@ -2095,22 +2334,38 @@
         }
 
         function showNotification(message) {
-            // В реальном приложении здесь будут настоящие уведомления
-            console.log('Notification:', message);
-            
             // Временное уведомление
             if ('Notification' in window && Notification.permission === 'granted') {
                 new Notification('Путь к Рамадану', {
                     body: message,
-                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>'
+                    icon: 'icons/icon-512.png'
                 });
             } else if ('Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission().then(permission => {
                     if (permission === 'granted') {
                         new Notification('Путь к Рамадану', {
                             body: message,
-                            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>'
+                            icon: 'icons/icon-512.png'
                         });
+                    }
+                });
+            }
+            
+            // Уведомление для Android через Service Worker
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'SHOW_NOTIFICATION',
+                    title: 'Путь к Рамадану',
+                    body: message
+                });
+            }
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('Разрешение на уведомления получено');
                     }
                 });
             }
@@ -2176,66 +2431,69 @@
             });
         }
 
-        async function loadQuranData() {
+        function loadQuranData() {
             const quranSection = document.getElementById('quran-section');
             
-            try {
-                // Используем API для получения списка сур
-                const response = await fetch('https://api.alquran.cloud/v1/surah');
-                const data = await response.json();
+            // Статические данные сур
+            const surahs = [
+                { number: 1, name: "Аль-Фатиха", arabicName: "الفاتحة", verses: 7, type: "Мекканская" },
+                { number: 2, name: "Аль-Бакара", arabicName: "البقرة", verses: 286, type: "Мединская" },
+                { number: 3, name: "Аль Имран", arabicName: "آل عمران", verses: 200, type: "Мединская" },
+                { number: 4, name: "Ан-Ниса", arabicName: "النساء", verses: 176, type: "Мединская" },
+                { number: 5, name: "Аль-Маида", arabicName: "المائدة", verses: 120, type: "Мединская" }
+            ];
+            
+            quranSection.innerHTML = surahs.map(surah => `
+                <div class="surah-card" onclick="openSurah(${surah.number})">
+                    <div class="surah-number">${surah.number}</div>
+                    <div class="surah-info">
+                        <div class="surah-name">${surah.name} (${surah.arabicName})</div>
+                        <div class="surah-details">${surah.verses} аятов • ${surah.type}</div>
+                    </div>
+                    <div class="surah-actions">
+                        <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(${surah.number})">🔖</button>
+                        <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(${surah.number})">🔊</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openSurah(surahNumber) {
+            currentSurah = surahNumber;
+            const surah = surahData[surahNumber];
+            
+            if (surah) {
+                document.getElementById('surah-modal-title').textContent = `Сура ${surah.name} (${surah.arabicName})`;
                 
-                if (data.code === 200) {
-                    const surahs = data.data;
-                    
-                    quranSection.innerHTML = surahs.map(surah => `
-                        <div class="surah-card" onclick="showSurah(${surah.number})">
-                            <div class="surah-number">${surah.number}</div>
-                            <div class="surah-info">
-                                <div class="surah-name">${surah.englishName} (${surah.name})</div>
-                                <div class="surah-details">${surah.numberOfAyahs} аятов • ${surah.revelationType === 'Meccan' ? 'Мекканская' : 'Мединская'}</div>
-                            </div>
-                            <div class="surah-actions">
-                                <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(${surah.number})">🔖</button>
-                                <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(${surah.number})">🔊</button>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    throw new Error('Не удалось загрузить данные Корана');
-                }
-            } catch (error) {
-                console.error('Ошибка загрузки Корана:', error);
-                // Запасной вариант - статические данные
-                quranSection.innerHTML = `
-                    <div class="surah-card" onclick="showSurah(1)">
-                        <div class="surah-number">1</div>
-                        <div class="surah-info">
-                            <div class="surah-name">Al-Fatihah (الفاتحة)</div>
-                            <div class="surah-details">7 аятов • Мекканская</div>
-                        </div>
-                        <div class="surah-actions">
-                            <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(1)">🔖</button>
-                            <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(1)">🔊</button>
-                        </div>
-                    </div>
-                    <div class="surah-card" onclick="showSurah(2)">
-                        <div class="surah-number">2</div>
-                        <div class="surah-info">
-                            <div class="surah-name">Al-Baqarah (البقرة)</div>
-                            <div class="surah-details">286 аятов • Мединская</div>
-                        </div>
-                        <div class="surah-actions">
-                            <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(2)">🔖</button>
-                            <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(2)">🔊</button>
-                        </div>
-                    </div>
-                `;
+                const surahContent = document.getElementById('surah-content');
+                surahContent.innerHTML = surah.verses.map(verse => 
+                    `<div>${verse.arabic}</div>`
+                ).join('');
+                
+                const surahTranslation = document.getElementById('surah-translation');
+                surahTranslation.innerHTML = surah.verses.map(verse => 
+                    `<div>${verse.translation}</div>`
+                ).join('');
+                
+                // Обновляем навигацию
+                document.getElementById('prev-surah').disabled = surahNumber <= 1;
+                document.getElementById('next-surah').disabled = surahNumber >= Object.keys(surahData).length;
+                
+                document.getElementById('surah-modal').classList.add('active');
+            } else {
+                showNotification('Данные суры временно недоступны');
             }
         }
 
-        function showSurah(surahNumber) {
-            showNotification(`Открывается сура ${surahNumber}`);
-            // В реальном приложении здесь будет переход к чтению суры
+        function closeSurahModal() {
+            document.getElementById('surah-modal').classList.remove('active');
+        }
+
+        function navigateSurah(direction) {
+            const newSurah = currentSurah + direction;
+            if (newSurah >= 1 && newSurah <= Object.keys(surahData).length) {
+                openSurah(newSurah);
+            }
         }
 
         function toggleBookmark(surahNumber) {
@@ -2250,24 +2508,18 @@
             const prayerList = document.getElementById('prayer-list');
             const now = new Date();
             const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
             
-            // Временные данные для примера (в реальном приложении нужно использовать API)
-            const prayerTimes = [
-                { name: 'Фаджр', time: '05:30', icon: '🌅' },
-                { name: 'Восход', time: '07:15', icon: '☀️' },
-                { name: 'Зухр', time: '12:30', icon: '☀️' },
-                { name: 'Аср', time: '16:00', icon: '⛅' },
-                { name: 'Магриб', time: '18:45', icon: '🌇' },
-                { name: 'Иша', time: '20:15', icon: '🌙' }
-            ];
+            // Получаем точное время намазов для Махачкалы
+            const prayerTimes = getPrayerTimes();
             
             prayerList.innerHTML = prayerTimes.map(prayer => {
                 const [hours, minutes] = prayer.time.split(':').map(Number);
-                const prayerDate = new Date();
-                prayerDate.setHours(hours, minutes, 0, 0);
+                const prayerTime = hours * 60 + minutes;
+                const currentTime = currentHour * 60 + currentMinutes;
                 
-                const isActive = currentHour >= hours && currentHour < (hours + 1);
-                const isCompleted = currentHour > hours;
+                const isActive = currentTime >= prayerTime && currentTime < prayerTime + 30; // Считаем активным в течение 30 минут
+                const isCompleted = currentTime > prayerTime;
                 
                 return `
                     <div class="prayer-item ${isActive ? 'active' : ''}">
@@ -2281,6 +2533,53 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        function getPrayerTimes() {
+            // В реальном приложении здесь будет API для получения точного времени намазов
+            // Пока используем статические данные для Махачкалы
+            const now = new Date();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            
+            // Примерные времена намазов для Махачкалы
+            // В реальном приложении нужно использовать API или расчеты
+            return [
+                { name: 'Фаджр', time: '05:30', icon: '🌅' },
+                { name: 'Восход', time: '07:15', icon: '☀️' },
+                { name: 'Зухр', time: '12:30', icon: '☀️' },
+                { name: 'Аср', time: '16:00', icon: '⛅' },
+                { name: 'Магриб', time: '18:45', icon: '🌇' },
+                { name: 'Иша', time: '20:15', icon: '🌙' }
+            ];
+        }
+
+        function setupPrayerNotifications() {
+            // Настройка уведомлений о намазах
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                // Регистрируем Service Worker для уведомлений
+                navigator.serviceWorker.ready.then(registration => {
+                    // Планируем уведомления о намазах
+                    schedulePrayerNotifications();
+                });
+            }
+        }
+
+        function schedulePrayerNotifications() {
+            // В реальном приложении здесь будет логика планирования уведомлений
+            // о предстоящих намазах
+            const prayerTimes = getPrayerTimes();
+            
+            prayerTimes.forEach(prayer => {
+                // Планируем уведомление за 15 минут до намаза
+                scheduleNotification(prayer.name, prayer.time, -15);
+            });
+        }
+
+        function scheduleNotification(prayerName, prayerTime, minutesBefore) {
+            // В реальном приложении здесь будет логика планирования уведомлений
+            // с использованием Service Worker и Push API
+            console.log(`Запланировано уведомление для ${prayerName} за ${minutesBefore} минут`);
         }
 
         function loadAzkarsData() {
@@ -2313,8 +2612,16 @@
         async function setupServiceWorker() {
             if ('serviceWorker' in navigator) {
                 try {
-                    await navigator.serviceWorker.register('./sw.js');
-                    console.log('Service Worker зарегистрирован');
+                    const registration = await navigator.serviceWorker.register('./sw.js');
+                    console.log('Service Worker зарегистрирован', registration);
+                    
+                    // Отправляем сообщение Service Worker для настройки уведомлений
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'INIT_NOTIFICATIONS',
+                            prayerTimes: getPrayerTimes()
+                        });
+                    }
                 } catch (error) {
                     console.log('Ошибка регистрации Service Worker:', error);
                 }
@@ -2326,93 +2633,5 @@
             Notification.requestPermission();
         }
     </script>
-    <script>
-// Принудительное обновление кэша
-if ('serviceWorker' in navigator) {
-  // Удаляем старый Service Worker
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-    }
-  });
-  
-  // Очищаем кэш
-  caches.keys().then(function(names) {
-    for (let name of names) {
-      caches.delete(name);
-    }
-  });
-}
-
-// Принудительное обновление страницы при загрузке
-window.addEventListener('load', function() {
-  // Проверяем, есть ли новая версия
-  if (window.performance) {
-    console.log('Время загрузки: ' + performance.getEntriesByType("navigation")[0].loadEventEnd);
-  }
-  
-  // Показываем кнопку обновления если приложение установлено
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('Запущено как PWA');
-  }
-});
-
-// Функция для принудительного обновления
-function hardReload() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-      registrations.forEach(function(registration) {
-        registration.unregister();
-      });
-    });
-  }
-  caches.keys().then(function(names) {
-    names.forEach(function(name) {
-      caches.delete(name);
-    });
-  });
-  localStorage.clear();
-  sessionStorage.clear();
-  window.location.reload(true);
-}
-
-// Добавляем скрытую кнопку обновления (удерживать 3 секунды)
-let reloadTimer;
-document.addEventListener('DOMContentLoaded', function() {
-  const hiddenReloadBtn = document.createElement('button');
-  hiddenReloadBtn.innerHTML = '🔄';
-  hiddenReloadBtn.style.cssText = `
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    background: var(--primary-main);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    opacity: 0.3;
-    z-index: 10000;
-    font-size: 16px;
-  `;
-  hiddenReloadBtn.addEventListener('mousedown', startReloadTimer);
-  hiddenReloadBtn.addEventListener('touchstart', startReloadTimer);
-  hiddenReloadBtn.addEventListener('mouseup', cancelReloadTimer);
-  hiddenReloadBtn.addEventListener('touchend', cancelReloadTimer);
-  
-  document.body.appendChild(hiddenReloadBtn);
-  
-  function startReloadTimer() {
-    reloadTimer = setTimeout(() => {
-      hardReload();
-    }, 3000);
-  }
-  
-  function cancelReloadTimer() {
-    clearTimeout(reloadTimer);
-  }
-});
-</script>
 </body>
 </html>
