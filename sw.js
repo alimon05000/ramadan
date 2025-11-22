@@ -1,16 +1,16 @@
-const CACHE_NAME = 'ramadan-app-v1.2';
+const CACHE_NAME = 'ramadan-app-v1.3';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-72.png',
-  '/icons/icon-96.png',
-  '/icons/icon-128.png',
-  '/icons/icon-144.png',
-  '/icons/icon-152.png',
-  '/icons/icon-192.png',
-  '/icons/icon-384.png',
-  '/icons/icon-512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icons/icon-72.png',
+  './icons/icon-96.png',
+  './icons/icon-128.png',
+  './icons/icon-144.png',
+  './icons/icon-152.png',
+  './icons/icon-192.png',
+  './icons/icon-384.png',
+  './icons/icon-512.png'
 ];
 
 // Установка Service Worker
@@ -25,6 +25,9 @@ self.addEventListener('install', function(event) {
       .then(function() {
         console.log('Service Worker: Все файлы закэшированы');
         return self.skipWaiting();
+      })
+      .catch(function(error) {
+        console.log('Service Worker: Ошибка кэширования', error);
       })
   );
 });
@@ -57,6 +60,11 @@ self.addEventListener('fetch', function(event) {
     return;
   }
 
+  // Пропускаем запросы не GET
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
@@ -80,6 +88,11 @@ self.addEventListener('fetch', function(event) {
             });
 
           return response;
+        }).catch(function() {
+          // Если файл не найден и нет в кэше, возвращаем заглушку для index.html
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
         });
       }
     )
@@ -93,8 +106,8 @@ self.addEventListener('push', function(event) {
   const data = event.data.json();
   const options = {
     body: data.body,
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-72.png',
+    icon: './icons/icon-192.png',
+    badge: './icons/icon-72.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -104,12 +117,12 @@ self.addEventListener('push', function(event) {
       {
         action: 'explore',
         title: 'Открыть',
-        icon: '/icons/icon-72.png'
+        icon: './icons/icon-72.png'
       },
       {
         action: 'close',
         title: 'Закрыть',
-        icon: '/icons/icon-72.png'
+        icon: './icons/icon-72.png'
       }
     ]
   };
@@ -126,7 +139,7 @@ self.addEventListener('notificationclick', function(event) {
 
   if (event.action === 'explore') {
     event.waitUntil(
-      clients.openWindow('/')
+      clients.openWindow('./')
     );
   }
 });
