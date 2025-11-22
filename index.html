@@ -606,6 +606,8 @@
             margin-bottom: 1.25rem;
             direction: rtl;
             font-weight: 500;
+            letter-spacing: 1px;
+            word-spacing: 3px;
         }
 
         .verse-translation {
@@ -1058,6 +1060,8 @@
             line-height: 1.8;
             margin-bottom: 1rem;
             direction: rtl;
+            letter-spacing: 1px;
+            word-spacing: 3px;
         }
 
         .dua-translation {
@@ -1457,6 +1461,8 @@
             line-height: 2.5;
             margin-bottom: 1.5rem;
             -webkit-overflow-scrolling: touch;
+            letter-spacing: 1px;
+            word-spacing: 3px;
         }
 
         .ayah-container {
@@ -1475,6 +1481,8 @@
             line-height: 2;
             margin-bottom: 0.5rem;
             text-align: right;
+            letter-spacing: 1px;
+            word-spacing: 3px;
         }
 
         .ayah-translation {
@@ -1637,7 +1645,7 @@
                     <div class="action-icon">📿</div>
                     <span class="action-text">Азкары</span>
                 </button>
-                <button class="action-button" data-action="community" onclick="showTab('community-tab')">
+                <button class="action-button" data-action="community" onclick="showNotification('Раздел "Сообщество" находится в разработке')">
                     <div class="action-icon">👥</div>
                     <span class="action-text">Сообщество</span>
                 </button>
@@ -1758,10 +1766,10 @@
                         </div>
                     </div>
                     <div class="community-actions">
-                        <button class="community-button" onclick="showNotification('Функция в разработке')">
+                        <button class="community-button" onclick="showNotification('Раздел "Обсуждения" находится в разработке')">
                             💬 Обсуждения
                         </button>
-                        <button class="community-button" onclick="showNotification('Функция в разработке')">
+                        <button class="community-button" onclick="showNotification('Раздел "Рейтинг" находится в разработке')">
                             🏆 Рейтинг
                         </button>
                     </div>
@@ -1897,7 +1905,7 @@
 
     <!-- Modal for Surah Reading -->
     <div class="modal" id="surah-modal">
-        <div class="modal-content">
+        <div class="modal-content" id="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="surah-modal-title">Сура Аль-Фатиха</h3>
                 <button class="modal-close" onclick="closeSurahModal()">×</button>
@@ -1928,6 +1936,8 @@
         let weeklyTasks = JSON.parse(localStorage.getItem('weeklyTasks')) || {};
         let currentSurah = 1;
         let allSurahs = [];
+        let notificationInterval;
+        let asrReminderSent = false;
 
         // Данные для подготовки
         const preparationData = [
@@ -2188,6 +2198,13 @@
         }
 
         function showNotification(message) {
+            // Проверяем разрешение на уведомления
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Путь к Рамадану', {
+                    body: message,
+                    icon: 'icons/icon-192.png'
+                });
+            }
             showToast(message, 'warning');
         }
 
@@ -2210,6 +2227,7 @@
             loadAzkarsData();
             updateDailyTask();
             calculateProgress();
+            setupNotifications();
         }
 
         function setupTheme() {
@@ -2280,6 +2298,11 @@
                 notificationsSwitch.addEventListener('change', function() {
                     if (this.checked) {
                         requestNotificationPermission();
+                    } else {
+                        // Отключить уведомления
+                        if (notificationInterval) {
+                            clearInterval(notificationInterval);
+                        }
                     }
                 });
             }
@@ -2294,6 +2317,18 @@
                     e.preventDefault();
                 }
             }, { passive: false });
+
+            // Закрытие модального окна при клике вне его
+            document.getElementById('surah-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSurahModal();
+                }
+            });
+
+            // Закрытие модального окна при клике на пустое место
+            document.getElementById('modal-content').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         }
 
         function toggleTheme() {
@@ -2752,8 +2787,125 @@
                 Notification.requestPermission().then(permission => {
                     if (permission === 'granted') {
                         showToast('Разрешение на уведомления получено');
+                        setupNotifications();
                     }
                 });
+            }
+        }
+
+        function setupNotifications() {
+            // Очищаем предыдущие интервалы
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+            }
+            
+            // Проверяем включены ли уведомления
+            const notificationsSwitch = document.getElementById('notificationsSwitch');
+            if (!notificationsSwitch || !notificationsSwitch.checked) {
+                return;
+            }
+            
+            // Запускаем проверку уведомлений каждую минуту
+            notificationInterval = setInterval(() => {
+                checkPrayerNotifications();
+                checkAzkarNotifications();
+                checkAsrReminder();
+                checkRamadanPreparationReminder();
+            }, 60000); // Каждую минуту
+            
+            // Первоначальная проверка
+            checkPrayerNotifications();
+            checkAzkarNotifications();
+            checkAsrReminder();
+            checkRamadanPreparationReminder();
+        }
+
+        function checkPrayerNotifications() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinutes;
+            
+            // Получаем время намазов
+            const prayerItems = document.querySelectorAll('.prayer-item');
+            prayerItems.forEach(item => {
+                const prayerName = item.querySelector('.prayer-name').textContent.trim();
+                const prayerTimeText = item.querySelector('.prayer-time').textContent;
+                const [hours, minutes] = prayerTimeText.split(':').map(Number);
+                const prayerTime = hours * 60 + minutes;
+                
+                // Уведомление за 15 минут до намаза
+                if (currentTime >= prayerTime - 15 && currentTime < prayerTime - 14) {
+                    showNotification(`Намаз ${prayerName} через 15 минут`);
+                }
+                
+                // Уведомление о начале намаза
+                if (currentTime >= prayerTime && currentTime < prayerTime + 1) {
+                    showNotification(`Время намаза ${prayerName}`);
+                }
+            });
+        }
+
+        function checkAzkarNotifications() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            // Утренние азкары (6-8 утра)
+            if (currentHour >= 6 && currentHour < 8) {
+                showNotification('Время утренних азкаров');
+            }
+            
+            // Вечерние азкары (18-20 вечера)
+            if (currentHour >= 18 && currentHour < 20) {
+                showNotification('Время вечерних азкаров');
+            }
+        }
+
+        function checkAsrReminder() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinutes;
+            
+            // Получаем время намаза Аср
+            const asrItem = document.querySelector('.prayer-item:nth-child(4)'); // 4-й элемент - Аср
+            if (asrItem) {
+                const asrTimeText = asrItem.querySelector('.prayer-time').textContent;
+                const [hours, minutes] = asrTimeText.split(':').map(Number);
+                const asrTime = hours * 60 + minutes;
+                
+                // Напоминание о последнем часе Аср (за 1 час до Магриба)
+                const maghribItem = document.querySelector('.prayer-item:nth-child(5)'); // 5-й элемент - Магриб
+                if (maghribItem) {
+                    const maghribTimeText = maghribItem.querySelector('.prayer-time').textContent;
+                    const [maghribHours, maghribMinutes] = maghribTimeText.split(':').map(Number);
+                    const maghribTime = maghribHours * 60 + maghribMinutes;
+                    const lastHourAsr = maghribTime - 60;
+                    
+                    if (currentTime >= lastHourAsr && currentTime < lastHourAsr + 1 && !asrReminderSent) {
+                        showNotification('Последний час намаза Аср! Постарайтесь совершить намаз вовремя');
+                        asrReminderSent = true;
+                    }
+                }
+            }
+        }
+
+        function checkRamadanPreparationReminder() {
+            const now = new Date();
+            const diff = RAMADAN_2026 - now;
+            const daysLeft = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            // Напоминания о продолжении подготовки к Рамадану
+            if (daysLeft === 30) {
+                showNotification('До Рамадана остался 1 месяц! Продолжайте подготовку');
+            } else if (daysLeft === 14) {
+                showNotification('До Рамадана осталось 2 недели! Увеличьте усилия в подготовке');
+            } else if (daysLeft === 7) {
+                showNotification('До Рамадана осталась 1 неделя! Завершите все приготовления');
+            } else if (daysLeft === 3) {
+                showNotification('До Рамадана осталось 3 дня! Проверьте готовность к посту');
+            } else if (daysLeft === 1) {
+                showNotification('Завтра начинается Рамадан! Да поможет нам Аллах');
             }
         }
 
