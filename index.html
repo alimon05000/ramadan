@@ -784,6 +784,187 @@
             background: var(--border-dark);
         }
 
+        /* === Prayer Tab === */
+        .prayer-section {
+            padding: 1rem 0.75rem;
+        }
+
+        .prayer-times {
+            background: var(--bg-card-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        body.dark-theme .prayer-times {
+            background: var(--bg-card-dark);
+        }
+
+        .prayer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .prayer-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .prayer-title {
+            color: var(--accent-gold);
+        }
+
+        .prayer-location {
+            font-size: 0.8rem;
+            color: var(--text-secondary-light);
+        }
+
+        body.dark-theme .prayer-location {
+            color: var(--text-secondary-dark);
+        }
+
+        .prayer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .prayer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        body.dark-theme .prayer-item {
+            background: var(--border-dark);
+        }
+
+        .prayer-item.active {
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.1), rgba(217, 180, 74, 0.05));
+            border-left: 4px solid var(--primary-main);
+        }
+
+        .prayer-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prayer-time {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .prayer-time {
+            color: var(--accent-gold);
+        }
+
+        .prayer-completed {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* === Community Tab === */
+        .community-section {
+            padding: 1rem 0.75rem;
+        }
+
+        .community-card {
+            background: var(--bg-card-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        body.dark-theme .community-card {
+            background: var(--bg-card-dark);
+        }
+
+        .community-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .community-title {
+            color: var(--accent-gold);
+        }
+
+        .community-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .community-stat {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+        }
+
+        body.dark-theme .community-stat {
+            background: var(--border-dark);
+        }
+
+        .community-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        body.dark-theme .community-stat-value {
+            color: var(--accent-gold);
+        }
+
+        .community-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary-light);
+        }
+
+        body.dark-theme .community-stat-label {
+            color: var(--text-secondary-dark);
+        }
+
+        .community-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .community-button {
+            background: var(--primary-main);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .community-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
         /* === Dua Tab === */
         .dua-section {
             padding: 1rem 0.75rem;
@@ -1227,7 +1408,7 @@
                     <div class="action-icon">📖</div>
                     <span class="action-text">Коран</span>
                 </button>
-                <button class="action-button" data-action="prayer" onclick="showNotification('Раздел Намаз в разработке')">
+                <button class="action-button" data-action="prayer" onclick="showTab('prayer-tab')">
                     <div class="action-icon">🕌</div>
                     <span class="action-text">Намаз</span>
                 </button>
@@ -1235,7 +1416,7 @@
                     <div class="action-icon">📿</div>
                     <span class="action-text">Азкары</span>
                 </button>
-                <button class="action-button" data-action="community" onclick="showNotification('Раздел Сообщество в разработке')">
+                <button class="action-button" data-action="community" onclick="showTab('community-tab')">
                     <div class="action-icon">👥</div>
                     <span class="action-text">Сообщество</span>
                 </button>
@@ -1273,63 +1454,8 @@
                 </div>
             </header>
 
-            <div class="week-section">
-                <!-- Week 12 -->
-                <div class="week-card">
-                    <div class="week-header">
-                        <h3 class="week-title">Неделя 12: Духовная диагностика</h3>
-                        <span class="week-progress">2/7 выполнено</span>
-                    </div>
-                    <p class="week-theme">Постановка целей и самопроверка</p>
-                    <div class="tasks-list">
-                        <div class="task-item completed" onclick="toggleTask(this)">
-                            <div class="task-item-checkbox"></div>
-                            <span class="task-item-text">Определить 3 главные цели на Рамадан</span>
-                        </div>
-                        <div class="task-item completed" onclick="toggleTask(this)">
-                            <div class="task-item-checkbox"></div>
-                            <span class="task-item-text">Проанализировать прошлые ошибки</span>
-                        </div>
-                        <div class="task-item" onclick="toggleTask(this)">
-                            <div class="task-item-checkbox"></div>
-                            <span class="task-item-text">Написать план исправления</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Week 11 -->
-                <div class="week-card">
-                    <div class="week-header">
-                        <h3 class="week-title">Неделя 11: Режим сна</h3>
-                        <span class="week-progress">0/7 выполнено</span>
-                    </div>
-                    <p class="week-theme">Привыкание к раннему пробуждению на фаджр</p>
-                    <div class="tasks-list">
-                        <div class="task-item" onclick="toggleTask(this)">
-                            <div class="task-item-checkbox"></div>
-                            <span class="task-item-text">Ложиться до 23:00</span>
-                        </div>
-                        <div class="task-item" onclick="toggleTask(this)">
-                            <div class="task-item-checkbox"></div>
-                            <span class="task-item-text">Вставать на фаджр ежедневно</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Week 10 -->
-                <div class="week-card">
-                    <div class="week-header">
-                        <h3 class="week-title">Неделя 10: Чтение Корана</h3>
-                        <span class="week-progress">0/7 выполнено</span>
-                    </div>
-                    <p class="week-theme">1 страница в день с пониманием</p>
-                    <div class="tasks-list">
-                        <div class="task-item" onclick="toggleTask(this)">
-                            <div class="task-item-checkbox"></div>
-                            <span class="task-item-text">Читать 1 страницу после фаджр</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="week-section" id="week-section">
+                <!-- Weeks will be generated dynamically -->
             </div>
         </div>
 
@@ -1347,43 +1473,76 @@
                 </div>
             </header>
 
-            <div class="quran-section">
-                <!-- Surah 1 -->
-                <div class="surah-card" onclick="showNotification('Открывается сура Аль-Фатиха')">
-                    <div class="surah-number">1</div>
-                    <div class="surah-info">
-                        <div class="surah-name">Аль-Фатиха</div>
-                        <div class="surah-details">7 аятов • Мекканская</div>
+            <div class="quran-section" id="quran-section">
+                <!-- Surahs will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Prayer Tab -->
+        <div id="prayer-tab" class="tab-content">
+            <header class="header">
+                <div class="header-top">
+                    <div class="logo">
+                        <div class="logo-icon">🕌</div>
+                        <div class="logo-text">Время намаза</div>
                     </div>
-                    <div class="surah-actions">
-                        <button class="surah-action-btn" onclick="event.stopPropagation(); showNotification('Добавлено в закладки')">🔖</button>
-                        <button class="surah-action-btn" onclick="event.stopPropagation(); showNotification('Воспроизведение audio')">🔊</button>
+                    <button class="theme-toggle" id="themeToggle4" aria-label="Переключить тему">
+                        🌙
+                    </button>
+                </div>
+            </header>
+
+            <div class="prayer-section">
+                <div class="prayer-times">
+                    <div class="prayer-header">
+                        <h3 class="prayer-title">Сегодняшние намазы</h3>
+                        <span class="prayer-location" id="prayer-location">Махачкала</span>
+                    </div>
+                    <div class="prayer-list" id="prayer-list">
+                        <!-- Prayer times will be loaded dynamically -->
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Surah 2 -->
-                <div class="surah-card" onclick="showNotification('Открывается сура Аль-Бакара')">
-                    <div class="surah-number">2</div>
-                    <div class="surah-info">
-                        <div class="surah-name">Аль-Бакара</div>
-                        <div class="surah-details">286 аятов • Мединская</div>
+        <!-- Community Tab -->
+        <div id="community-tab" class="tab-content">
+            <header class="header">
+                <div class="header-top">
+                    <div class="logo">
+                        <div class="logo-icon">👥</div>
+                        <div class="logo-text">Сообщество</div>
                     </div>
-                    <div class="surah-actions">
-                        <button class="surah-action-btn" onclick="event.stopPropagation(); showNotification('Добавлено в закладки')">🔖</button>
-                        <button class="surah-action-btn" onclick="event.stopPropagation(); showNotification('Воспроизведение audio')">🔊</button>
-                    </div>
+                    <button class="theme-toggle" id="themeToggle5" aria-label="Переключить тему">
+                        🌙
+                    </button>
                 </div>
+            </header>
 
-                <!-- Surah 3 -->
-                <div class="surah-card" onclick="showNotification('Открывается сура Аль Имран')">
-                    <div class="surah-number">3</div>
-                    <div class="surah-info">
-                        <div class="surah-name">Аль Имран</div>
-                        <div class="surah-details">200 аятов • Мединская</div>
+            <div class="community-section">
+                <div class="community-card">
+                    <h3 class="community-title">Статистика сообщества</h3>
+                    <div class="community-stats">
+                        <div class="community-stat">
+                            <div class="community-stat-value" id="community-users">1,245</div>
+                            <div class="community-stat-label">Участников</div>
+                        </div>
+                        <div class="community-stat">
+                            <div class="community-stat-value" id="community-tasks">12,847</div>
+                            <div class="community-stat-label">Выполнено задач</div>
+                        </div>
+                        <div class="community-stat">
+                            <div class="community-stat-value" id="community-pages">45,231</div>
+                            <div class="community-stat-label">Прочитано страниц</div>
+                        </div>
                     </div>
-                    <div class="surah-actions">
-                        <button class="surah-action-btn" onclick="event.stopPropagation(); showNotification('Добавлено в закладки')">🔖</button>
-                        <button class="surah-action-btn" onclick="event.stopPropagation(); showNotification('Воспроизведение audio')">🔊</button>
+                    <div class="community-actions">
+                        <button class="community-button" onclick="showNotification('Функция в разработке')">
+                            💬 Обсуждения
+                        </button>
+                        <button class="community-button" onclick="showNotification('Функция в разработке')">
+                            🏆 Рейтинг
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1397,38 +1556,14 @@
                         <div class="logo-icon">📿</div>
                         <div class="logo-text">Дуа и Азкары</div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle4" aria-label="Переключить тему">
+                    <button class="theme-toggle" id="themeToggle6" aria-label="Переключить тему">
                         🌙
                     </button>
                 </div>
             </header>
 
-            <div class="dua-section">
-                <div class="dua-category">
-                    <h3 class="category-title">Утренние азкары</h3>
-                    
-                    <div class="dua-card">
-                        <div class="dua-arabic">أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ</div>
-                        <div class="dua-translation">"Мы дожили до утра, и власть принадлежит Аллаху, хвала Аллаху, нет божества, кроме Аллаха, и нет у Него сотоварища"</div>
-                        <div class="dua-source">Муслим 2723</div>
-                    </div>
-
-                    <div class="dua-card">
-                        <div class="dua-arabic">اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ</div>
-                        <div class="dua-translation">"О Аллах, с Тобой мы дожили до утра, с Тобой мы дожили до вечера, с Тобой мы живём, с Тобой умираем, и к Тебе воскресение"</div>
-                        <div class="dua-source">Ат-Тирмизи 3391</div>
-                    </div>
-                </div>
-
-                <div class="dua-category">
-                    <h3 class="category-title">Вечерние азкары</h3>
-                    
-                    <div class="dua-card">
-                        <div class="dua-arabic">أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ</div>
-                        <div class="dua-translation">"Мы дожили до вечера, и власть принадлежит Аллаху, хвала Аллаху, нет божества, кроме Аллаха, и нет у Него сотоварища"</div>
-                        <div class="dua-source">Муслим 2723</div>
-                    </div>
-                </div>
+            <div class="dua-section" id="dua-section">
+                <!-- Duas will be loaded dynamically -->
             </div>
         </div>
 
@@ -1440,7 +1575,7 @@
                         <div class="logo-icon">👤</div>
                         <div class="logo-text">Мой профиль</div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle5" aria-label="Переключить тему">
+                    <button class="theme-toggle" id="themeToggle7" aria-label="Переключить тему">
                         🌙
                     </button>
                 </div>
@@ -1474,7 +1609,7 @@
                     <div class="setting-item">
                         <span class="setting-label">Пуш-уведомления</span>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <input type="checkbox" id="notificationsSwitch" checked>
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -1482,7 +1617,7 @@
                     <div class="setting-item">
                         <span class="setting-label">Напоминания о намазе</span>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <input type="checkbox" id="prayerRemindersSwitch" checked>
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -1491,6 +1626,22 @@
                         <span class="setting-label">Тёмная тема</span>
                         <label class="switch">
                             <input type="checkbox" id="darkThemeSwitch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <span class="setting-label">Утренние напоминания</span>
+                        <label class="switch">
+                            <input type="checkbox" id="morningRemindersSwitch" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <span class="setting-label">Вечерние напоминания</span>
+                        <label class="switch">
+                            <input type="checkbox" id="eveningRemindersSwitch" checked>
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -1524,13 +1675,236 @@
     </div>
 
     <script>
-        // Точная дата Рамадана 2026 (27 февраля 2026 по расчетам для Махачкалы)
-        const RAMADAN_2026 = new Date('2026-02-27T00:00:00+03:00');
+        // Точная дата Рамадана 2026 (18 февраля 2026 по расчетам для Махачкалы)
+        const RAMADAN_2026 = new Date('2026-02-18T00:00:00+03:00');
+        const TOTAL_DAYS = 88;
 
         // Глобальные переменные
         let currentProgress = 0;
         let completedTasks = 0;
         let currentTheme = localStorage.getItem('theme') || 'light';
+        let dailyTasks = JSON.parse(localStorage.getItem('dailyTasks')) || {};
+        let weeklyTasks = JSON.parse(localStorage.getItem('weeklyTasks')) || {};
+
+        // Данные для подготовки
+        const preparationData = [
+            {
+                week: 12,
+                title: "Духовная диагностика",
+                theme: "Постановка целей и самопроверка",
+                tasks: [
+                    "Определить 3 главные цели на Рамадан",
+                    "Проанализировать прошлые ошибки",
+                    "Написать план исправления",
+                    "Составить список благодарностей Аллаху",
+                    "Оценить текущий уровень имана",
+                    "Определить вредные привычки для исправления",
+                    "Начать вести духовный дневник"
+                ]
+            },
+            {
+                week: 11,
+                title: "Режим сна",
+                theme: "Привыкание к раннему пробуждению на фаджр",
+                tasks: [
+                    "Ложиться до 23:00",
+                    "Вставать на фаджр ежедневно",
+                    "Читать утренние азкары после фаджр",
+                    "Совершать суннат-намазы фаджра",
+                    "Планировать дела на день после фаджр",
+                    "Изучить дуа перед сном",
+                    "Создать ритуал перед сном"
+                ]
+            },
+            {
+                week: 10,
+                title: "Чтение Корана",
+                theme: "1 страница в день с пониманием",
+                tasks: [
+                    "Читать 1 страницу после фаджр",
+                    "Изучать тафсир одного аята",
+                    "Запоминать один короткий аят",
+                    "Размышлять над смыслом прочитанного",
+                    "Читать Коран с тажвидом",
+                    "Слушать чтение Корана",
+                    "Делиться смыслом аята с семьей"
+                ]
+            },
+            {
+                week: 9,
+                title: "Укрепление намаза",
+                theme: "Сосредоточенность и регулярность",
+                tasks: [
+                    "Совершать все намазы вовремя",
+                    "Готовиться к намазу за 5 минут",
+                    "Читать дополнительные суннат-намазы",
+                    "Улучшать концентрацию в намазе",
+                    "Изучать значения читаемого в намазе",
+                    "Совершать намаз в джамаате",
+                    "Учить новые суры для намаза"
+                ]
+            },
+            {
+                week: 8,
+                title: "Пост по понедельникам и четвергам",
+                theme: "Подготовка организма к посту",
+                tasks: [
+                    "Соблюдать суннат-пост в понедельник",
+                    "Соблюдать суннат-пост в четверг",
+                    "Правильно питаться в сухур и ифтар",
+                    "Увеличивать потребление воды",
+                    "Снижать потребление кофеина",
+                    "Практиковать ранний сухур",
+                    "Изучать правила поста"
+                ]
+            },
+            {
+                week: 7,
+                title: "Финансовая подготовка",
+                theme: "Планирование закята и садаки",
+                tasks: [
+                    "Рассчитать закят аль-фитр",
+                    "Составить список нуждающихся",
+                    "Подготовить пожертвования для мечети",
+                    "Изучить правила закята",
+                    "Определить суммы для садаки",
+                    "Планировать ифтары для нуждающихся",
+                    "Изучить благотворительные проекты"
+                ]
+            },
+            {
+                week: 6,
+                title: "Духовное очищение",
+                theme: "Искренность и отказ от показухи",
+                tasks: [
+                    "Скрывать благие дела от других",
+                    "Практиковать искренность в намерениях",
+                    "Избегать хвастовства",
+                    "Просить Аллаха принять дела",
+                    "Размышлять о показухе (рия)",
+                    "Совершать тайные пожертвования",
+                    "Просить прощения за показушные дела"
+                ]
+            },
+            {
+                week: 5,
+                title: "Укрепление семейных уз",
+                theme: "Подготовка семьи к Рамадану",
+                tasks: [
+                    "Провести семейное собрание о Рамадане",
+                    "Создать план совместных ифтаров",
+                    "Обучать детей основам поста",
+                    "Украсить дом к Рамадану",
+                    "Создать атмосферу поклонения дома",
+                    "Планировать совместные таравих-намазы",
+                    "Готовить специальные блюда для Рамадана"
+                ]
+            },
+            {
+                week: 4,
+                title: "Интеллектуальная подготовка",
+                theme: "Изучение фикха поста и Рамадана",
+                tasks: [
+                    "Изучить правила поста",
+                    "Узнать о действиях, нарушающих пост",
+                    "Изучить исключения из поста",
+                    "Прочитать о достоинствах Рамадана",
+                    "Изучить правила закята аль-фитр",
+                    "Узнать о ночи предопределения",
+                    "Изучить правила итикафа"
+                ]
+            },
+            {
+                week: 3,
+                title: "Социальная ответственность",
+                theme: "Подготовка к помощи другим",
+                tasks: [
+                    "Найти нуждающихся для помощи",
+                    "Организовать ифтар для соседей",
+                    "Приготовить еду для одиноких",
+                    "Посетить больных родственников",
+                    "Помочь в подготовке мечети",
+                    "Примириться с теми, с кем в ссоре",
+                    "Простить обиды"
+                ]
+            },
+            {
+                week: 2,
+                title: "Интенсивное поклонение",
+                theme: "Увеличение объема поклонения",
+                tasks: [
+                    "Увеличить чтение Корана до 2 страниц",
+                    "Добавить дополнительные нафль-намазы",
+                    "Увеличить время зикра",
+                    "Читать больше салаватов",
+                    "Совершать тахаджуд-намаз",
+                    "Участвовать в коллективных ифтарах",
+                    "Готовить дуа для Рамадана"
+                ]
+            },
+            {
+                week: 1,
+                title: "Финальная подготовка",
+                theme: "Последние приготовления к Рамадану",
+                tasks: [
+                    "Составить расписание на Рамадан",
+                    "Завершить все важные дела",
+                    "Сделать генеральную уборку дома",
+                    "Купить продукты для Рамадана",
+                    "Подготовить одежду для мечети",
+                    "Настроить будильники для сухура",
+                    "Попросить прощения у всех"
+                ]
+            }
+        ];
+
+        // Утренние и вечерние азкары
+        const azkarsData = {
+            morning: [
+                {
+                    arabic: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ",
+                    translation: "Мы дожили до утра, и власть принадлежит Аллаху, хвала Аллаху, нет божества, кроме Аллаха, и нет у Него сотоварища",
+                    source: "Муслим 2723"
+                },
+                {
+                    arabic: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
+                    translation: "О Аллах, с Тобой мы дожили до утра, с Тобой мы дожили до вечера, с Тобой мы живём, с Тобой умираем, и к Тебе воскресение",
+                    source: "Ат-Тирмизи 3391"
+                },
+                {
+                    arabic: "اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لاَ إِلَهَ إِلاَّ أَنْتَ",
+                    translation: "О Аллах, даруй мне здоровье в моем теле, о Аллах, даруй мне здоровье в моем слухе, о Аллах, даруй мне здоровье в моем зрении, нет божества, кроме Тебя",
+                    source: "Абу Дауд 5090"
+                },
+                {
+                    arabic: "حَسْبِيَ اللَّهُ لاَ إِلَهَ إِلاَّ هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+                    translation: "Достаточно мне Аллаха, нет божества, кроме Него, на Него я уповаю, и Он - Господь великого Трона",
+                    source: "Абу Дауд 5081"
+                }
+            ],
+            evening: [
+                {
+                    arabic: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ",
+                    translation: "Мы дожили до вечера, и власть принадлежит Аллаху, хвала Аллаху, нет божества, кроме Аллаха, и нет у Него сотоварища",
+                    source: "Муслим 2723"
+                },
+                {
+                    arabic: "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ",
+                    translation: "О Аллах, с Тобой мы дожили до вечера, с Тобой мы дожили до утра, с Тобой мы живём, с Тобой умираем, и к Тебе возвращение",
+                    source: "Ат-Тирмизи 3391"
+                },
+                {
+                    arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكَسَلِ وَالْهَرَمِ وَالْمَأْثَمِ وَالْمَغْرَمِ",
+                    translation: "О Аллах, поистине, я прибегаю к Тебе от лени, старости, греха и долгов",
+                    source: "Бухари 6363"
+                },
+                {
+                    arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ وَأَعُوذُ بِكَ مِنْ شَرِّ هَذِهِ اللَّيْلَةِ",
+                    translation: "О Аллах, я прошу у Тебя блага этой ночи и прибегаю к Тебе от зла этой ночи",
+                    source: "Абу Дауд 5046"
+                }
+            ]
+        };
 
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
@@ -1544,6 +1918,12 @@
             setupServiceWorker();
             updateCurrentDate();
             updateStats();
+            loadPreparationData();
+            loadQuranData();
+            loadPrayerTimes();
+            loadAzkarsData();
+            updateDailyTask();
+            calculateProgress();
         }
 
         function setupTheme() {
@@ -1612,38 +1992,57 @@
         function toggleMainTask() {
             const checkbox = document.getElementById('checkbox');
             const isChecked = checkbox.classList.contains('checked');
+            const today = new Date().toDateString();
             
             if (!isChecked) {
                 checkbox.classList.add('checked');
-                currentProgress = Math.min(100, currentProgress + 5);
+                dailyTasks[today] = true;
                 completedTasks++;
                 updateProgress();
                 updateStats();
-                showNotification('Задача выполнена! +5% к готовности');
+                showNotification('Задача выполнена!');
+                localStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
             } else {
                 checkbox.classList.remove('checked');
-                currentProgress = Math.max(0, currentProgress - 5);
+                dailyTasks[today] = false;
                 completedTasks = Math.max(0, completedTasks - 1);
                 updateProgress();
                 updateStats();
+                localStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
             }
         }
 
-        function toggleTask(taskElement) {
+        function toggleTask(taskElement, weekIndex, taskIndex) {
             const isCompleted = taskElement.classList.contains('completed');
             
             if (!isCompleted) {
                 taskElement.classList.add('completed');
-                currentProgress = Math.min(100, currentProgress + 2);
-                completedTasks++;
+                if (!weeklyTasks[weekIndex]) weeklyTasks[weekIndex] = [];
+                weeklyTasks[weekIndex][taskIndex] = true;
             } else {
                 taskElement.classList.remove('completed');
-                currentProgress = Math.max(0, currentProgress - 2);
-                completedTasks = Math.max(0, completedTasks - 1);
+                if (weeklyTasks[weekIndex]) weeklyTasks[weekIndex][taskIndex] = false;
             }
             
             updateProgress();
             updateStats();
+            localStorage.setItem('weeklyTasks', JSON.stringify(weeklyTasks));
+        }
+
+        function calculateProgress() {
+            // Рассчитываем прогресс на основе выполненных задач
+            const today = new Date().toDateString();
+            const startDate = new Date(RAMADAN_2026);
+            startDate.setDate(startDate.getDate() - TOTAL_DAYS);
+            
+            const daysPassed = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+            const maxPossibleProgress = Math.min(100, Math.floor((daysPassed / TOTAL_DAYS) * 100));
+            
+            // Базовая прогрессия + бонусы за выполненные задачи
+            const taskBonus = Object.keys(dailyTasks).filter(date => dailyTasks[date]).length * 0.5;
+            currentProgress = Math.min(maxPossibleProgress + taskBonus, 100);
+            
+            updateProgress();
         }
 
         function updateProgress() {
@@ -1651,13 +2050,31 @@
             const progressPercent = document.getElementById('progressPercent');
             
             progressFill.style.width = `${currentProgress}%`;
-            progressPercent.textContent = `${currentProgress}%`;
+            progressPercent.textContent = `${Math.round(currentProgress)}%`;
         }
 
         function updateStats() {
             document.getElementById('completedTasks').textContent = completedTasks;
             document.getElementById('quranPages').textContent = Math.floor(completedTasks * 1.5);
-            document.getElementById('streakDays').textContent = completedTasks > 0 ? '1' : '0';
+            
+            // Рассчитываем серию выполненных дней подряд
+            const dates = Object.keys(dailyTasks).sort();
+            let streak = 0;
+            let currentDate = new Date();
+            
+            for (let i = 0; i < 7; i++) {
+                const checkDate = new Date(currentDate);
+                checkDate.setDate(checkDate.getDate() - i);
+                const dateString = checkDate.toDateString();
+                
+                if (dailyTasks[dateString]) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            
+            document.getElementById('streakDays').textContent = streak;
         }
 
         function showTab(tabId) {
@@ -1711,20 +2128,197 @@
                 now.toLocaleDateString('ru-RU', options);
         }
 
+        function updateDailyTask() {
+            const today = new Date().toDateString();
+            const checkbox = document.getElementById('checkbox');
+            
+            // Проверяем, выполнена ли сегодняшняя задача
+            if (dailyTasks[today]) {
+                checkbox.classList.add('checked');
+            } else {
+                checkbox.classList.remove('checked');
+            }
+        }
+
+        function loadPreparationData() {
+            const weekSection = document.getElementById('week-section');
+            weekSection.innerHTML = '';
+            
+            preparationData.forEach((weekData, weekIndex) => {
+                const weekCard = document.createElement('div');
+                weekCard.className = 'week-card';
+                
+                // Подсчитываем выполненные задачи для этой недели
+                const completedCount = weeklyTasks[weekIndex] ? 
+                    weeklyTasks[weekIndex].filter(task => task).length : 0;
+                
+                weekCard.innerHTML = `
+                    <div class="week-header">
+                        <h3 class="week-title">Неделя ${weekData.week}: ${weekData.title}</h3>
+                        <span class="week-progress">${completedCount}/${weekData.tasks.length} выполнено</span>
+                    </div>
+                    <p class="week-theme">${weekData.theme}</p>
+                    <div class="tasks-list">
+                        ${weekData.tasks.map((task, taskIndex) => {
+                            const isCompleted = weeklyTasks[weekIndex] && weeklyTasks[weekIndex][taskIndex];
+                            return `
+                                <div class="task-item ${isCompleted ? 'completed' : ''}" 
+                                     onclick="toggleTask(this, ${weekIndex}, ${taskIndex})">
+                                    <div class="task-item-checkbox"></div>
+                                    <span class="task-item-text">${task}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                
+                weekSection.appendChild(weekCard);
+            });
+        }
+
+        async function loadQuranData() {
+            const quranSection = document.getElementById('quran-section');
+            
+            try {
+                // Используем API для получения списка сур
+                const response = await fetch('https://api.alquran.cloud/v1/surah');
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    const surahs = data.data;
+                    
+                    quranSection.innerHTML = surahs.map(surah => `
+                        <div class="surah-card" onclick="showSurah(${surah.number})">
+                            <div class="surah-number">${surah.number}</div>
+                            <div class="surah-info">
+                                <div class="surah-name">${surah.englishName} (${surah.name})</div>
+                                <div class="surah-details">${surah.numberOfAyahs} аятов • ${surah.revelationType === 'Meccan' ? 'Мекканская' : 'Мединская'}</div>
+                            </div>
+                            <div class="surah-actions">
+                                <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(${surah.number})">🔖</button>
+                                <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(${surah.number})">🔊</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    throw new Error('Не удалось загрузить данные Корана');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки Корана:', error);
+                // Запасной вариант - статические данные
+                quranSection.innerHTML = `
+                    <div class="surah-card" onclick="showSurah(1)">
+                        <div class="surah-number">1</div>
+                        <div class="surah-info">
+                            <div class="surah-name">Al-Fatihah (الفاتحة)</div>
+                            <div class="surah-details">7 аятов • Мекканская</div>
+                        </div>
+                        <div class="surah-actions">
+                            <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(1)">🔖</button>
+                            <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(1)">🔊</button>
+                        </div>
+                    </div>
+                    <div class="surah-card" onclick="showSurah(2)">
+                        <div class="surah-number">2</div>
+                        <div class="surah-info">
+                            <div class="surah-name">Al-Baqarah (البقرة)</div>
+                            <div class="surah-details">286 аятов • Мединская</div>
+                        </div>
+                        <div class="surah-actions">
+                            <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(2)">🔖</button>
+                            <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(2)">🔊</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function showSurah(surahNumber) {
+            showNotification(`Открывается сура ${surahNumber}`);
+            // В реальном приложении здесь будет переход к чтению суры
+        }
+
+        function toggleBookmark(surahNumber) {
+            showNotification(`Супра ${surahNumber} добавлена в закладки`);
+        }
+
+        function playAudio(surahNumber) {
+            showNotification(`Воспроизведение суры ${surahNumber}`);
+        }
+
+        function loadPrayerTimes() {
+            const prayerList = document.getElementById('prayer-list');
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            // Временные данные для примера (в реальном приложении нужно использовать API)
+            const prayerTimes = [
+                { name: 'Фаджр', time: '05:30', icon: '🌅' },
+                { name: 'Восход', time: '07:15', icon: '☀️' },
+                { name: 'Зухр', time: '12:30', icon: '☀️' },
+                { name: 'Аср', time: '16:00', icon: '⛅' },
+                { name: 'Магриб', time: '18:45', icon: '🌇' },
+                { name: 'Иша', time: '20:15', icon: '🌙' }
+            ];
+            
+            prayerList.innerHTML = prayerTimes.map(prayer => {
+                const [hours, minutes] = prayer.time.split(':').map(Number);
+                const prayerDate = new Date();
+                prayerDate.setHours(hours, minutes, 0, 0);
+                
+                const isActive = currentHour >= hours && currentHour < (hours + 1);
+                const isCompleted = currentHour > hours;
+                
+                return `
+                    <div class="prayer-item ${isActive ? 'active' : ''}">
+                        <div class="prayer-name">
+                            <span>${prayer.icon}</span>
+                            ${prayer.name}
+                        </div>
+                        <div class="prayer-time ${isCompleted ? 'prayer-completed' : ''}">
+                            ${prayer.time}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadAzkarsData() {
+            const duaSection = document.getElementById('dua-section');
+            
+            duaSection.innerHTML = `
+                <div class="dua-category">
+                    <h3 class="category-title">Утренние азкары</h3>
+                    ${azkarsData.morning.map(dua => `
+                        <div class="dua-card">
+                            <div class="dua-arabic">${dua.arabic}</div>
+                            <div class="dua-translation">${dua.translation}</div>
+                            <div class="dua-source">${dua.source}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="dua-category">
+                    <h3 class="category-title">Вечерние азкары</h3>
+                    ${azkarsData.evening.map(dua => `
+                        <div class="dua-card">
+                            <div class="dua-arabic">${dua.arabic}</div>
+                            <div class="dua-translation">${dua.translation}</div>
+                            <div class="dua-source">${dua.source}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
         async function setupServiceWorker() {
             if ('serviceWorker' in navigator) {
                 try {
-                    await navigatorServiceWorker();
+                    await navigator.serviceWorker.register('./sw.js');
                     console.log('Service Worker зарегистрирован');
                 } catch (error) {
                     console.log('Ошибка регистрации Service Worker:', error);
                 }
             }
-        }
-
-        async function navigatorServiceWorker() {
-            const registration = await navigator.serviceWorker.register('./sw.js');
-            return registration;
         }
 
         // Запрос разрешения на уведомления при загрузке
