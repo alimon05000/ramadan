@@ -59,10 +59,11 @@
             user-select: none;
         }
 
-        html {
-            touch-action: manipulation;
+        html, body {
             height: 100%;
-            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            overflow: hidden;
+            position: fixed;
         }
 
         body {
@@ -72,7 +73,8 @@
             line-height: 1.6;
             min-height: 100vh;
             transition: var(--transition);
-            overflow-x: hidden;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
             position: relative;
         }
 
@@ -85,25 +87,42 @@
             max-width: 480px;
             margin: 0 auto;
             padding: 0;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            background: var(--bg-light);
+        }
+
+        body.dark-theme .app-container {
+            background: var(--bg-dark);
         }
 
         /* === Tab Content === */
         .tab-content {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             padding-bottom: 80px;
             display: none;
             -webkit-overflow-scrolling: touch;
             height: calc(100vh - 80px);
+            position: relative;
         }
 
         .tab-content.active {
             display: block;
+        }
+
+        /* Фикс для PWA прокрутки */
+        .tab-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         /* === Header === */
@@ -113,6 +132,7 @@
             padding: 1.5rem 1.25rem;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .header::before {
@@ -2138,26 +2158,44 @@
             updateDailyTask();
             calculateProgress();
             setupNotifications();
-            fixScrollIssues();
+            fixPwaScrollIssues();
         }
 
-        function fixScrollIssues() {
-            // Исправление проблем с прокруткой на iOS
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.webkitOverflowScrolling = 'touch';
-                tab.style.overflow = 'auto';
-            });
+        function fixPwaScrollIssues() {
+            // Специальные исправления для PWA
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.height = '100%';
             
-            // Предотвращение блокировки прокрутки
-            document.addEventListener('touchmove', function(e) {
-                // Разрешаем прокрутку только если элемент имеет переполнение
+            // Принудительное обновление layout для iOS
+            setTimeout(() => {
+                document.body.style.height = '100%';
+                window.scrollTo(0, 0);
+            }, 100);
+            
+            // Обработчик для предотвращения блокировки прокрутки
+            document.addEventListener('touchstart', function(e) {
+                // Разрешаем прокрутку только для элементов с переполнением
                 const target = e.target;
-                const isScrollable = target.scrollHeight > target.clientHeight;
+                const isScrollable = target.closest('.tab-content') || 
+                                   target.closest('.modal-content') ||
+                                   target.closest('.surah-content');
                 
-                if (!isScrollable && target.tagName !== 'BODY') {
+                if (!isScrollable) {
                     e.preventDefault();
                 }
             }, { passive: false });
+            
+            // Исправление для iOS PWA
+            if (window.navigator.standalone === true) {
+                document.body.style.webkitOverflowScrolling = 'touch';
+                document.body.style.overflow = 'auto';
+                document.body.style.height = '100%';
+                
+                // Принудительный рефлоу
+                document.body.offsetHeight;
+            }
         }
 
         function setupTheme() {
@@ -2275,8 +2313,15 @@
                 e.preventDefault();
             });
 
+            // Исправление прокрутки для PWA
             document.addEventListener('touchmove', function(e) {
-                if (e.scale !== 1) {
+                // Разрешаем прокрутку только для элементов с переполнением
+                const target = e.target;
+                const isScrollable = target.closest('.tab-content') || 
+                                   target.closest('.modal-content') ||
+                                   target.closest('.surah-content');
+                
+                if (!isScrollable && e.touches.length === 1) {
                     e.preventDefault();
                 }
             }, { passive: false });
@@ -2420,10 +2465,13 @@
             
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
             
-            // Исправление прокрутки для iOS
+            // Сброс прокрутки для PWA
             setTimeout(() => {
-                document.getElementById(tabId).scrollTop = 0;
-            }, 100);
+                const activeTab = document.getElementById(tabId);
+                if (activeTab) {
+                    activeTab.scrollTop = 0;
+                }
+            }, 50);
         }
 
         function showToast(message, type = 'success') {
