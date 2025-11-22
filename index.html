@@ -3,490 +3,799 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Путь к Рамадану</title>
-    <meta name="description" content="Ваш духовный спутник в подготовке к Рамадану">
+    <title>Путь к Рамадану - Ваш духовный спутник</title>
+    <meta name="description" content="Подготовка к Рамадану 2026 - Коран, намаз, азкары, трекер привычек">
     <meta name="theme-color" content="#0B5B3F"/>
     <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* === Базовые стили и Сброс === */
+        /* === CSS Variables === */
         :root {
             --primary-dark: #0B5B3F;
-            --primary-light: #1C7A5C;
+            --primary-main: #1C7A5C;
+            --primary-light: #2A9D75;
             --accent-gold: #D9B44A;
             --accent-cream: #F6E8C3;
             --bg-light: #FAFAF8;
+            --bg-card-light: #FFFFFF;
+            --text-primary-light: #1A1A1A;
+            --text-secondary-light: #666666;
+            --border-light: #E8E8E8;
             --bg-dark: #0E1116;
-            --text-light: #333333;
-            --text-dark: #E0E0E0;
-            --card-light: #FFFFFF;
-            --card-dark: #1A1D24;
-            --shadow: 0 4px 12px rgba(11, 91, 63, 0.15);
-            --radius: 16px;
+            --bg-card-dark: #1A1D24;
+            --text-primary-dark: #F0F0F0;
+            --text-secondary-dark: #A0A0A0;
+            --border-dark: #2D3748;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 2px 8px rgba(11, 91, 63, 0.08);
+            --shadow-md: 0 4px 20px rgba(11, 91, 63, 0.12);
+            --shadow-lg: 0 8px 32px rgba(11, 91, 63, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* === Base Styles === */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Nunito Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-light);
-            color: var(--text-light);
+            color: var(--text-primary-light);
             line-height: 1.6;
-            padding: 0;
-            margin: 0;
             min-height: 100vh;
-            transition: background-color 0.3s ease;
+            transition: var(--transition);
         }
 
-        /* === Тёмная тема === */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: var(--bg-dark);
-                color: var(--text-dark);
-            }
+        body.dark-theme {
+            background-color: var(--bg-dark);
+            color: var(--text-primary-dark);
         }
 
-        /* === Контейнер приложения === */
         .app-container {
             max-width: 480px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        /* === Шапка === */
+        /* === Header === */
         .header {
-            text-align: center;
-            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
+            color: white;
+            padding: 1.5rem 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(217, 180, 74, 0.1) 0%, transparent 70%);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary-dark);
-            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            gap: 0.75rem;
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary-dark), var(--accent-gold));
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-gold), #F6E8C3);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
         }
 
-        .subtitle {
-            color: var(--primary-light);
-            font-size: 1rem;
-            font-weight: 400;
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        /* === Главный счётчик === */
         .countdown-section {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
-            color: white;
-            border-radius: var(--radius);
-            padding: 1.5rem;
             text-align: center;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
         }
 
         .countdown-title {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
+            font-size: 0.9rem;
             opacity: 0.9;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
         }
 
         .countdown-timer {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             font-feature-settings: "tnum";
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .countdown-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0.8;
         }
 
-        /* === Прогресс-бар готовности === */
+        /* === Progress Section === */
         .progress-section {
-            margin-bottom: 2rem;
+            padding: 1.5rem 1.25rem;
+            background: var(--bg-card-light);
+            margin: 0.75rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        body.dark-theme .progress-section {
+            background: var(--bg-card-dark);
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            align-items: center;
+            margin-bottom: 1rem;
         }
 
         .progress-label {
-            font-size: 0.9rem;
-            color: var(--primary-dark);
+            font-size: 1rem;
             font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .progress-label {
+            color: var(--accent-gold);
         }
 
         .progress-percent {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--primary-dark);
         }
 
+        body.dark-theme .progress-percent {
+            color: var(--accent-gold);
+        }
+
         .progress-bar {
-            height: 8px;
-            background-color: var(--accent-cream);
+            height: 12px;
+            background-color: var(--bg-light);
             border-radius: 10px;
             overflow: hidden;
+            position: relative;
+        }
+
+        body.dark-theme .progress-bar {
+            background-color: var(--border-dark);
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-dark), var(--accent-gold));
+            background: linear-gradient(90deg, var(--primary-main), var(--accent-gold));
             border-radius: 10px;
-            width: 35%; /* Начальное значение */
-            transition: width 0.5s ease;
+            width: 35%;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* === Карточка сегодняшней задачи === */
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* === Today's Task === */
         .task-card {
-            background-color: var(--card-light);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--accent-gold);
+            background: var(--bg-card-light);
+            margin: 0.75rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: var(--transition);
         }
 
-        @media (prefers-color-scheme: dark) {
-            .task-card {
-                background-color: var(--card-dark);
-            }
+        body.dark-theme .task-card {
+            background: var(--bg-card-dark);
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .task-header {
+            padding: 1.25rem 1.25rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .task-badge {
-            display: inline-block;
-            background-color: var(--accent-cream);
-            color: var(--primary-dark);
-            font-size: 0.7rem;
-            padding: 0.3rem 0.8rem;
+            background: linear-gradient(135deg, var(--accent-gold), #e6a429);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.4rem 1rem;
             border-radius: 20px;
-            margin-bottom: 1rem;
             font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .task-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary-light);
+            font-weight: 500;
+        }
+
+        body.dark-theme .task-date {
+            color: var(--text-secondary-dark);
+        }
+
+        .task-content {
+            padding: 1.25rem;
         }
 
         .task-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: var(--primary-dark);
+            font-size: 1.3rem;
             font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary-light);
+            line-height: 1.4;
+        }
+
+        body.dark-theme .task-title {
+            color: var(--text-primary-dark);
         }
 
         .task-description {
+            color: var(--text-secondary-light);
             margin-bottom: 1.5rem;
             font-size: 0.95rem;
-            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        body.dark-theme .task-description {
+            color: var(--text-secondary-dark);
         }
 
         .task-proof {
-            background-color: rgba(11, 91, 63, 0.05);
-            border-radius: 10px;
-            padding: 1rem;
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.05), rgba(217, 180, 74, 0.05));
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
             margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-main);
             font-style: italic;
-            border-left: 3px solid var(--primary-light);
+            line-height: 1.6;
         }
 
-        .task-proof .source {
+        body.dark-theme .task-proof {
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.15), rgba(217, 180, 74, 0.1));
+        }
+
+        .task-source {
             display: block;
             text-align: right;
             font-size: 0.8rem;
+            margin-top: 0.75rem;
             opacity: 0.7;
-            margin-top: 0.5rem;
             font-style: normal;
+            font-weight: 500;
         }
 
         .task-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        body.dark-theme .task-actions {
+            border-top-color: var(--border-dark);
         }
 
         .task-checkbox {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.75rem;
+            cursor: pointer;
         }
 
         .checkbox {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--primary-dark);
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--primary-main);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
+            position: relative;
         }
 
         .checkbox.checked {
-            background-color: var(--primary-dark);
-            color: white;
+            background: var(--primary-main);
+            border-color: var(--primary-main);
         }
 
-        .task-time {
-            font-size: 0.8rem;
-            opacity: 0.7;
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-label {
+            font-weight: 600;
+            color: var(--text-primary-light);
+        }
+
+        body.dark-theme .checkbox-label {
+            color: var(--text-primary-dark);
+        }
+
+        .task-meta {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary-light);
         }
 
-        /* === Быстрые действия === */
+        body.dark-theme .task-meta {
+            color: var(--text-secondary-dark);
+        }
+
+        .task-time, .task-difficulty {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* === Quick Actions === */
         .quick-actions {
+            padding: 1rem 0.75rem;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
         }
 
         .action-button {
-            background-color: var(--card-light);
+            background: var(--bg-card-light);
             border: none;
-            border-radius: var(--radius);
-            padding: 1rem;
+            border-radius: var(--radius-lg);
+            padding: 1.25rem 0.5rem;
             text-align: center;
-            box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: var(--transition);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-sm);
         }
 
-        @media (prefers-color-scheme: dark) {
-            .action-button {
-                background-color: var(--card-dark);
-            }
+        body.dark-theme .action-button {
+            background: var(--bg-card-dark);
         }
 
-        .action-button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 6px rgba(11, 91, 63, 0.1);
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-button.active {
+            background: linear-gradient(135deg, var(--primary-main), var(--primary-dark));
+            color: white;
         }
 
         .action-icon {
-            width: 24px;
-            height: 24px;
-            background-color: var(--primary-dark);
-            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-main), var(--primary-dark));
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 0.8rem;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .action-button.active .action-icon {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .action-text {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: var(--primary-dark);
+            color: var(--text-primary-light);
         }
 
-        /* === Аят дня === */
+        body.dark-theme .action-text {
+            color: var(--text-primary-dark);
+        }
+
+        .action-button.active .action-text {
+            color: white;
+        }
+
+        /* === Daily Verse === */
         .verse-card {
             background: linear-gradient(135deg, var(--accent-cream), #f0e6d1);
-            border-radius: var(--radius);
+            margin: 0.75rem;
+            border-radius: var(--radius-lg);
             padding: 1.5rem;
-            margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        body.dark-theme .verse-card {
+            background: linear-gradient(135deg, #2d2a1a, #3a3520);
         }
 
         .verse-card::before {
             content: """;
             position: absolute;
-            top: -20px;
-            right: 10px;
-            font-size: 80px;
+            top: -10px;
+            right: 15px;
+            font-size: 120px;
             color: rgba(11, 91, 63, 0.1);
             font-family: serif;
+            line-height: 1;
+        }
+
+        body.dark-theme .verse-card::before {
+            color: rgba(217, 180, 74, 0.1);
+        }
+
+        .verse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .verse-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        body.dark-theme .verse-title {
+            color: var(--accent-gold);
+        }
+
+        .verse-bookmark {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .verse-bookmark:hover {
+            opacity: 1;
+            transform: scale(1.1);
         }
 
         .verse-arabic {
-            font-family: 'Noto Naskh Arabic', 'Times New Roman', serif;
-            font-size: 1.4rem;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.5rem;
             text-align: right;
-            line-height: 1.8;
-            margin-bottom: 1rem;
+            line-height: 2;
+            margin-bottom: 1.25rem;
             direction: rtl;
+            font-weight: 500;
         }
 
         .verse-translation {
             font-style: italic;
             margin-bottom: 1rem;
-            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-primary-light);
+        }
+
+        body.dark-theme .verse-translation {
+            color: var(--text-primary-dark);
         }
 
         .verse-source {
             text-align: right;
             font-size: 0.8rem;
             opacity: 0.7;
+            font-weight: 500;
         }
 
-        /* === Нижняя навигация === */
+        /* === Bottom Navigation === */
         .bottom-nav {
             position: sticky;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: var(--card-light);
+            background: var(--bg-card-light);
             display: flex;
             justify-content: space-around;
-            padding: 0.8rem 0;
-            border-top: 1px solid rgba(11, 91, 63, 0.1);
+            padding: 0.75rem 0;
+            border-top: 1px solid var(--border-light);
             margin-top: auto;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .bottom-nav {
-                background-color: var(--card-dark);
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-            }
+        body.dark-theme .bottom-nav {
+            background: var(--bg-card-dark);
+            border-top-color: var(--border-dark);
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 0.25rem;
             cursor: pointer;
             opacity: 0.6;
-            transition: opacity 0.2s ease;
+            transition: var(--transition);
             flex: 1;
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
         }
 
         .nav-item.active {
             opacity: 1;
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.1), rgba(217, 180, 74, 0.05));
+        }
+
+        body.dark-theme .nav-item.active {
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.2), rgba(217, 180, 74, 0.1));
         }
 
         .nav-icon {
             width: 24px;
             height: 24px;
-            background-color: var(--primary-dark);
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 0.7rem;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .nav-item.active .nav-icon {
+            transform: scale(1.1);
         }
 
         .nav-text {
             font-size: 0.7rem;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
-        /* === Адаптивность === */
+        .nav-item.active .nav-text {
+            color: var(--primary-main);
+        }
+
+        body.dark-theme .nav-item.active .nav-text {
+            color: var(--accent-gold);
+        }
+
+        /* === Responsive Design === */
         @media (max-width: 380px) {
             .app-container {
-                padding: 15px;
+                padding: 0;
             }
             
             .countdown-timer {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             
             .quick-actions {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
             }
+            
+            .action-button {
+                padding: 1rem 0.25rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 800px;
+                border-left: 1px solid var(--border-light);
+                border-right: 1px solid var(--border-light);
+            }
+            
+            body.dark-theme .app-container {
+                border-left-color: var(--border-dark);
+                border-right-color: var(--border-dark);
+            }
+        }
+
+        /* === Utility Classes === */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === Loading States === */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Шапка -->
+        <!-- Header -->
         <header class="header">
-            <div class="logo">
-                <span class="logo-icon"></span>
-                Путь к Рамадану
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">🕌</div>
+                    <div class="logo-text">Путь к Рамадану</div>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                    🌙
+                </button>
             </div>
-            <div class="subtitle">Ваш духовный спутник</div>
+            
+            <div class="countdown-section">
+                <div class="countdown-title">До Рамадана 2026 года осталось:</div>
+                <div class="countdown-timer" id="countdown">88:00:00:00</div>
+                <div class="countdown-subtitle">По расчетам для региона Махачкала</div>
+            </div>
         </header>
 
-        <!-- Главный счётчик -->
-        <section class="countdown-section">
-            <div class="countdown-title">До Рамадана 2026 года осталось:</div>
-            <div class="countdown-timer" id="countdown">87:23:59:45</div>
-            <div class="countdown-subtitle">По расчетам для региона Махачкала</div>
-        </section>
-
-        <!-- Прогресс-бар готовности -->
-        <section class="progress-section">
+        <!-- Progress Section -->
+        <section class="progress-section fade-in">
             <div class="progress-header">
                 <span class="progress-label">Ваша готовность к Рамадану</span>
-                <span class="progress-percent">35%</span>
+                <span class="progress-percent" id="progressPercent">35%</span>
             </div>
             <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
+                <div class="progress-fill" id="progressFill"></div>
             </div>
         </section>
 
-        <!-- Карточка сегодняшней задачи -->
-        <section class="task-card">
-            <div class="task-badge">СЕГОДНЯШНЯЯ ЗАДАЧА</div>
-            <h2 class="task-title">Прочитать 1 страницу Корана</h2>
-            <p class="task-description">Открой мусхаф и прочитай одну страницу с медленным тажвидом. Постарайтесь понять смысл прочитанного.</p>
-            
-            <div class="task-proof">
-                "Читай во имя Господа твоего, Который сотворил все сущее"
-                <span class="source">Коран, 96:1 (перевод Э. Кулиева)</span>
+        <!-- Today's Task -->
+        <section class="task-card fade-in">
+            <div class="task-header">
+                <div class="task-badge">СЕГОДНЯШНЯЯ ЗАДАЧА</div>
+                <div class="task-date" id="currentDate"></div>
             </div>
             
-            <div class="task-actions">
-                <div class="task-checkbox">
-                    <div class="checkbox" id="task-checkbox">✓</div>
-                    <span>Выполнено</span>
+            <div class="task-content">
+                <h2 class="task-title" id="taskTitle">Прочитать 1 страницу Корана</h2>
+                <p class="task-description" id="taskDescription">Открой мусхаф и прочитай одну страницу с медленным тажвидом. Постарайтесь понять смысл прочитанного и подумать над аятами.</p>
+                
+                <div class="task-proof">
+                    "Читай во имя Господа твоего, Который сотворил все сущее"
+                    <span class="task-source">Коран, 96:1 (перевод Э. Кулиева)</span>
                 </div>
-                <div class="task-time">
-                    ⏱ 15 мин
+                
+                <div class="task-actions">
+                    <div class="task-checkbox" id="taskCheckbox">
+                        <div class="checkbox" id="checkbox"></div>
+                        <span class="checkbox-label">Отметить выполненным</span>
+                    </div>
+                    <div class="task-meta">
+                        <div class="task-time">⏱ 15 мин</div>
+                        <div class="task-difficulty">💪 Легко</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Быстрые действия -->
-        <section class="quick-actions">
-            <button class="action-button">
+        <!-- Quick Actions -->
+        <section class="quick-actions fade-in">
+            <button class="action-button active" data-action="quran">
                 <div class="action-icon">📖</div>
                 <span class="action-text">Коран</span>
             </button>
-            <button class="action-button">
+            <button class="action-button" data-action="prayer">
                 <div class="action-icon">🕌</div>
                 <span class="action-text">Намаз</span>
             </button>
-            <button class="action-button">
+            <button class="action-button" data-action="azkar">
                 <div class="action-icon">📿</div>
                 <span class="action-text">Азкары</span>
             </button>
-            <button class="action-button">
+            <button class="action-button" data-action="community">
                 <div class="action-icon">👥</div>
                 <span class="action-text">Сообщество</span>
             </button>
         </section>
 
-        <!-- Аят дня -->
-        <section class="verse-card">
+        <!-- Daily Verse -->
+        <section class="verse-card fade-in">
+            <div class="verse-header">
+                <div class="verse-title">Аят дня</div>
+                <button class="verse-bookmark" aria-label="Добавить в закладки">🔖</button>
+            </div>
             <div class="verse-arabic">
                 إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا
             </div>
@@ -498,84 +807,233 @@
             </div>
         </section>
 
-        <!-- Нижняя навигация -->
+        <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <div class="nav-item active">
+            <div class="nav-item active" data-tab="home">
                 <div class="nav-icon">🏠</div>
                 <span class="nav-text">Главная</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="preparation">
                 <div class="nav-icon">📅</div>
                 <span class="nav-text">Подготовка</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="quran">
                 <div class="nav-icon">📖</div>
                 <span class="nav-text">Коран</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="dua">
                 <div class="nav-icon">📿</div>
                 <span class="nav-text">Дуа</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="profile">
                 <div class="nav-icon">👤</div>
                 <span class="nav-text">Профиль</span>
             </div>
         </nav>
     </div>
 
-    <!-- Service Worker Registration -->
     <script>
-        // Регистрация Service Worker для PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('ServiceWorker зарегистрирован: ', registration);
-                    })
-                    .catch(function(error) {
-                        console.log('Ошибка регистрации ServiceWorker: ', error);
-                    });
-            });
-        }
+        // Точная дата Рамадана 2026 (27 февраля 2026)
+        const RAMADAN_2026 = new Date('2026-02-27T00:00:00+03:00'); // Время для Махачкалы
 
-        // Обратный отсчет до Рамадана 2026 (примерная дата - 27 февраля 2026)
-        function updateCountdown() {
-            const ramadan2026 = new Date('February 27, 2026 00:00:00').getTime();
-            const now = new Date().getTime();
-            const difference = ramadan2026 - now;
-            
-            if (difference > 0) {
-                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        // Инициализация приложения
+        class RamadanPath {
+            constructor() {
+                this.currentProgress = 35;
+                this.currentTheme = localStorage.getItem('theme') || 'light';
+                this.init();
+            }
+
+            init() {
+                this.setupTheme();
+                this.setupCountdown();
+                this.setupEventListeners();
+                this.setupServiceWorker();
+                this.updateCurrentDate();
+            }
+
+            setupTheme() {
+                if (this.currentTheme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    document.getElementById('themeToggle').textContent = '☀️';
+                }
+            }
+
+            setupCountdown() {
+                const updateCountdown = () => {
+                    const now = new Date();
+                    const diff = RAMADAN_2026 - now;
+
+                    if (diff > 0) {
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                        document.getElementById('countdown').textContent = 
+                            `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    } else {
+                        document.getElementById('countdown').textContent = "Рамадан наступил!";
+                    }
+                };
+
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            }
+
+            setupEventListeners() {
+                // Переключение темы
+                document.getElementById('themeToggle').addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+
+                // Отметка задачи как выполненной
+                document.getElementById('taskCheckbox').addEventListener('click', () => {
+                    this.toggleTaskCompletion();
+                });
+
+                // Быстрые действия
+                document.querySelectorAll('.action-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.handleActionClick(e.currentTarget);
+                    });
+                });
+
+                // Навигация
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        this.handleNavigation(e.currentTarget);
+                    });
+                });
+            }
+
+            toggleTheme() {
+                this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                document.body.classList.toggle('dark-theme');
+                document.getElementById('themeToggle').textContent = 
+                    this.currentTheme === 'light' ? '🌙' : '☀️';
+                localStorage.setItem('theme', this.currentTheme);
+            }
+
+            toggleTaskCompletion() {
+                const checkbox = document.getElementById('checkbox');
+                const isChecked = checkbox.classList.contains('checked');
                 
-                document.getElementById('countdown').textContent = 
-                    `${days}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            } else {
-                document.getElementById('countdown').textContent = "Рамадан наступил!";
+                if (!isChecked) {
+                    checkbox.classList.add('checked');
+                    this.currentProgress = Math.min(100, this.currentProgress + 5);
+                    this.updateProgress();
+                    
+                    // Показать уведомление
+                    this.showNotification('Задача выполнена! +5% к готовности');
+                } else {
+                    checkbox.classList.remove('checked');
+                    this.currentProgress = Math.max(0, this.currentProgress - 5);
+                    this.updateProgress();
+                }
+            }
+
+            updateProgress() {
+                const progressFill = document.getElementById('progressFill');
+                const progressPercent = document.getElementById('progressPercent');
+                
+                progressFill.style.width = `${this.currentProgress}%`;
+                progressPercent.textContent = `${this.currentProgress}%`;
+            }
+
+            handleActionClick(button) {
+                // Снять активное состояние со всех кнопок
+                document.querySelectorAll('.action-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Установить активное состояние на clicked кнопку
+                button.classList.add('active');
+                
+                const action = button.dataset.action;
+                this.showNotification(`Открывается раздел: ${this.getActionName(action)}`);
+            }
+
+            handleNavigation(navItem) {
+                // Снять активное состояние со всех элементов навигации
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Установить активное состояние на clicked элемент
+                navItem.classList.add('active');
+                
+                const tab = navItem.dataset.tab;
+                this.showNotification(`Переход в раздел: ${this.getTabName(tab)}`);
+            }
+
+            getActionName(action) {
+                const names = {
+                    'quran': 'Коран',
+                    'prayer': 'Намаз',
+                    'azkar': 'Азкары',
+                    'community': 'Сообщество'
+                };
+                return names[action] || action;
+            }
+
+            getTabName(tab) {
+                const names = {
+                    'home': 'Главная',
+                    'preparation': 'Подготовка',
+                    'quran': 'Коран',
+                    'dua': 'Дуа',
+                    'profile': 'Профиль'
+                };
+                return names[tab] || tab;
+            }
+
+            showNotification(message) {
+                // В реальном приложении здесь будут настоящие уведомления
+                console.log('Notification:', message);
+                
+                // Временное уведомление в консоли
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Путь к Рамадану', {
+                        body: message,
+                        icon: '/icon-192.png'
+                    });
+                }
+            }
+
+            updateCurrentDate() {
+                const now = new Date();
+                const options = { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric',
+                    weekday: 'long'
+                };
+                document.getElementById('currentDate').textContent = 
+                    now.toLocaleDateString('ru-RU', options);
+            }
+
+            async setupServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    try {
+                        await navigator.serviceWorker.register('/sw.js');
+                        console.log('Service Worker зарегистрирован');
+                    } catch (error) {
+                        console.log('Ошибка регистрации Service Worker:', error);
+                    }
+                }
             }
         }
 
-        // Обновление прогресс-бара
-        function updateProgress() {
-            const progressFill = document.getElementById('progress-fill');
-            // В реальном приложении это значение будет браться из данных пользователя
-            const progress = 35; // процент выполнения
-            progressFill.style.width = `${progress}%`;
-        }
-
-        // Обработчик чекбокса задачи
-        document.getElementById('task-checkbox').addEventListener('click', function() {
-            this.classList.toggle('checked');
-            // Здесь будет логика обновления прогресса
-            updateProgress();
+        // Запуск приложения
+        document.addEventListener('DOMContentLoaded', () => {
+            new RamadanPath();
         });
 
-        // Инициализация
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-        updateProgress();
+        // Запрос разрешения на уведомления
+        if ('Notification' in window) {
+            Notification.requestPermission();
+        }
     </script>
 </body>
 </html>
