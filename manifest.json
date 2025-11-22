@@ -9,6 +9,10 @@
   "orientation": "portrait",
   "scope": "./",
   "lang": "ru",
+  "categories": ["lifestyle", "productivity", "religious"],
+  "dir": "ltr",
+  "iarc_rating_id": "e58f23f1-689a-4c2d-b93f-5bc63c6c8b21",
+  
   "icons": [
     {
       "src": "./icons/icon-72.png",
@@ -50,6 +54,63 @@
       "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  
+  "screenshots": [
+    {
+      "src": "./screenshots/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "./screenshots/screenshot2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Сегодняшняя задача",
+      "short_name": "Задача",
+      "description": "Посмотреть задачу на сегодня",
+      "url": "./?shortcut=today",
+      "icons": [
+        {
+          "src": "./icons/shortcut-task.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Время намаза",
+      "short_name": "Намаз",
+      "description": "Посмотреть время намазов",
+      "url": "./?shortcut=prayer",
+      "icons": [
+        {
+          "src": "./icons/shortcut-prayer.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Чтение Корана",
+      "short_name": "Коран",
+      "description": "Открыть Коран для чтения",
+      "url": "./?shortcut=quran",
+      "icons": [
+        {
+          "src": "./icons/shortcut-quran.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
