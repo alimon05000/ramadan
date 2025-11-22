@@ -62,6 +62,7 @@
         html {
             touch-action: manipulation;
             height: 100%;
+            overflow: hidden;
         }
 
         body {
@@ -72,6 +73,8 @@
             min-height: 100vh;
             transition: var(--transition);
             overflow-x: hidden;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
         }
 
         body.dark-theme {
@@ -87,6 +90,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            overflow: hidden;
         }
 
         /* === Tab Content === */
@@ -96,6 +100,9 @@
             padding-bottom: 80px;
             display: none;
             -webkit-overflow-scrolling: touch;
+            transform: translateZ(0);
+            will-change: transform;
+            height: calc(100vh - 80px);
         }
 
         .tab-content.active {
@@ -1377,6 +1384,7 @@
             max-height: 80%;
             overflow-y: auto;
             box-shadow: var(--shadow-lg);
+            position: relative;
         }
 
         body.dark-theme .modal-content {
@@ -1858,7 +1866,7 @@
 
     <!-- Modal for Surah Reading -->
     <div class="modal" id="surah-modal">
-        <div class="modal-content">
+        <div class="modal-content" id="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="surah-modal-title">Сура Аль-Фатиха</h3>
                 <button class="modal-close" onclick="closeSurahModal()">×</button>
@@ -1892,6 +1900,7 @@
         let notificationPermission = false;
         let prayerNotifications = [];
         let azkarNotifications = [];
+        let serviceWorkerRegistration = null;
 
         // Данные для подготовки
         const preparationData = [
@@ -2244,6 +2253,13 @@
                 });
             }
 
+            // Закрытие модального окна при клике вне его области
+            document.getElementById('surah-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSurahModal();
+                }
+            });
+
             // Предотвращение масштабирования
             document.addEventListener('gesturestart', function(e) {
                 e.preventDefault();
@@ -2254,6 +2270,10 @@
                     e.preventDefault();
                 }
             }, { passive: false });
+
+            // Оптимизация для Android
+            document.addEventListener('touchstart', function() {}, {passive: true});
+            document.addEventListener('touchmove', function() {}, {passive: true});
         }
 
         function toggleTheme() {
@@ -2934,7 +2954,27 @@
             if ('serviceWorker' in navigator) {
                 try {
                     const registration = await navigator.serviceWorker.register('./sw.js');
+                    serviceWorkerRegistration = registration;
                     console.log('Service Worker зарегистрирован', registration);
+                    
+                    // Проверяем обновления каждые 24 часа
+                    setInterval(() => {
+                        registration.update();
+                    }, 24 * 60 * 60 * 1000);
+                    
+                    // Обработка обновления Service Worker
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                showToast('Доступно обновление приложения', 'success');
+                                // Перезагружаем страницу для применения обновления
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 3000);
+                            }
+                        });
+                    });
                 } catch (error) {
                     console.log('Ошибка регистрации Service Worker:', error);
                 }
