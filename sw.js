@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ramadan-app-v1.3';
+const CACHE_NAME = 'ramadan-app-v1.4';
 const urlsToCache = [
   './',
   './index.html',
@@ -99,28 +99,49 @@ self.addEventListener('fetch', function(event) {
   );
 });
 
-// Обработка push-уведомлений
+// Обработка push-уведомлений - УЛУЧШЕННАЯ ВЕРСИЯ
 self.addEventListener('push', function(event) {
-  if (!event.data) return;
+  console.log('Push notification received', event);
+  
+  if (!event.data) {
+    console.log('Push event but no data');
+    return;
+  }
 
-  const data = event.data.json();
+  let data;
+  try {
+    data = event.data.json();
+  } catch (e) {
+    console.log('Push data is not JSON, using text');
+    data = {
+      title: 'Путь к Рамадану',
+      body: event.data.text(),
+      icon: './icons/icon-192.png',
+      badge: './icons/icon-72.png'
+    };
+  }
+
   const options = {
-    body: data.body,
-    icon: './icons/icon-192.png',
-    badge: './icons/icon-72.png',
-    vibrate: [100, 50, 100],
+    body: data.body || 'Новое уведомление',
+    icon: data.icon || './icons/icon-192.png',
+    badge: data.badge || './icons/icon-72.png',
+    vibrate: [200, 100, 200, 100, 200], // Более заметная вибрация
+    tag: data.tag || 'ramadan-notification',
+    requireInteraction: true, // Требует взаимодействия пользователя
+    silent: false,
     data: {
-      dateOfArrival: Date.now(),
+      url: data.url || './',
+      timestamp: Date.now(),
       primaryKey: '2'
     },
     actions: [
       {
-        action: 'explore',
-        title: 'Открыть',
+        action: 'open',
+        title: 'Открыть приложение',
         icon: './icons/icon-72.png'
       },
       {
-        action: 'close',
+        action: 'dismiss',
         title: 'Закрыть',
         icon: './icons/icon-72.png'
       }
@@ -128,25 +149,128 @@ self.addEventListener('push', function(event) {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(data.title || 'Путь к Рамадану', options)
+      .then(() => console.log('Notification shown successfully'))
+      .catch(err => console.error('Error showing notification:', err))
   );
 });
 
-// Обработка кликов по уведомлениям
+// Обработка кликов по уведомлениям - УЛУЧШЕННАЯ ВЕРСИЯ
 self.addEventListener('notificationclick', function(event) {
-  console.log('Notification click received.');
+  console.log('Notification click received:', event.action);
+  
   event.notification.close();
 
-  if (event.action === 'explore') {
+  if (event.action === 'open' || event.action === 'explore') {
     event.waitUntil(
-      clients.openWindow('./')
+      clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true
+      }).then(function(clientList) {
+        // Проверяем, открыто ли уже приложение
+        for (let i = 0; i < clientList.length; i++) {
+          let client = clientList[i];
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            console.log('Focusing existing client');
+            return client.focus();
+          }
+        }
+        
+        // Если приложение не открыто, открываем новое окно
+        if (clients.openWindow) {
+          console.log('Opening new window');
+          return clients.openWindow(event.notification.data.url || './');
+        }
+      })
+    );
+  } else if (event.action === 'dismiss' || event.action === 'close') {
+    console.log('Notification dismissed');
+    // Просто закрываем уведомление
+  } else {
+    // Клик по самому уведомлению (не по кнопке)
+    event.waitUntil(
+      clients.openWindow(event.notification.data.url || './')
     );
   }
 });
 
+// Обработка закрытия уведомлений
+self.addEventListener('notificationclose', function(event) {
+  console.log('Notification closed:', event.notification.tag);
+});
+
 // Обработка сообщений от основного приложения
 self.addEventListener('message', function(event) {
+  console.log('Message received in service worker:', event.data);
+  
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({
+      version: CACHE_NAME,
+      timestamp: Date.now()
+    });
+  }
+  
+  if (event.data && event.data.type === 'CACHE_URLS') {
+    event.waitUntil(
+      caches.open(CACHE_NAME)
+        .then(function(cache) {
+          return cache.addAll(event.data.urls);
+        })
+        .then(function() {
+          event.ports[0].postMessage({success: true});
+        })
+        .catch(function(error) {
+          event.ports[0].postMessage({success: false, error: error.message});
+        })
+    );
+  }
 });
+
+// Фоновая синхронизация для обновления данных
+self.addEventListener('sync', function(event) {
+  console.log('Background sync:', event.tag);
+  
+  if (event.tag === 'update-prayer-times') {
+    event.waitUntil(
+      updatePrayerTimes()
+    );
+  }
+});
+
+// Функция для обновления времени намазов в фоне
+function updatePrayerTimes() {
+  return fetch('https://api.aladhan.com/v1/timings/' + Math.floor(Date.now()/1000) + '?latitude=42.98&longitude=47.50&method=2')
+    .then(response => response.json())
+    .then(data => {
+      console.log('Prayer times updated in background');
+      // Можно сохранить данные в IndexedDB или отправить сообщение в основное приложение
+      return self.registration.showNotification('Время намазов обновлено', {
+        body: 'Актуальные времена намазов загружены',
+        icon: './icons/icon-192.png',
+        tag: 'prayer-update'
+      });
+    })
+    .catch(error => {
+      console.error('Error updating prayer times:', error);
+    });
+}
+
+// Периодическая фоновая синхронизация (для браузеров, которые поддерживают)
+self.addEventListener('periodicsync', function(event) {
+  if (event.tag === 'update-content') {
+    console.log('Periodic background sync');
+    event.waitUntil(updateAppContent());
+  }
+});
+
+function updateAppContent() {
+  // Здесь можно обновлять контент приложения в фоне
+  return Promise.all([
+    updatePrayerTimes()
+    // Добавьте другие функции обновления по необходимости
+  ]);
+}
