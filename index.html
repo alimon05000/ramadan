@@ -1625,19 +1625,19 @@
 
             <!-- Quick Actions -->
             <section class="quick-actions fade-in">
-                <button class="action-button active" data-action="quran" data-tab="quran-tab">
+                <button class="action-button active" data-action="quran" onclick="showTab('quran-tab')">
                     <div class="action-icon">📖</div>
                     <span class="action-text">Коран</span>
                 </button>
-                <button class="action-button" data-action="prayer" data-tab="prayer-tab">
+                <button class="action-button" data-action="prayer" onclick="showTab('prayer-tab')">
                     <div class="action-icon">🕌</div>
                     <span class="action-text">Намаз</span>
                 </button>
-                <button class="action-button" data-action="azkar" data-tab="dua-tab">
+                <button class="action-button" data-action="azkar" onclick="showTab('dua-tab')">
                     <div class="action-icon">📿</div>
                     <span class="action-text">Азкары</span>
                 </button>
-                <button class="action-button" data-action="community" data-tab="community-tab">
+                <button class="action-button" data-action="community" onclick="showTab('community-tab')">
                     <div class="action-icon">👥</div>
                     <span class="action-text">Сообщество</span>
                 </button>
@@ -1758,10 +1758,10 @@
                         </div>
                     </div>
                     <div class="community-actions">
-                        <button class="community-button" data-action="discussions">
+                        <button class="community-button" onclick="showNotification('Функция в разработке')">
                             💬 Обсуждения
                         </button>
-                        <button class="community-button" data-action="leaderboard">
+                        <button class="community-button" onclick="showNotification('Функция в разработке')">
                             🏆 Рейтинг
                         </button>
                     </div>
@@ -1872,23 +1872,23 @@
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <div class="nav-item active" data-tab="home-tab">
+            <div class="nav-item active" data-tab="home-tab" onclick="showTab('home-tab')">
                 <div class="nav-icon">🏠</div>
                 <span class="nav-text">Главная</span>
             </div>
-            <div class="nav-item" data-tab="preparation-tab">
+            <div class="nav-item" data-tab="preparation-tab" onclick="showTab('preparation-tab')">
                 <div class="nav-icon">📅</div>
                 <span class="nav-text">Подготовка</span>
             </div>
-            <div class="nav-item" data-tab="quran-tab">
+            <div class="nav-item" data-tab="quran-tab" onclick="showTab('quran-tab')">
                 <div class="nav-icon">📖</div>
                 <span class="nav-text">Коран</span>
             </div>
-            <div class="nav-item" data-tab="dua-tab">
+            <div class="nav-item" data-tab="dua-tab" onclick="showTab('dua-tab')">
                 <div class="nav-icon">📿</div>
                 <span class="nav-text">Дуа</span>
             </div>
-            <div class="nav-item" data-tab="profile-tab">
+            <div class="nav-item" data-tab="profile-tab" onclick="showTab('profile-tab')">
                 <div class="nav-icon">👤</div>
                 <span class="nav-text">Профиль</span>
             </div>
@@ -1900,14 +1900,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="surah-modal-title">Сура Аль-Фатиха</h3>
-                <button class="modal-close" id="modal-close">×</button>
+                <button class="modal-close" onclick="closeSurahModal()">×</button>
             </div>
             <div class="surah-content" id="surah-content">
                 <!-- Surah content will be loaded here -->
             </div>
             <div class="surah-navigation">
-                <button class="nav-button" id="prev-surah">Предыдущая</button>
-                <button class="nav-button" id="next-surah">Следующая</button>
+                <button class="nav-button" id="prev-surah" onclick="navigateSurah(-1)">Предыдущая</button>
+                <button class="nav-button" id="next-surah" onclick="navigateSurah(1)">Следующая</button>
             </div>
         </div>
     </div>
@@ -1928,9 +1928,6 @@
         let weeklyTasks = JSON.parse(localStorage.getItem('weeklyTasks')) || {};
         let currentSurah = 1;
         let allSurahs = [];
-        let notificationPermission = false;
-        let prayerNotifications = [];
-        let azkarNotifications = [];
 
         // Данные для подготовки
         const preparationData = [
@@ -2154,60 +2151,33 @@
 
         // === ОСНОВНЫЕ ФУНКЦИИ НАВИГАЦИИ ===
 
-        // Функция для переключения вкладок
         function showTab(tabId) {
-            console.log('Переключение на вкладку:', tabId);
-            
             // Скрыть все вкладки
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
             // Показать выбранную вкладку
-            const targetTab = document.getElementById(tabId);
-            if (targetTab) {
-                targetTab.classList.add('active');
-            } else {
-                console.error('Вкладка не найдена:', tabId);
-                return;
-            }
+            document.getElementById(tabId).classList.add('active');
             
             // Обновить навигацию
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            const activeNavItem = document.querySelector(`[data-tab="${tabId}"]`);
-            if (activeNavItem) {
-                activeNavItem.classList.add('active');
-            }
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
             
             // Сброс прокрутки для PWA
             setTimeout(() => {
-                if (targetTab) {
-                    targetTab.scrollTop = 0;
+                const activeTab = document.getElementById(tabId);
+                if (activeTab) {
+                    activeTab.scrollTop = 0;
                 }
             }, 50);
-            
-            // Вибрация для тактильного отклика (если поддерживается)
-            if (navigator.vibrate) {
-                navigator.vibrate(10);
-            }
         }
 
-        // Функция для обработки кликов по навигации
-        function handleNavClick(tabId) {
-            console.log('Нажата кнопка навигации:', tabId);
-            showTab(tabId);
-        }
-
-        // Функция для показа уведомлений
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            if (!toast) {
-                console.error('Элемент toast не найден');
-                return;
-            }
             toast.textContent = message;
             toast.className = 'toast ' + type;
             toast.classList.add('show');
@@ -2224,12 +2194,10 @@
         // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM загружен, инициализация приложения...');
             initApp();
         });
 
         function initApp() {
-            console.log('Инициализация приложения...');
             setupTheme();
             setupCountdown();
             setupEventListeners();
@@ -2242,83 +2210,6 @@
             loadAzkarsData();
             updateDailyTask();
             calculateProgress();
-            setupNotifications();
-            fixPwaScrollIssues();
-            setupNavigation();
-            
-            console.log('Приложение инициализировано');
-        }
-
-        function setupNavigation() {
-            console.log('Настройка навигации...');
-            
-            // Обработчики для навигации внизу
-            const navItems = document.querySelectorAll('.nav-item');
-            console.log('Найдено элементов навигации:', navItems.length);
-            
-            navItems.forEach(item => {
-                const tabId = item.getAttribute('data-tab');
-                console.log('Настройка обработчика для:', tabId);
-                
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Клик по навигации:', tabId);
-                    handleNavClick(tabId);
-                });
-                
-                // Добавляем стиль для указания, что элемент кликабелен
-                item.style.cursor = 'pointer';
-            });
-
-            // Обработчики для кнопок быстрых действий
-            const actionButtons = document.querySelectorAll('.action-button');
-            actionButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const tabId = this.getAttribute('data-tab');
-                    if (tabId) {
-                        console.log('Клик по быстрой кнопке:', tabId);
-                        handleNavClick(tabId);
-                    }
-                });
-            });
-
-            // Обработчики для кнопок сообщества
-            const communityButtons = document.querySelectorAll('.community-button');
-            communityButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const action = this.getAttribute('data-action');
-                    if (action) {
-                        console.log('Кнопка сообщества:', action);
-                        showNotification('Функция в разработке');
-                    }
-                });
-            });
-
-            // Обработчики для модального окна
-            const modalClose = document.getElementById('modal-close');
-            const prevSurah = document.getElementById('prev-surah');
-            const nextSurah = document.getElementById('next-surah');
-            
-            if (modalClose) {
-                modalClose.addEventListener('click', closeSurahModal);
-            }
-            if (prevSurah) {
-                prevSurah.addEventListener('click', function() {
-                    navigateSurah(-1);
-                });
-            }
-            if (nextSurah) {
-                nextSurah.addEventListener('click', function() {
-                    navigateSurah(1);
-                });
-            }
-            
-            console.log('Навигация настроена');
         }
 
         function setupTheme() {
@@ -2389,44 +2280,6 @@
                 notificationsSwitch.addEventListener('change', function() {
                     if (this.checked) {
                         requestNotificationPermission();
-                    } else {
-                        disableAllNotifications();
-                    }
-                });
-            }
-
-            // Настройки напоминаний о намазе
-            const prayerRemindersSwitch = document.getElementById('prayerRemindersSwitch');
-            if (prayerRemindersSwitch) {
-                prayerRemindersSwitch.addEventListener('change', function() {
-                    if (this.checked) {
-                        schedulePrayerNotifications();
-                    } else {
-                        cancelPrayerNotifications();
-                    }
-                });
-            }
-
-            // Настройки утренних напоминаний
-            const morningRemindersSwitch = document.getElementById('morningRemindersSwitch');
-            if (morningRemindersSwitch) {
-                morningRemindersSwitch.addEventListener('change', function() {
-                    if (this.checked) {
-                        scheduleAzkarNotifications('morning');
-                    } else {
-                        cancelAzkarNotifications('morning');
-                    }
-                });
-            }
-
-            // Настройки вечерних напоминаний
-            const eveningRemindersSwitch = document.getElementById('eveningRemindersSwitch');
-            if (eveningRemindersSwitch) {
-                eveningRemindersSwitch.addEventListener('change', function() {
-                    if (this.checked) {
-                        scheduleAzkarNotifications('evening');
-                    } else {
-                        cancelAzkarNotifications('evening');
                     }
                 });
             }
@@ -2436,15 +2289,8 @@
                 e.preventDefault();
             });
 
-            // Исправление прокрутки для PWA
             document.addEventListener('touchmove', function(e) {
-                // Разрешаем прокрутку только для элементов с переполнением
-                const target = e.target;
-                const isScrollable = target.closest('.tab-content') || 
-                                   target.closest('.modal-content') ||
-                                   target.closest('.surah-content');
-                
-                if (!isScrollable && e.touches.length === 1) {
+                if (e.scale !== 1) {
                     e.preventDefault();
                 }
             }, { passive: false });
@@ -2645,44 +2491,18 @@
                     allSurahs = data.data;
                     
                     quranSection.innerHTML = allSurahs.map(surah => `
-                        <div class="surah-card" data-surah="${surah.number}">
+                        <div class="surah-card" onclick="openSurah(${surah.number})">
                             <div class="surah-number">${surah.number}</div>
                             <div class="surah-info">
                                 <div class="surah-name">${surah.englishName} (${surah.name})</div>
                                 <div class="surah-details">${surah.numberOfAyahs} аятов • ${surah.revelationType === 'Meccan' ? 'Мекканская' : 'Мединская'}</div>
                             </div>
                             <div class="surah-actions">
-                                <button class="surah-action-btn" data-action="bookmark" data-surah="${surah.number}">🔖</button>
-                                <button class="surah-action-btn" data-action="audio" data-surah="${surah.number}">🔊</button>
+                                <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(${surah.number})">🔖</button>
+                                <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(${surah.number})">🔊</button>
                             </div>
                         </div>
                     `).join('');
-                    
-                    // Добавляем обработчики событий для карточек сур
-                    document.querySelectorAll('.surah-card').forEach(card => {
-                        card.addEventListener('click', function() {
-                            const surahNumber = parseInt(this.getAttribute('data-surah'));
-                            openSurah(surahNumber);
-                        });
-                    });
-                    
-                    // Добавляем обработчики для кнопок действий
-                    document.querySelectorAll('.surah-action-btn[data-action="bookmark"]').forEach(btn => {
-                        btn.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const surahNumber = parseInt(this.getAttribute('data-surah'));
-                            toggleBookmark(surahNumber);
-                        });
-                    });
-                    
-                    document.querySelectorAll('.surah-action-btn[data-action="audio"]').forEach(btn => {
-                        btn.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const surahNumber = parseInt(this.getAttribute('data-surah'));
-                            playAudio(surahNumber);
-                        });
-                    });
-                    
                 } else {
                     throw new Error('Не удалось загрузить данные Корана');
                 }
@@ -2705,43 +2525,18 @@
             ];
             
             quranSection.innerHTML = fallbackSurahs.map(surah => `
-                <div class="surah-card" data-surah="${surah.number}">
+                <div class="surah-card" onclick="openSurah(${surah.number})">
                     <div class="surah-number">${surah.number}</div>
                     <div class="surah-info">
                         <div class="surah-name">${surah.englishName} (${surah.name})</div>
                         <div class="surah-details">${surah.numberOfAyahs} аятов • ${surah.revelationType === 'Meccan' ? 'Мекканская' : 'Мединская'}</div>
                     </div>
                     <div class="surah-actions">
-                        <button class="surah-action-btn" data-action="bookmark" data-surah="${surah.number}">🔖</button>
-                        <button class="surah-action-btn" data-action="audio" data-surah="${surah.number}">🔊</button>
+                        <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(${surah.number})">🔖</button>
+                        <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(${surah.number})">🔊</button>
                     </div>
                 </div>
             `).join('');
-            
-            // Добавляем обработчики событий для карточек сур
-            document.querySelectorAll('.surah-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const surahNumber = parseInt(this.getAttribute('data-surah'));
-                    openSurah(surahNumber);
-                });
-            });
-            
-            // Добавляем обработчики для кнопок действий
-            document.querySelectorAll('.surah-action-btn[data-action="bookmark"]').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const surahNumber = parseInt(this.getAttribute('data-surah'));
-                    toggleBookmark(surahNumber);
-                });
-            });
-            
-            document.querySelectorAll('.surah-action-btn[data-action="audio"]').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const surahNumber = parseInt(this.getAttribute('data-surah'));
-                    playAudio(surahNumber);
-                });
-            });
         }
 
         async function openSurah(surahNumber) {
@@ -2864,7 +2659,7 @@
         }
 
         function getCurrentPosition() {
-            return new Promise((resolve, reject) {
+            return new Promise((resolve, reject) => {
                 if (!navigator.geolocation) {
                     reject(new Error('Геолокация не поддерживается'));
                 }
@@ -2956,250 +2751,15 @@
             if ('Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission().then(permission => {
                     if (permission === 'granted') {
-                        notificationPermission = true;
                         showToast('Разрешение на уведомления получено');
-                        setupNotifications();
                     }
                 });
-            } else if (Notification.permission === 'granted') {
-                notificationPermission = true;
-                setupNotifications();
-            }
-        }
-
-        function setupNotifications() {
-            if (!notificationPermission) return;
-            
-            // Настройка уведомлений о намазах
-            if (document.getElementById('prayerRemindersSwitch').checked) {
-                schedulePrayerNotifications();
-            }
-            
-            // Настройка утренних азкаров
-            if (document.getElementById('morningRemindersSwitch').checked) {
-                scheduleAzkarNotifications('morning');
-            }
-            
-            // Настройка вечерних азкаров
-            if (document.getElementById('eveningRemindersSwitch').checked) {
-                scheduleAzkarNotifications('evening');
-            }
-        }
-
-        function schedulePrayerNotifications() {
-            if (!notificationPermission) return;
-            
-            // Очистка предыдущих уведомлений
-            cancelPrayerNotifications();
-            
-            // В реальном приложении здесь будет логика получения времени намазов
-            // для текущего местоположения пользователя
-            const prayerTimes = [
-                { name: 'Фаджр', time: '05:30' },
-                { name: 'Зухр', time: '12:30' },
-                { name: 'Аср', time: '16:00' },
-                { name: 'Магриб', time: '18:45' },
-                { name: 'Иша', time: '20:15' }
-            ];
-            
-            prayerTimes.forEach(prayer => {
-                const [hours, minutes] = prayer.time.split(':').map(Number);
-                const now = new Date();
-                const notificationTime = new Date();
-                notificationTime.setHours(hours, minutes - 15, 0, 0); // За 15 минут до намаза
-                
-                // Если время уже прошло сегодня, планируем на завтра
-                if (notificationTime < now) {
-                    notificationTime.setDate(notificationTime.getDate() + 1);
-                }
-                
-                const timeout = notificationTime.getTime() - now.getTime();
-                
-                if (timeout > 0) {
-                    const notificationId = setTimeout(() => {
-                        showPrayerNotification(prayer.name, prayer.time);
-                    }, timeout);
-                    
-                    prayerNotifications.push(notificationId);
-                }
-            });
-            
-            // Особое уведомление для пятничного асра
-            const today = new Date();
-            if (today.getDay() === 5) { // 5 = пятница
-                const asrTime = prayerTimes.find(p => p.name === 'Аср').time;
-                const [hours, minutes] = asrTime.split(':').map(Number);
-                const notificationTime = new Date();
-                notificationTime.setHours(hours, minutes - 30, 0, 0); // За 30 минут до асра
-                
-                if (notificationTime < now) {
-                    notificationTime.setDate(notificationTime.getDate() + 7);
-                }
-                
-                const timeout = notificationTime.getTime() - now.getTime();
-                
-                if (timeout > 0) {
-                    const notificationId = setTimeout(() => {
-                        showFridayAsrNotification();
-                    }, timeout);
-                    
-                    prayerNotifications.push(notificationId);
-                }
-            }
-        }
-
-        function showPrayerNotification(prayerName, prayerTime) {
-            if (!notificationPermission) return;
-            
-            const notification = new Notification('Время намаза', {
-                body: `До ${prayerName} осталось 15 минут. Время начала: ${prayerTime}`,
-                icon: 'icons/icon-192.png',
-                tag: 'prayer-reminder'
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                this.close();
-            };
-        }
-
-        function showFridayAsrNotification() {
-            if (!notificationPermission) return;
-            
-            const notification = new Notification('Пятничный аср', {
-                body: 'Сегодня пятница! Не забудьте о важности последнего часа асра для принятия дуа.',
-                icon: 'icons/icon-192.png',
-                tag: 'friday-asr-reminder'
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                this.close();
-            };
-        }
-
-        function cancelPrayerNotifications() {
-            prayerNotifications.forEach(id => clearTimeout(id));
-            prayerNotifications = [];
-        }
-
-        function scheduleAzkarNotifications(type) {
-            if (!notificationPermission) return;
-            
-            // Очистка предыдущих уведомлений
-            cancelAzkarNotifications(type);
-            
-            const now = new Date();
-            const notificationTime = new Date();
-            
-            if (type === 'morning') {
-                // Утренние азкары - 7:00 утра
-                notificationTime.setHours(7, 0, 0, 0);
-            } else {
-                // Вечерние азкары - 19:00 вечера
-                notificationTime.setHours(19, 0, 0, 0);
-            }
-            
-            // Если время уже прошло сегодня, планируем на завтра
-            if (notificationTime < now) {
-                notificationTime.setDate(notificationTime.getDate() + 1);
-            }
-            
-            const timeout = notificationTime.getTime() - now.getTime();
-            
-            if (timeout > 0) {
-                const notificationId = setTimeout(() => {
-                    showAzkarNotification(type);
-                    // Планируем следующее уведомление на завтра
-                    scheduleAzkarNotifications(type);
-                }, timeout);
-                
-                azkarNotifications.push({type, id: notificationId});
-            }
-        }
-
-        function showAzkarNotification(type) {
-            if (!notificationPermission) return;
-            
-            const title = type === 'morning' ? 'Утренние азкары' : 'Вечерние азкары';
-            const body = type === 'morning' 
-                ? 'Время читать утренние азкары. Не забудьте помянуть Аллаха.' 
-                : 'Время читать вечерние азкары. Завершите день поминанием Аллаха.';
-            
-            const notification = new Notification(title, {
-                body: body,
-                icon: 'icons/icon-192.png',
-                tag: `${type}-azkar-reminder`
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                this.close();
-            };
-        }
-
-        function cancelAzkarNotifications(type) {
-            azkarNotifications = azkarNotifications.filter(item => {
-                if (item.type === type) {
-                    clearTimeout(item.id);
-                    return false;
-                }
-                return true;
-            });
-        }
-
-        function disableAllNotifications() {
-            cancelPrayerNotifications();
-            azkarNotifications.forEach(item => clearTimeout(item.id));
-            azkarNotifications = [];
-        }
-
-        function fixPwaScrollIssues() {
-            // Специальные исправления для PWA
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-            document.body.style.height = '100%';
-            
-            // Принудительное обновление layout для iOS
-            setTimeout(() => {
-                document.body.style.height = '100%';
-                window.scrollTo(0, 0);
-            }, 100);
-            
-            // Обработчик для предотвращения блокировки прокрутки
-            document.addEventListener('touchstart', function(e) {
-                // Разрешаем прокрутку только для элементов с переполнением
-                const target = e.target;
-                const isScrollable = target.closest('.tab-content') || 
-                                   target.closest('.modal-content') ||
-                                   target.closest('.surah-content');
-                
-                if (!isScrollable) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-            
-            // Исправление для iOS PWA
-            if (window.navigator.standalone === true) {
-                document.body.style.webkitOverflowScrolling = 'touch';
-                document.body.style.overflow = 'auto';
-                document.body.style.height = '100%';
-                
-                // Принудительный рефлоу
-                document.body.offsetHeight;
             }
         }
 
         // Запрос разрешения на уведомления при загрузке
         if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    notificationPermission = true;
-                }
-            });
-        } else if (Notification.permission === 'granted') {
-            notificationPermission = true;
+            Notification.requestPermission();
         }
     </script>
 </body>
