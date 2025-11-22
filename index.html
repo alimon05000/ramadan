@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Путь к Рамадану</title>
+    <meta name="description" content="Ваш духовный спутник в подготовке к Рамадану">
+    <meta name="theme-color" content="#0B5B3F"/>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* === Базовые стили и Сброс === */
+        :root {
+            --primary-dark: #0B5B3F;
+            --primary-light: #1C7A5C;
+            --accent-gold: #D9B44A;
+            --accent-cream: #F6E8C3;
+            --bg-light: #FAFAF8;
+            --bg-dark: #0E1116;
+            --text-light: #333333;
+            --text-dark: #E0E0E0;
+            --card-light: #FFFFFF;
+            --card-dark: #1A1D24;
+            --shadow: 0 4px 12px rgba(11, 91, 63, 0.15);
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        /* === Тёмная тема === */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: var(--bg-dark);
+                color: var(--text-dark);
+            }
+        }
+
+        /* === Контейнер приложения === */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* === Шапка === */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--accent-gold));
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .subtitle {
+            color: var(--primary-light);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        /* === Главный счётчик === */
+        .countdown-section {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            color: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .countdown-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .countdown-timer {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-feature-settings: "tnum";
+            margin-bottom: 0.5rem;
+        }
+
+        .countdown-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* === Прогресс-бар готовности === */
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .progress-percent {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--accent-cream);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--accent-gold));
+            border-radius: 10px;
+            width: 35%; /* Начальное значение */
+            transition: width 0.5s ease;
+        }
+
+        /* === Карточка сегодняшней задачи === */
+        .task-card {
+            background-color: var(--card-light);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .task-card {
+                background-color: var(--card-dark);
+            }
+        }
+
+        .task-badge {
+            display: inline-block;
+            background-color: var(--accent-cream);
+            color: var(--primary-dark);
+            font-size: 0.7rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .task-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .task-description {
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .task-proof {
+            background-color: rgba(11, 91, 63, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            border-left: 3px solid var(--primary-light);
+        }
+
+        .task-proof .source {
+            display: block;
+            text-align: right;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+            font-style: normal;
+        }
+
+        .task-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--primary-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox.checked {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+
+        .task-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* === Быстрые действия === */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-button {
+            background-color: var(--card-light);
+            border: none;
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .action-button {
+                background-color: var(--card-dark);
+            }
+        }
+
+        .action-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 6px rgba(11, 91, 63, 0.1);
+        }
+
+        .action-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--primary-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .action-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        /* === Аят дня === */
+        .verse-card {
+            background: linear-gradient(135deg, var(--accent-cream), #f0e6d1);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verse-card::before {
+            content: """;
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            font-size: 80px;
+            color: rgba(11, 91, 63, 0.1);
+            font-family: serif;
+        }
+
+        .verse-arabic {
+            font-family: 'Noto Naskh Arabic', 'Times New Roman', serif;
+            font-size: 1.4rem;
+            text-align: right;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            direction: rtl;
+        }
+
+        .verse-translation {
+            font-style: italic;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .verse-source {
+            text-align: right;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* === Нижняя навигация === */
+        .bottom-nav {
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-light);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem 0;
+            border-top: 1px solid rgba(11, 91, 63, 0.1);
+            margin-top: auto;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bottom-nav {
+                background-color: var(--card-dark);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--primary-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        .nav-text {
+            font-size: 0.7rem;
+        }
+
+        /* === Адаптивность === */
+        @media (max-width: 380px) {
+            .app-container {
+                padding: 15px;
+            }
+            
+            .countdown-timer {
+                font-size: 2rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Шапка -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon"></span>
+                Путь к Рамадану
+            </div>
+            <div class="subtitle">Ваш духовный спутник</div>
+        </header>
+
+        <!-- Главный счётчик -->
+        <section class="countdown-section">
+            <div class="countdown-title">До Рамадана 2026 года осталось:</div>
+            <div class="countdown-timer" id="countdown">87:23:59:45</div>
+            <div class="countdown-subtitle">По расчетам для региона Махачкала</div>
+        </section>
+
+        <!-- Прогресс-бар готовности -->
+        <section class="progress-section">
+            <div class="progress-header">
+                <span class="progress-label">Ваша готовность к Рамадану</span>
+                <span class="progress-percent">35%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </section>
+
+        <!-- Карточка сегодняшней задачи -->
+        <section class="task-card">
+            <div class="task-badge">СЕГОДНЯШНЯЯ ЗАДАЧА</div>
+            <h2 class="task-title">Прочитать 1 страницу Корана</h2>
+            <p class="task-description">Открой мусхаф и прочитай одну страницу с медленным тажвидом. Постарайтесь понять смысл прочитанного.</p>
+            
+            <div class="task-proof">
+                "Читай во имя Господа твоего, Который сотворил все сущее"
+                <span class="source">Коран, 96:1 (перевод Э. Кулиева)</span>
+            </div>
+            
+            <div class="task-actions">
+                <div class="task-checkbox">
+                    <div class="checkbox" id="task-checkbox">✓</div>
+                    <span>Выполнено</span>
+                </div>
+                <div class="task-time">
+                    ⏱ 15 мин
+                </div>
+            </div>
+        </section>
+
+        <!-- Быстрые действия -->
+        <section class="quick-actions">
+            <button class="action-button">
+                <div class="action-icon">📖</div>
+                <span class="action-text">Коран</span>
+            </button>
+            <button class="action-button">
+                <div class="action-icon">🕌</div>
+                <span class="action-text">Намаз</span>
+            </button>
+            <button class="action-button">
+                <div class="action-icon">📿</div>
+                <span class="action-text">Азкары</span>
+            </button>
+            <button class="action-button">
+                <div class="action-icon">👥</div>
+                <span class="action-text">Сообщество</span>
+            </button>
+        </section>
+
+        <!-- Аят дня -->
+        <section class="verse-card">
+            <div class="verse-arabic">
+                إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا
+            </div>
+            <div class="verse-translation">
+                "Воистину, Аллах и Его ангелы благословляют Пророка. О те, которые уверовали! Благословляйте его и приветствуйте миром."
+            </div>
+            <div class="verse-source">
+                Коран, 33:56 (перевод Э. Кулиева)
+            </div>
+        </section>
+
+        <!-- Нижняя навигация -->
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon">🏠</div>
+                <span class="nav-text">Главная</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📅</div>
+                <span class="nav-text">Подготовка</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📖</div>
+                <span class="nav-text">Коран</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📿</div>
+                <span class="nav-text">Дуа</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <span class="nav-text">Профиль</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Регистрация Service Worker для PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker зарегистрирован: ', registration);
+                    })
+                    .catch(function(error) {
+                        console.log('Ошибка регистрации ServiceWorker: ', error);
+                    });
+            });
+        }
+
+        // Обратный отсчет до Рамадана 2026 (примерная дата - 27 февраля 2026)
+        function updateCountdown() {
+            const ramadan2026 = new Date('February 27, 2026 00:00:00').getTime();
+            const now = new Date().getTime();
+            const difference = ramadan2026 - now;
+            
+            if (difference > 0) {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown').textContent = 
+                    `${days}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                document.getElementById('countdown').textContent = "Рамадан наступил!";
+            }
+        }
+
+        // Обновление прогресс-бара
+        function updateProgress() {
+            const progressFill = document.getElementById('progress-fill');
+            // В реальном приложении это значение будет браться из данных пользователя
+            const progress = 35; // процент выполнения
+            progressFill.style.width = `${progress}%`;
+        }
+
+        // Обработчик чекбокса задачи
+        document.getElementById('task-checkbox').addEventListener('click', function() {
+            this.classList.toggle('checked');
+            // Здесь будет логика обновления прогресса
+            updateProgress();
+        });
+
+        // Инициализация
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        updateProgress();
+    </script>
+</body>
+</html>
