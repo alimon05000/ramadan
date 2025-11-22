@@ -1645,7 +1645,7 @@
                     <div class="action-icon">📿</div>
                     <span class="action-text">Азкары</span>
                 </button>
-                <button class="action-button" data-action="community" onclick="showNotification('Раздел "Сообщество" находится в разработке')">
+                <button class="action-button" data-action="community" onclick="showCommunityNotification()">
                     <div class="action-icon">👥</div>
                     <span class="action-text">Сообщество</span>
                 </button>
@@ -1766,10 +1766,10 @@
                         </div>
                     </div>
                     <div class="community-actions">
-                        <button class="community-button" onclick="showNotification('Раздел "Обсуждения" находится в разработке')">
+                        <button class="community-button" onclick="showCommunityNotification()">
                             💬 Обсуждения
                         </button>
-                        <button class="community-button" onclick="showNotification('Раздел "Рейтинг" находится в разработке')">
+                        <button class="community-button" onclick="showCommunityNotification()">
                             🏆 Рейтинг
                         </button>
                     </div>
@@ -2192,20 +2192,42 @@
             toast.className = 'toast ' + type;
             toast.classList.add('show');
             
+            // Вибрация при уведомлении
+            if (navigator.vibrate) {
+                navigator.vibrate(200);
+            }
+            
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
 
-        function showNotification(message) {
+        function showNotification(message, vibrate = true) {
             // Проверяем разрешение на уведомления
             if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('Путь к Рамадану', {
+                const notification = new Notification('Путь к Рамадану', {
                     body: message,
-                    icon: 'icons/icon-192.png'
+                    icon: 'icons/icon-192.png',
+                    badge: 'icons/icon-192.png',
+                    tag: 'ramadan-notification',
+                    requireInteraction: true
                 });
+                
+                // Вибрация при уведомлении
+                if (vibrate && navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+                
+                // Закрыть уведомление через 5 секунд
+                setTimeout(() => {
+                    notification.close();
+                }, 5000);
             }
             showToast(message, 'warning');
+        }
+
+        function showCommunityNotification() {
+            showNotification('Раздел "Сообщество" находится в разработке!', true);
         }
 
         // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
@@ -2228,6 +2250,7 @@
             updateDailyTask();
             calculateProgress();
             setupNotifications();
+            requestNotificationPermission();
         }
 
         function setupTheme() {
@@ -2328,6 +2351,13 @@
             // Закрытие модального окна при клике на пустое место
             document.getElementById('modal-content').addEventListener('click', function(e) {
                 e.stopPropagation();
+            });
+            
+            // Закрытие модального окна при клике на аяты (пустое место)
+            document.getElementById('surah-content').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSurahModal();
+                }
             });
         }
 
@@ -2698,7 +2728,11 @@
                 if (!navigator.geolocation) {
                     reject(new Error('Геолокация не поддерживается'));
                 }
-                navigator.geolocation.getCurrentPosition(resolve, reject);
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                });
             });
         }
 
@@ -2776,10 +2810,36 @@
                 try {
                     const registration = await navigator.serviceWorker.register('./sw.js');
                     console.log('Service Worker зарегистрирован', registration);
+                    
+                    // Подписка на push-уведомления
+                    if ('PushManager' in window) {
+                        const subscription = await registration.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlBase64ToUint8Array('BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U')
+                        });
+                        
+                        console.log('Подписка на push-уведомления:', subscription);
+                    }
                 } catch (error) {
                     console.log('Ошибка регистрации Service Worker:', error);
                 }
             }
+        }
+
+        // Вспомогательная функция для преобразования ключа
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, '+')
+                .replace(/_/g, '/');
+            
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
         }
 
         function requestNotificationPermission() {
@@ -2790,6 +2850,8 @@
                         setupNotifications();
                     }
                 });
+            } else if (Notification.permission === 'granted') {
+                setupNotifications();
             }
         }
 
@@ -2836,12 +2898,12 @@
                 
                 // Уведомление за 15 минут до намаза
                 if (currentTime >= prayerTime - 15 && currentTime < prayerTime - 14) {
-                    showNotification(`Намаз ${prayerName} через 15 минут`);
+                    showNotification(`Намаз ${prayerName} через 15 минут`, true);
                 }
                 
                 // Уведомление о начале намаза
                 if (currentTime >= prayerTime && currentTime < prayerTime + 1) {
-                    showNotification(`Время намаза ${prayerName}`);
+                    showNotification(`Время намаза ${prayerName}`, true);
                 }
             });
         }
@@ -2852,12 +2914,12 @@
             
             // Утренние азкары (6-8 утра)
             if (currentHour >= 6 && currentHour < 8) {
-                showNotification('Время утренних азкаров');
+                showNotification('Время утренних азкаров', true);
             }
             
             // Вечерние азкары (18-20 вечера)
             if (currentHour >= 18 && currentHour < 20) {
-                showNotification('Время вечерних азкаров');
+                showNotification('Время вечерних азкаров', true);
             }
         }
 
@@ -2883,7 +2945,7 @@
                     const lastHourAsr = maghribTime - 60;
                     
                     if (currentTime >= lastHourAsr && currentTime < lastHourAsr + 1 && !asrReminderSent) {
-                        showNotification('Последний час намаза Аср! Постарайтесь совершить намаз вовремя');
+                        showNotification('Последний час намаза Аср! Постарайтесь совершить намаз вовремя', true);
                         asrReminderSent = true;
                     }
                 }
@@ -2897,15 +2959,15 @@
             
             // Напоминания о продолжении подготовки к Рамадану
             if (daysLeft === 30) {
-                showNotification('До Рамадана остался 1 месяц! Продолжайте подготовку');
+                showNotification('До Рамадана остался 1 месяц! Продолжайте подготовку', true);
             } else if (daysLeft === 14) {
-                showNotification('До Рамадана осталось 2 недели! Увеличьте усилия в подготовке');
+                showNotification('До Рамадана осталось 2 недели! Увеличьте усилия в подготовке', true);
             } else if (daysLeft === 7) {
-                showNotification('До Рамадана осталась 1 неделя! Завершите все приготовления');
+                showNotification('До Рамадана осталась 1 неделя! Завершите все приготовления', true);
             } else if (daysLeft === 3) {
-                showNotification('До Рамадана осталось 3 дня! Проверьте готовность к посту');
+                showNotification('До Рамадана осталось 3 дня! Проверьте готовность к посту', true);
             } else if (daysLeft === 1) {
-                showNotification('Завтра начинается Рамадан! Да поможет нам Аллах');
+                showNotification('Завтра начинается Рамадан! Да поможет нам Аллах', true);
             }
         }
 
