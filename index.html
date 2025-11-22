@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     
     <style>
         /* === CSS Variables === */
@@ -569,7 +570,7 @@
         }
 
         .verse-arabic {
-            font-family: 'Times New Roman', serif;
+            font-family: 'Amiri', 'Times New Roman', serif;
             font-size: 1.5rem;
             text-align: right;
             line-height: 2;
@@ -1018,7 +1019,7 @@
         }
 
         .dua-arabic {
-            font-family: 'Times New Roman', serif;
+            font-family: 'Amiri', 'Times New Roman', serif;
             font-size: 1.3rem;
             text-align: right;
             line-height: 1.8;
@@ -1414,21 +1415,52 @@
         .surah-content {
             text-align: right;
             direction: rtl;
-            font-family: 'Times New Roman', serif;
+            font-family: 'Amiri', 'Times New Roman', serif;
             font-size: 1.5rem;
             line-height: 2.5;
             margin-bottom: 1.5rem;
         }
 
-        .surah-translation {
-            font-style: italic;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            color: var(--text-secondary-light);
+        .ayah-container {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 1rem;
         }
 
-        body.dark-theme .surah-translation {
+        body.dark-theme .ayah-container {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .ayah-arabic {
+            font-family: 'Amiri', 'Times New Roman', serif;
+            font-size: 1.5rem;
+            line-height: 2;
+            margin-bottom: 0.5rem;
+            text-align: right;
+        }
+
+        .ayah-translation {
+            font-style: italic;
+            line-height: 1.6;
+            color: var(--text-secondary-light);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-theme .ayah-translation {
             color: var(--text-secondary-dark);
+        }
+
+        .ayah-number {
+            display: inline-block;
+            background: var(--primary-main);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 0.8rem;
+            line-height: 24px;
+            margin-left: 0.5rem;
         }
 
         .surah-navigation {
@@ -1834,9 +1866,6 @@
             <div class="surah-content" id="surah-content">
                 <!-- Surah content will be loaded here -->
             </div>
-            <div class="surah-translation" id="surah-translation">
-                <!-- Translation will be loaded here -->
-            </div>
             <div class="surah-navigation">
                 <button class="nav-button" id="prev-surah" onclick="navigateSurah(-1)">Предыдущая</button>
                 <button class="nav-button" id="next-surah" onclick="navigateSurah(1)">Следующая</button>
@@ -1860,6 +1889,9 @@
         let weeklyTasks = JSON.parse(localStorage.getItem('weeklyTasks')) || {};
         let currentSurah = 1;
         let allSurahs = [];
+        let notificationPermission = false;
+        let prayerNotifications = [];
+        let azkarNotifications = [];
 
         // Данные для подготовки
         const preparationData = [
@@ -2099,7 +2131,7 @@
             loadAzkarsData();
             updateDailyTask();
             calculateProgress();
-            setupPrayerNotifications();
+            setupNotifications();
         }
 
         function setupTheme() {
@@ -2170,6 +2202,44 @@
                 notificationsSwitch.addEventListener('change', function() {
                     if (this.checked) {
                         requestNotificationPermission();
+                    } else {
+                        disableAllNotifications();
+                    }
+                });
+            }
+
+            // Настройки напоминаний о намазе
+            const prayerRemindersSwitch = document.getElementById('prayerRemindersSwitch');
+            if (prayerRemindersSwitch) {
+                prayerRemindersSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        schedulePrayerNotifications();
+                    } else {
+                        cancelPrayerNotifications();
+                    }
+                });
+            }
+
+            // Настройки утренних напоминаний
+            const morningRemindersSwitch = document.getElementById('morningRemindersSwitch');
+            if (morningRemindersSwitch) {
+                morningRemindersSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        scheduleAzkarNotifications('morning');
+                    } else {
+                        cancelAzkarNotifications('morning');
+                    }
+                });
+            }
+
+            // Настройки вечерних напоминаний
+            const eveningRemindersSwitch = document.getElementById('eveningRemindersSwitch');
+            if (eveningRemindersSwitch) {
+                eveningRemindersSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        scheduleAzkarNotifications('evening');
+                    } else {
+                        cancelAzkarNotifications('evening');
                     }
                 });
             }
@@ -2344,10 +2414,202 @@
             if ('Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission().then(permission => {
                     if (permission === 'granted') {
+                        notificationPermission = true;
                         showToast('Разрешение на уведомления получено');
+                        setupNotifications();
                     }
                 });
+            } else if (Notification.permission === 'granted') {
+                notificationPermission = true;
+                setupNotifications();
             }
+        }
+
+        function setupNotifications() {
+            if (!notificationPermission) return;
+            
+            // Настройка уведомлений о намазах
+            if (document.getElementById('prayerRemindersSwitch').checked) {
+                schedulePrayerNotifications();
+            }
+            
+            // Настройка утренних азкаров
+            if (document.getElementById('morningRemindersSwitch').checked) {
+                scheduleAzkarNotifications('morning');
+            }
+            
+            // Настройка вечерних азкаров
+            if (document.getElementById('eveningRemindersSwitch').checked) {
+                scheduleAzkarNotifications('evening');
+            }
+        }
+
+        function schedulePrayerNotifications() {
+            if (!notificationPermission) return;
+            
+            // Очистка предыдущих уведомлений
+            cancelPrayerNotifications();
+            
+            // В реальном приложении здесь будет логика получения времени намазов
+            // для текущего местоположения пользователя
+            const prayerTimes = [
+                { name: 'Фаджр', time: '05:30' },
+                { name: 'Зухр', time: '12:30' },
+                { name: 'Аср', time: '16:00' },
+                { name: 'Магриб', time: '18:45' },
+                { name: 'Иша', time: '20:15' }
+            ];
+            
+            prayerTimes.forEach(prayer => {
+                const [hours, minutes] = prayer.time.split(':').map(Number);
+                const now = new Date();
+                const notificationTime = new Date();
+                notificationTime.setHours(hours, minutes - 15, 0, 0); // За 15 минут до намаза
+                
+                // Если время уже прошло сегодня, планируем на завтра
+                if (notificationTime < now) {
+                    notificationTime.setDate(notificationTime.getDate() + 1);
+                }
+                
+                const timeout = notificationTime.getTime() - now.getTime();
+                
+                if (timeout > 0) {
+                    const notificationId = setTimeout(() => {
+                        showPrayerNotification(prayer.name, prayer.time);
+                    }, timeout);
+                    
+                    prayerNotifications.push(notificationId);
+                }
+            });
+            
+            // Особое уведомление для пятничного асра
+            const today = new Date();
+            if (today.getDay() === 5) { // 5 = пятница
+                const asrTime = prayerTimes.find(p => p.name === 'Аср').time;
+                const [hours, minutes] = asrTime.split(':').map(Number);
+                const notificationTime = new Date();
+                notificationTime.setHours(hours, minutes - 30, 0, 0); // За 30 минут до асра
+                
+                if (notificationTime < now) {
+                    notificationTime.setDate(notificationTime.getDate() + 7);
+                }
+                
+                const timeout = notificationTime.getTime() - now.getTime();
+                
+                if (timeout > 0) {
+                    const notificationId = setTimeout(() => {
+                        showFridayAsrNotification();
+                    }, timeout);
+                    
+                    prayerNotifications.push(notificationId);
+                }
+            }
+        }
+
+        function showPrayerNotification(prayerName, prayerTime) {
+            if (!notificationPermission) return;
+            
+            const notification = new Notification('Время намаза', {
+                body: `До ${prayerName} осталось 15 минут. Время начала: ${prayerTime}`,
+                icon: 'icons/icon-192.png',
+                tag: 'prayer-reminder'
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        }
+
+        function showFridayAsrNotification() {
+            if (!notificationPermission) return;
+            
+            const notification = new Notification('Пятничный аср', {
+                body: 'Сегодня пятница! Не забудьте о важности последнего часа асра для принятия дуа.',
+                icon: 'icons/icon-192.png',
+                tag: 'friday-asr-reminder'
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        }
+
+        function cancelPrayerNotifications() {
+            prayerNotifications.forEach(id => clearTimeout(id));
+            prayerNotifications = [];
+        }
+
+        function scheduleAzkarNotifications(type) {
+            if (!notificationPermission) return;
+            
+            // Очистка предыдущих уведомлений
+            cancelAzkarNotifications(type);
+            
+            const now = new Date();
+            const notificationTime = new Date();
+            
+            if (type === 'morning') {
+                // Утренние азкары - 7:00 утра
+                notificationTime.setHours(7, 0, 0, 0);
+            } else {
+                // Вечерние азкары - 19:00 вечера
+                notificationTime.setHours(19, 0, 0, 0);
+            }
+            
+            // Если время уже прошло сегодня, планируем на завтра
+            if (notificationTime < now) {
+                notificationTime.setDate(notificationTime.getDate() + 1);
+            }
+            
+            const timeout = notificationTime.getTime() - now.getTime();
+            
+            if (timeout > 0) {
+                const notificationId = setTimeout(() => {
+                    showAzkarNotification(type);
+                    // Планируем следующее уведомление на завтра
+                    scheduleAzkarNotifications(type);
+                }, timeout);
+                
+                azkarNotifications.push({type, id: notificationId});
+            }
+        }
+
+        function showAzkarNotification(type) {
+            if (!notificationPermission) return;
+            
+            const title = type === 'morning' ? 'Утренние азкары' : 'Вечерние азкары';
+            const body = type === 'morning' 
+                ? 'Время читать утренние азкары. Не забудьте помянуть Аллаха.' 
+                : 'Время читать вечерние азкары. Завершите день поминанием Аллаха.';
+            
+            const notification = new Notification(title, {
+                body: body,
+                icon: 'icons/icon-192.png',
+                tag: `${type}-azkar-reminder`
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        }
+
+        function cancelAzkarNotifications(type) {
+            azkarNotifications = azkarNotifications.filter(item => {
+                if (item.type === type) {
+                    clearTimeout(item.id);
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        function disableAllNotifications() {
+            cancelPrayerNotifications();
+            azkarNotifications.forEach(item => clearTimeout(item.id));
+            azkarNotifications = [];
         }
 
         function updateCurrentDate() {
@@ -2490,14 +2752,27 @@
                             `Сура ${surah.englishName} (${surah.name})`;
                         
                         const surahContent = document.getElementById('surah-content');
-                        surahContent.innerHTML = arabicEdition.ayahs.map(ayah => 
-                            `<div>${ayah.text} <span style="font-size: 0.8em; color: var(--text-secondary-light);">${ayah.numberInSurah}</span></div>`
-                        ).join('');
+                        surahContent.innerHTML = '';
                         
-                        const surahTranslation = document.getElementById('surah-translation');
-                        surahTranslation.innerHTML = translationEdition.ayahs.map(ayah => 
-                            `<div><strong>${ayah.numberInSurah}.</strong> ${ayah.text}</div>`
-                        ).join('');
+                        // Создаем контейнеры для каждого аята с арабским текстом и переводом
+                        for (let i = 0; i < arabicEdition.ayahs.length; i++) {
+                            const arabicAyah = arabicEdition.ayahs[i];
+                            const translationAyah = translationEdition.ayahs[i];
+                            
+                            const ayahContainer = document.createElement('div');
+                            ayahContainer.className = 'ayah-container';
+                            
+                            ayahContainer.innerHTML = `
+                                <div class="ayah-arabic">
+                                    ${arabicAyah.text} <span class="ayah-number">${arabicAyah.numberInSurah}</span>
+                                </div>
+                                <div class="ayah-translation">
+                                    <strong>${arabicAyah.numberInSurah}.</strong> ${translationAyah.text}
+                                </div>
+                            `;
+                            
+                            surahContent.appendChild(ayahContainer);
+                        }
                         
                         // Обновляем навигацию
                         document.getElementById('prev-surah').disabled = surahNumber <= 1;
@@ -2628,23 +2903,6 @@
             }).join('');
         }
 
-        function setupPrayerNotifications() {
-            // Настройка уведомлений о намазах
-            if ('serviceWorker' in navigator && 'PushManager' in window) {
-                // Регистрируем Service Worker для уведомлений
-                navigator.serviceWorker.ready.then(registration => {
-                    // Планируем уведомления о намазах
-                    schedulePrayerNotifications();
-                });
-            }
-        }
-
-        function schedulePrayerNotifications() {
-            // В реальном приложении здесь будет логика планирования уведомлений
-            // о предстоящих намазах
-            console.log('Планирование уведомлений о намазах');
-        }
-
         function loadAzkarsData() {
             const duaSection = document.getElementById('dua-section');
             
@@ -2685,7 +2943,13 @@
 
         // Запрос разрешения на уведомления при загрузке
         if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    notificationPermission = true;
+                }
+            });
+        } else if (Notification.permission === 'granted') {
+            notificationPermission = true;
         }
     </script>
 </body>
