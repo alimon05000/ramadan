@@ -2152,12 +2152,84 @@
             ]
         };
 
-        // Инициализация приложения
+        // === ОСНОВНЫЕ ФУНКЦИИ НАВИГАЦИИ ===
+
+        // Функция для переключения вкладок
+        function showTab(tabId) {
+            console.log('Переключение на вкладку:', tabId);
+            
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            } else {
+                console.error('Вкладка не найдена:', tabId);
+                return;
+            }
+            
+            // Обновить навигацию
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const activeNavItem = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
+            
+            // Сброс прокрутки для PWA
+            setTimeout(() => {
+                if (targetTab) {
+                    targetTab.scrollTop = 0;
+                }
+            }, 50);
+            
+            // Вибрация для тактильного отклика (если поддерживается)
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+        }
+
+        // Функция для обработки кликов по навигации
+        function handleNavClick(tabId) {
+            console.log('Нажата кнопка навигации:', tabId);
+            showTab(tabId);
+        }
+
+        // Функция для показа уведомлений
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            if (!toast) {
+                console.error('Элемент toast не найден');
+                return;
+            }
+            toast.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function showNotification(message) {
+            showToast(message, 'warning');
+        }
+
+        // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
+
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM загружен, инициализация приложения...');
             initApp();
         });
 
         function initApp() {
+            console.log('Инициализация приложения...');
             setupTheme();
             setupCountdown();
             setupEventListeners();
@@ -2173,113 +2245,80 @@
             setupNotifications();
             fixPwaScrollIssues();
             setupNavigation();
+            
+            console.log('Приложение инициализировано');
         }
 
         function setupNavigation() {
-            // Улучшенная настройка навигации для PWA
-            const navItems = document.querySelectorAll('.nav-item');
-            const actionButtons = document.querySelectorAll('.action-button');
-            const communityButtons = document.querySelectorAll('.community-button');
+            console.log('Настройка навигации...');
             
             // Обработчики для навигации внизу
+            const navItems = document.querySelectorAll('.nav-item');
+            console.log('Найдено элементов навигации:', navItems.length);
+            
             navItems.forEach(item => {
+                const tabId = item.getAttribute('data-tab');
+                console.log('Настройка обработчика для:', tabId);
+                
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    const tabId = this.getAttribute('data-tab');
-                    if (tabId) {
-                        showTab(tabId);
-                        
-                        // Вибрация для тактильного отклика (если поддерживается)
-                        if (navigator.vibrate) {
-                            navigator.vibrate(10);
-                        }
-                    }
-                }, { passive: true });
+                    console.log('Клик по навигации:', tabId);
+                    handleNavClick(tabId);
+                });
+                
+                // Добавляем стиль для указания, что элемент кликабелен
+                item.style.cursor = 'pointer';
             });
-            
+
             // Обработчики для кнопок быстрых действий
+            const actionButtons = document.querySelectorAll('.action-button');
             actionButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
                     const tabId = this.getAttribute('data-tab');
                     if (tabId) {
-                        showTab(tabId);
-                        
-                        // Вибрация для тактильного отклика (если поддерживается)
-                        if (navigator.vibrate) {
-                            navigator.vibrate(10);
-                        }
+                        console.log('Клик по быстрой кнопке:', tabId);
+                        handleNavClick(tabId);
                     }
-                }, { passive: true });
+                });
             });
-            
+
             // Обработчики для кнопок сообщества
+            const communityButtons = document.querySelectorAll('.community-button');
             communityButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
                     const action = this.getAttribute('data-action');
                     if (action) {
+                        console.log('Кнопка сообщества:', action);
                         showNotification('Функция в разработке');
-                        
-                        // Вибрация для тактильного отклика (если поддерживается)
-                        if (navigator.vibrate) {
-                            navigator.vibrate(10);
-                        }
                     }
-                }, { passive: true });
+                });
             });
-            
-            // Обработчики для модального окна
-            document.getElementById('modal-close').addEventListener('click', closeSurahModal);
-            document.getElementById('prev-surah').addEventListener('click', function() {
-                navigateSurah(-1);
-            });
-            document.getElementById('next-surah').addEventListener('click', function() {
-                navigateSurah(1);
-            });
-        }
 
-        function fixPwaScrollIssues() {
-            // Специальные исправления для PWA
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-            document.body.style.height = '100%';
+            // Обработчики для модального окна
+            const modalClose = document.getElementById('modal-close');
+            const prevSurah = document.getElementById('prev-surah');
+            const nextSurah = document.getElementById('next-surah');
             
-            // Принудительное обновление layout для iOS
-            setTimeout(() => {
-                document.body.style.height = '100%';
-                window.scrollTo(0, 0);
-            }, 100);
-            
-            // Обработчик для предотвращения блокировки прокрутки
-            document.addEventListener('touchstart', function(e) {
-                // Разрешаем прокрутку только для элементов с переполнением
-                const target = e.target;
-                const isScrollable = target.closest('.tab-content') || 
-                                   target.closest('.modal-content') ||
-                                   target.closest('.surah-content');
-                
-                if (!isScrollable) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-            
-            // Исправление для iOS PWA
-            if (window.navigator.standalone === true) {
-                document.body.style.webkitOverflowScrolling = 'touch';
-                document.body.style.overflow = 'auto';
-                document.body.style.height = '100%';
-                
-                // Принудительный рефлоу
-                document.body.offsetHeight;
+            if (modalClose) {
+                modalClose.addEventListener('click', closeSurahModal);
             }
+            if (prevSurah) {
+                prevSurah.addEventListener('click', function() {
+                    navigateSurah(-1);
+                });
+            }
+            if (nextSurah) {
+                nextSurah.addEventListener('click', function() {
+                    navigateSurah(1);
+                });
+            }
+            
+            console.log('Навигация настроена');
         }
 
         function setupTheme() {
@@ -2531,248 +2570,6 @@
             }
             
             document.getElementById('streakDays').textContent = streak;
-        }
-
-        function showTab(tabId) {
-            // Скрыть все вкладки
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Показать выбранную вкладку
-            document.getElementById(tabId).classList.add('active');
-            
-            // Обновить навигацию
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-            
-            // Сброс прокрутки для PWA
-            setTimeout(() => {
-                const activeTab = document.getElementById(tabId);
-                if (activeTab) {
-                    activeTab.scrollTop = 0;
-                }
-            }, 50);
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + type;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function showNotification(message) {
-            showToast(message, 'warning');
-        }
-
-        function requestNotificationPermission() {
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        notificationPermission = true;
-                        showToast('Разрешение на уведомления получено');
-                        setupNotifications();
-                    }
-                });
-            } else if (Notification.permission === 'granted') {
-                notificationPermission = true;
-                setupNotifications();
-            }
-        }
-
-        function setupNotifications() {
-            if (!notificationPermission) return;
-            
-            // Настройка уведомлений о намазах
-            if (document.getElementById('prayerRemindersSwitch').checked) {
-                schedulePrayerNotifications();
-            }
-            
-            // Настройка утренних азкаров
-            if (document.getElementById('morningRemindersSwitch').checked) {
-                scheduleAzkarNotifications('morning');
-            }
-            
-            // Настройка вечерних азкаров
-            if (document.getElementById('eveningRemindersSwitch').checked) {
-                scheduleAzkarNotifications('evening');
-            }
-        }
-
-        function schedulePrayerNotifications() {
-            if (!notificationPermission) return;
-            
-            // Очистка предыдущих уведомлений
-            cancelPrayerNotifications();
-            
-            // В реальном приложении здесь будет логика получения времени намазов
-            // для текущего местоположения пользователя
-            const prayerTimes = [
-                { name: 'Фаджр', time: '05:30' },
-                { name: 'Зухр', time: '12:30' },
-                { name: 'Аср', time: '16:00' },
-                { name: 'Магриб', time: '18:45' },
-                { name: 'Иша', time: '20:15' }
-            ];
-            
-            prayerTimes.forEach(prayer => {
-                const [hours, minutes] = prayer.time.split(':').map(Number);
-                const now = new Date();
-                const notificationTime = new Date();
-                notificationTime.setHours(hours, minutes - 15, 0, 0); // За 15 минут до намаза
-                
-                // Если время уже прошло сегодня, планируем на завтра
-                if (notificationTime < now) {
-                    notificationTime.setDate(notificationTime.getDate() + 1);
-                }
-                
-                const timeout = notificationTime.getTime() - now.getTime();
-                
-                if (timeout > 0) {
-                    const notificationId = setTimeout(() => {
-                        showPrayerNotification(prayer.name, prayer.time);
-                    }, timeout);
-                    
-                    prayerNotifications.push(notificationId);
-                }
-            });
-            
-            // Особое уведомление для пятничного асра
-            const today = new Date();
-            if (today.getDay() === 5) { // 5 = пятница
-                const asrTime = prayerTimes.find(p => p.name === 'Аср').time;
-                const [hours, minutes] = asrTime.split(':').map(Number);
-                const notificationTime = new Date();
-                notificationTime.setHours(hours, minutes - 30, 0, 0); // За 30 минут до асра
-                
-                if (notificationTime < now) {
-                    notificationTime.setDate(notificationTime.getDate() + 7);
-                }
-                
-                const timeout = notificationTime.getTime() - now.getTime();
-                
-                if (timeout > 0) {
-                    const notificationId = setTimeout(() => {
-                        showFridayAsrNotification();
-                    }, timeout);
-                    
-                    prayerNotifications.push(notificationId);
-                }
-            }
-        }
-
-        function showPrayerNotification(prayerName, prayerTime) {
-            if (!notificationPermission) return;
-            
-            const notification = new Notification('Время намаза', {
-                body: `До ${prayerName} осталось 15 минут. Время начала: ${prayerTime}`,
-                icon: 'icons/icon-192.png',
-                tag: 'prayer-reminder'
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                this.close();
-            };
-        }
-
-        function showFridayAsrNotification() {
-            if (!notificationPermission) return;
-            
-            const notification = new Notification('Пятничный аср', {
-                body: 'Сегодня пятница! Не забудьте о важности последнего часа асра для принятия дуа.',
-                icon: 'icons/icon-192.png',
-                tag: 'friday-asr-reminder'
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                this.close();
-            };
-        }
-
-        function cancelPrayerNotifications() {
-            prayerNotifications.forEach(id => clearTimeout(id));
-            prayerNotifications = [];
-        }
-
-        function scheduleAzkarNotifications(type) {
-            if (!notificationPermission) return;
-            
-            // Очистка предыдущих уведомлений
-            cancelAzkarNotifications(type);
-            
-            const now = new Date();
-            const notificationTime = new Date();
-            
-            if (type === 'morning') {
-                // Утренние азкары - 7:00 утра
-                notificationTime.setHours(7, 0, 0, 0);
-            } else {
-                // Вечерние азкары - 19:00 вечера
-                notificationTime.setHours(19, 0, 0, 0);
-            }
-            
-            // Если время уже прошло сегодня, планируем на завтра
-            if (notificationTime < now) {
-                notificationTime.setDate(notificationTime.getDate() + 1);
-            }
-            
-            const timeout = notificationTime.getTime() - now.getTime();
-            
-            if (timeout > 0) {
-                const notificationId = setTimeout(() => {
-                    showAzkarNotification(type);
-                    // Планируем следующее уведомление на завтра
-                    scheduleAzkarNotifications(type);
-                }, timeout);
-                
-                azkarNotifications.push({type, id: notificationId});
-            }
-        }
-
-        function showAzkarNotification(type) {
-            if (!notificationPermission) return;
-            
-            const title = type === 'morning' ? 'Утренние азкары' : 'Вечерние азкары';
-            const body = type === 'morning' 
-                ? 'Время читать утренние азкары. Не забудьте помянуть Аллаха.' 
-                : 'Время читать вечерние азкары. Завершите день поминанием Аллаха.';
-            
-            const notification = new Notification(title, {
-                body: body,
-                icon: 'icons/icon-192.png',
-                tag: `${type}-azkar-reminder`
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                this.close();
-            };
-        }
-
-        function cancelAzkarNotifications(type) {
-            azkarNotifications = azkarNotifications.filter(item => {
-                if (item.type === type) {
-                    clearTimeout(item.id);
-                    return false;
-                }
-                return true;
-            });
-        }
-
-        function disableAllNotifications() {
-            cancelPrayerNotifications();
-            azkarNotifications.forEach(item => clearTimeout(item.id));
-            azkarNotifications = [];
         }
 
         function updateCurrentDate() {
@@ -3067,7 +2864,7 @@
         }
 
         function getCurrentPosition() {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) {
                 if (!navigator.geolocation) {
                     reject(new Error('Геолокация не поддерживается'));
                 }
@@ -3152,6 +2949,245 @@
                 } catch (error) {
                     console.log('Ошибка регистрации Service Worker:', error);
                 }
+            }
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        notificationPermission = true;
+                        showToast('Разрешение на уведомления получено');
+                        setupNotifications();
+                    }
+                });
+            } else if (Notification.permission === 'granted') {
+                notificationPermission = true;
+                setupNotifications();
+            }
+        }
+
+        function setupNotifications() {
+            if (!notificationPermission) return;
+            
+            // Настройка уведомлений о намазах
+            if (document.getElementById('prayerRemindersSwitch').checked) {
+                schedulePrayerNotifications();
+            }
+            
+            // Настройка утренних азкаров
+            if (document.getElementById('morningRemindersSwitch').checked) {
+                scheduleAzkarNotifications('morning');
+            }
+            
+            // Настройка вечерних азкаров
+            if (document.getElementById('eveningRemindersSwitch').checked) {
+                scheduleAzkarNotifications('evening');
+            }
+        }
+
+        function schedulePrayerNotifications() {
+            if (!notificationPermission) return;
+            
+            // Очистка предыдущих уведомлений
+            cancelPrayerNotifications();
+            
+            // В реальном приложении здесь будет логика получения времени намазов
+            // для текущего местоположения пользователя
+            const prayerTimes = [
+                { name: 'Фаджр', time: '05:30' },
+                { name: 'Зухр', time: '12:30' },
+                { name: 'Аср', time: '16:00' },
+                { name: 'Магриб', time: '18:45' },
+                { name: 'Иша', time: '20:15' }
+            ];
+            
+            prayerTimes.forEach(prayer => {
+                const [hours, minutes] = prayer.time.split(':').map(Number);
+                const now = new Date();
+                const notificationTime = new Date();
+                notificationTime.setHours(hours, minutes - 15, 0, 0); // За 15 минут до намаза
+                
+                // Если время уже прошло сегодня, планируем на завтра
+                if (notificationTime < now) {
+                    notificationTime.setDate(notificationTime.getDate() + 1);
+                }
+                
+                const timeout = notificationTime.getTime() - now.getTime();
+                
+                if (timeout > 0) {
+                    const notificationId = setTimeout(() => {
+                        showPrayerNotification(prayer.name, prayer.time);
+                    }, timeout);
+                    
+                    prayerNotifications.push(notificationId);
+                }
+            });
+            
+            // Особое уведомление для пятничного асра
+            const today = new Date();
+            if (today.getDay() === 5) { // 5 = пятница
+                const asrTime = prayerTimes.find(p => p.name === 'Аср').time;
+                const [hours, minutes] = asrTime.split(':').map(Number);
+                const notificationTime = new Date();
+                notificationTime.setHours(hours, minutes - 30, 0, 0); // За 30 минут до асра
+                
+                if (notificationTime < now) {
+                    notificationTime.setDate(notificationTime.getDate() + 7);
+                }
+                
+                const timeout = notificationTime.getTime() - now.getTime();
+                
+                if (timeout > 0) {
+                    const notificationId = setTimeout(() => {
+                        showFridayAsrNotification();
+                    }, timeout);
+                    
+                    prayerNotifications.push(notificationId);
+                }
+            }
+        }
+
+        function showPrayerNotification(prayerName, prayerTime) {
+            if (!notificationPermission) return;
+            
+            const notification = new Notification('Время намаза', {
+                body: `До ${prayerName} осталось 15 минут. Время начала: ${prayerTime}`,
+                icon: 'icons/icon-192.png',
+                tag: 'prayer-reminder'
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        }
+
+        function showFridayAsrNotification() {
+            if (!notificationPermission) return;
+            
+            const notification = new Notification('Пятничный аср', {
+                body: 'Сегодня пятница! Не забудьте о важности последнего часа асра для принятия дуа.',
+                icon: 'icons/icon-192.png',
+                tag: 'friday-asr-reminder'
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        }
+
+        function cancelPrayerNotifications() {
+            prayerNotifications.forEach(id => clearTimeout(id));
+            prayerNotifications = [];
+        }
+
+        function scheduleAzkarNotifications(type) {
+            if (!notificationPermission) return;
+            
+            // Очистка предыдущих уведомлений
+            cancelAzkarNotifications(type);
+            
+            const now = new Date();
+            const notificationTime = new Date();
+            
+            if (type === 'morning') {
+                // Утренние азкары - 7:00 утра
+                notificationTime.setHours(7, 0, 0, 0);
+            } else {
+                // Вечерние азкары - 19:00 вечера
+                notificationTime.setHours(19, 0, 0, 0);
+            }
+            
+            // Если время уже прошло сегодня, планируем на завтра
+            if (notificationTime < now) {
+                notificationTime.setDate(notificationTime.getDate() + 1);
+            }
+            
+            const timeout = notificationTime.getTime() - now.getTime();
+            
+            if (timeout > 0) {
+                const notificationId = setTimeout(() => {
+                    showAzkarNotification(type);
+                    // Планируем следующее уведомление на завтра
+                    scheduleAzkarNotifications(type);
+                }, timeout);
+                
+                azkarNotifications.push({type, id: notificationId});
+            }
+        }
+
+        function showAzkarNotification(type) {
+            if (!notificationPermission) return;
+            
+            const title = type === 'morning' ? 'Утренние азкары' : 'Вечерние азкары';
+            const body = type === 'morning' 
+                ? 'Время читать утренние азкары. Не забудьте помянуть Аллаха.' 
+                : 'Время читать вечерние азкары. Завершите день поминанием Аллаха.';
+            
+            const notification = new Notification(title, {
+                body: body,
+                icon: 'icons/icon-192.png',
+                tag: `${type}-azkar-reminder`
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        }
+
+        function cancelAzkarNotifications(type) {
+            azkarNotifications = azkarNotifications.filter(item => {
+                if (item.type === type) {
+                    clearTimeout(item.id);
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        function disableAllNotifications() {
+            cancelPrayerNotifications();
+            azkarNotifications.forEach(item => clearTimeout(item.id));
+            azkarNotifications = [];
+        }
+
+        function fixPwaScrollIssues() {
+            // Специальные исправления для PWA
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.height = '100%';
+            
+            // Принудительное обновление layout для iOS
+            setTimeout(() => {
+                document.body.style.height = '100%';
+                window.scrollTo(0, 0);
+            }, 100);
+            
+            // Обработчик для предотвращения блокировки прокрутки
+            document.addEventListener('touchstart', function(e) {
+                // Разрешаем прокрутку только для элементов с переполнением
+                const target = e.target;
+                const isScrollable = target.closest('.tab-content') || 
+                                   target.closest('.modal-content') ||
+                                   target.closest('.surah-content');
+                
+                if (!isScrollable) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Исправление для iOS PWA
+            if (window.navigator.standalone === true) {
+                document.body.style.webkitOverflowScrolling = 'touch';
+                document.body.style.overflow = 'auto';
+                document.body.style.height = '100%';
+                
+                // Принудительный рефлоу
+                document.body.offsetHeight;
             }
         }
 
