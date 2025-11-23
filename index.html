@@ -1896,7 +1896,7 @@
             background: linear-gradient(135deg, rgba(11, 91, 63, 0.2), rgba(217, 180, 74, 0.1));
         }
 
-        /* ИСПРАВЛЕНИЕ: Кнопки управления аятом */
+        /* ИСПРАВЛЕНИЕ: Убраны кнопки управления аятом */
         .ayah-controls {
             display: flex;
             gap: 0.5rem;
@@ -1912,6 +1912,7 @@
             font-size: 0.8rem;
             cursor: pointer;
             transition: var(--transition);
+            display: none; /* Скрываем кнопки */
         }
 
         .ayah-play-btn:hover {
@@ -2351,6 +2352,7 @@
         let isPlaying = false;
         let currentAyah = null;
         let currentReciter = 'ar.alafasy';
+        let userInteracted = false; // Флаг для отслеживания взаимодействия пользователя
 
         // Данные для подготовки
         const preparationData = [
@@ -2673,6 +2675,11 @@
             setupWarmLight();
             updateQuranProgress();
             setupAudioControls();
+            
+            // ИСПРАВЛЕНИЕ: Добавляем обработчик для отслеживания взаимодействия пользователя
+            document.addEventListener('click', function() {
+                userInteracted = true;
+            }, { once: true });
         }
 
         function setupTheme() {
@@ -2763,7 +2770,7 @@
                 }
             }, { passive: false });
 
-            // Закрытие модального окна при клике вне его
+            // ИСПРАВЛЕНИЕ: Закрытие модального окна при клике вне его
             document.getElementById('surah-modal').addEventListener('click', function(e) {
                 if (e.target === this) {
                     closeSurahModal();
@@ -3242,6 +3249,9 @@
                         document.getElementById('surah-modal').style.justifyContent = 'center';
                         
                         document.getElementById('surah-modal').classList.add('active');
+                        
+                        // ИСПРАВЛЕНИЕ: Предотвращаем скроллинг под модальным окном
+                        document.body.style.overflow = 'hidden';
                     } else {
                         throw new Error('Не удалось загрузить текст суры');
                     }
@@ -3257,6 +3267,9 @@
         function closeSurahModal() {
             document.getElementById('surah-modal').classList.remove('active');
             stopAudio();
+            
+            // ИСПРАВЛЕНИЕ: Восстанавливаем скроллинг
+            document.body.style.overflow = '';
         }
 
         function navigateSurah(direction) {
@@ -3308,6 +3321,13 @@
         // === АУДИО ФУНКЦИИ ===
 
         function playAyah(ayahNumber, surahNumber = currentSurah) {
+            // ИСПРАВЛЕНИЕ: Проверяем, было ли взаимодействие пользователя
+            if (!userInteracted) {
+                showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
+                userInteracted = true;
+                return;
+            }
+            
             if (isPlaying && currentAyah === ayahNumber) {
                 toggleAudio();
                 return;
@@ -3328,22 +3348,28 @@
                 .then(data => {
                     if (data.code === 200 && data.data.audio) {
                         currentAudio.src = data.data.audio;
-                        currentAudio.play();
                         
-                        // Обновляем UI
-                        document.getElementById('play-btn').classList.add('playing');
-                        document.getElementById('play-btn').textContent = '⏸️';
-                        isPlaying = true;
+                        // ИСПРАВЛЕНИЕ: Добавляем обработчик для PWA
+                        currentAudio.setAttribute('playsinline', '');
+                        currentAudio.setAttribute('webkit-playsinline', '');
                         
-                        // Обновляем кнопку аята
-                        const ayahPlayBtn = document.getElementById(`ayah-play-${ayahNumber}`);
-                        if (ayahPlayBtn) {
-                            ayahPlayBtn.classList.add('playing');
-                            ayahPlayBtn.textContent = '⏸️ Пауза';
+                        // Пытаемся воспроизвести
+                        const playPromise = currentAudio.play();
+                        
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                // Обновляем UI
+                                document.getElementById('play-btn').classList.add('playing');
+                                document.getElementById('play-btn').textContent = '⏸️';
+                                isPlaying = true;
+                                
+                                // Подсвечиваем текущий аят
+                                highlightCurrentAyah(ayahNumber);
+                            }).catch(error => {
+                                console.error('Ошибка воспроизведения:', error);
+                                showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
+                            });
                         }
-                        
-                        // Подсвечиваем текущий аят
-                        highlightCurrentAyah(ayahNumber);
                         
                         // Обработчики событий аудио
                         currentAudio.addEventListener('ended', function() {
@@ -3388,12 +3414,6 @@
             isPlaying = false;
             document.getElementById('play-btn').classList.remove('playing');
             document.getElementById('play-btn').textContent = '▶️';
-            
-            // Обновляем кнопки аятов
-            document.querySelectorAll('.ayah-play-btn').forEach(btn => {
-                btn.classList.remove('playing');
-                btn.textContent = '▶️ Воспроизвести';
-            });
             
             // Убираем подсветку с текущего аята
             removeAyahHighlight();
