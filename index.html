@@ -1591,8 +1591,9 @@
             color: #5a4c30;
         }
 
+        /* ИСПРАВЛЕНИЕ: Кнопка темы чтения Корана теперь видима на белой теме */
         .theme-toggle-quran {
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--primary-main);
             border: none;
             padding: 0.5rem 1rem;
             border-radius: var(--radius-md);
@@ -1604,7 +1605,7 @@
         }
 
         .theme-toggle-quran:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--primary-dark);
         }
 
         .bismillah {
@@ -1735,6 +1736,77 @@
         }
 
         body.dark-theme .progress-reading-text {
+            color: var(--text-secondary-dark);
+        }
+
+        /* ИСПРАВЛЕНИЕ: Прогресс-бар для чтения Корана */
+        .reading-progress-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+        }
+
+        body.dark-theme .reading-progress-container {
+            background: var(--border-dark);
+        }
+
+        .reading-progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .reading-progress-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .reading-progress-title {
+            color: var(--accent-gold);
+        }
+
+        .reading-progress-percent {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .reading-progress-percent {
+            color: var(--accent-gold);
+        }
+
+        .reading-progress-bar {
+            height: 8px;
+            background-color: var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body.dark-theme .reading-progress-bar {
+            background-color: var(--border-dark);
+        }
+
+        .reading-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-main), var(--accent-gold));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reading-progress-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary-light);
+            margin-top: 0.5rem;
+        }
+
+        body.dark-theme .reading-progress-text {
             color: var(--text-secondary-dark);
         }
     </style>
@@ -1887,9 +1959,16 @@
                 </div>
             </div>
 
-            <div class="progress-reading">
-                <div class="progress-reading-title">Ваш прогресс чтения</div>
-                <div class="progress-reading-text" id="reading-progress-text">Вы еще не начали чтение Корана</div>
+            <!-- ИСПРАВЛЕНИЕ: Добавлен прогресс-бар чтения Корана -->
+            <div class="reading-progress-container">
+                <div class="reading-progress-header">
+                    <span class="reading-progress-title">Ваш прогресс чтения Корана</span>
+                    <span class="reading-progress-percent" id="quranProgressPercent">0%</span>
+                </div>
+                <div class="reading-progress-bar">
+                    <div class="reading-progress-fill" id="quranProgressFill"></div>
+                </div>
+                <div class="reading-progress-text" id="reading-progress-text">Вы еще не начали чтение Корана</div>
             </div>
 
             <div class="quran-section" id="quran-section">
@@ -2099,6 +2178,7 @@
             <div class="modal-header">
                 <h3 class="modal-title" id="surah-modal-title">Сура Аль-Фатиха</h3>
                 <div>
+                    <!-- ИСПРАВЛЕНИЕ: Кнопка темы чтения Корана теперь видима на белой теме -->
                     <button class="theme-toggle-quran" id="quranThemeToggle">Приятная тема</button>
                     <button class="modal-close" onclick="closeSurahModal()">×</button>
                 </div>
@@ -2137,6 +2217,7 @@
         let arabicFontSize = parseInt(localStorage.getItem('arabicFontSize')) || 32;
         let translationFontSize = parseInt(localStorage.getItem('translationFontSize')) || 16;
         let warmLightEnabled = localStorage.getItem('warmLightEnabled') === 'true';
+        let quranProgress = JSON.parse(localStorage.getItem('quranProgress')) || { readAyahs: 0, totalAyahs: 6236 };
 
         // Данные для подготовки
         const preparationData = [
@@ -2457,6 +2538,7 @@
             requestNotificationPermission();
             updateFontSizes();
             setupWarmLight();
+            updateQuranProgress();
         }
 
         function setupTheme() {
@@ -2802,6 +2884,15 @@
             }
         }
 
+        function updateQuranProgress() {
+            const progressPercent = Math.round((quranProgress.readAyahs / quranProgress.totalAyahs) * 100);
+            document.getElementById('quranProgressPercent').textContent = `${progressPercent}%`;
+            document.getElementById('quranProgressFill').style.width = `${progressPercent}%`;
+            
+            const progressText = document.getElementById('reading-progress-text');
+            progressText.textContent = `Прочитано ${quranProgress.readAyahs} из ${quranProgress.totalAyahs} аятов (${progressPercent}%)`;
+        }
+
         function loadPreparationData() {
             const weekSection = document.getElementById('week-section');
             weekSection.innerHTML = '';
@@ -2935,7 +3026,7 @@
                         const surahContent = document.getElementById('surah-content');
                         surahContent.innerHTML = '';
                         
-                        // Добавляем тасмию отдельно (кроме суры Ат-Тауба)
+                        // ИСПРАВЛЕНИЕ: Добавляем тасмию отдельно (кроме суры Ат-Тауба)
                         if (surahNumber !== 9) {
                             const bismillah = document.createElement('div');
                             bismillah.className = 'bismillah';
@@ -2954,6 +3045,7 @@
                             // Помечаем последний прочитанный аят
                             const isLastRead = lastReadAyah.surah === surahNumber && lastReadAyah.ayah === arabicAyah.numberInSurah;
                             
+                            // ИСПРАВЛЕНИЕ: Не добавляем тасмию в первый аят
                             ayahContainer.innerHTML = `
                                 <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}>
                                     ${arabicAyah.text} <span class="ayah-number">${arabicAyah.numberInSurah}</span>
@@ -3024,6 +3116,25 @@
         function setLastReadAyah(surahNumber, ayahNumber) {
             lastReadAyah = { surah: surahNumber, ayah: ayahNumber };
             localStorage.setItem('lastReadAyah', JSON.stringify(lastReadAyah));
+            
+            // Обновляем прогресс чтения Корана
+            const surah = allSurahs.find(s => s.number === surahNumber);
+            if (surah) {
+                // Рассчитываем количество прочитанных аятов
+                let readAyahs = 0;
+                for (let i = 1; i < surahNumber; i++) {
+                    const prevSurah = allSurahs.find(s => s.number === i);
+                    if (prevSurah) {
+                        readAyahs += prevSurah.numberOfAyahs;
+                    }
+                }
+                readAyahs += ayahNumber;
+                
+                quranProgress.readAyahs = readAyahs;
+                localStorage.setItem('quranProgress', JSON.stringify(quranProgress));
+                updateQuranProgress();
+            }
+            
             showToast(`Отмечен аят ${ayahNumber} суры ${surahNumber} как прочитанный`);
             loadQuranData(); // Перезагружаем список сур для обновления индикаторов
             updateReadingProgress(); // Обновляем прогресс чтения
@@ -3162,6 +3273,24 @@
                 try {
                     const registration = await navigator.serviceWorker.register('./sw.js');
                     console.log('Service Worker зарегистрирован', registration);
+                    
+                    // ИСПРАВЛЕНИЕ: Автоматическое обновление PWA при изменении кода
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Новый контент доступен, показываем уведомление
+                                    showToast('Доступна новая версия приложения. Перезагрузите страницу для обновления.', 'warning');
+                                }
+                            });
+                        }
+                    });
+                    
+                    // Проверяем обновления каждые 24 часа
+                    setInterval(() => {
+                        registration.update();
+                    }, 24 * 60 * 60 * 1000);
                     
                     // Подписка на push-уведомления
                     if ('PushManager' in window) {
