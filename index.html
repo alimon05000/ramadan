@@ -1406,7 +1406,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 2000;
             align-items: center;
             justify-content: center;
@@ -1420,14 +1420,13 @@
         .modal-content {
             background: var(--bg-card-light);
             border-radius: var(--radius-lg);
-            padding: 2rem;
-            max-width: 90%;
-            max-height: 80%;
-            overflow-y: auto;
+            width: 95%;
+            height: 95%;
+            overflow: hidden;
             box-shadow: var(--shadow-lg);
-            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
             position: relative;
-            touch-action: pan-y;
         }
 
         body.dark-theme .modal-content {
@@ -1438,12 +1437,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            background: inherit;
             position: sticky;
             top: 0;
-            background: inherit;
-            padding: 1rem 0;
             z-index: 10;
+            flex-shrink: 0;
+        }
+
+        body.dark-theme .modal-header {
+            border-bottom-color: var(--border-dark);
         }
 
         .modal-title {
@@ -1463,28 +1467,43 @@
             cursor: pointer;
             color: var(--text-secondary-light);
             touch-action: manipulation;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(0,0,0,0.1);
         }
 
         body.dark-theme .modal-close {
             color: var(--text-secondary-dark);
         }
 
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .surah-content {
             text-align: right;
             direction: rtl;
             font-family: 'Lateef', serif;
-            font-size: var(--arabic-font-size);
             line-height: 2.5;
-            margin-bottom: 1.5rem;
-            -webkit-overflow-scrolling: touch;
             letter-spacing: 1px;
             word-spacing: 3px;
         }
 
         .ayah-container {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             border-bottom: 1px solid var(--border-light);
-            padding-bottom: 1rem;
+            padding-bottom: 1.5rem;
             position: relative;
         }
 
@@ -1504,14 +1523,15 @@
             transition: var(--transition);
             padding: 0.5rem;
             border-radius: var(--radius-sm);
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .ayah-arabic:hover {
-            background: rgba(11, 91, 63, 0.05);
+        .ayah-arabic:active {
+            background: rgba(11, 91, 63, 0.1);
         }
 
-        body.dark-theme .ayah-arabic:hover {
-            background: rgba(217, 180, 74, 0.05);
+        body.dark-theme .ayah-arabic:active {
+            background: rgba(217, 180, 74, 0.1);
         }
 
         .ayah-translation {
@@ -1520,6 +1540,8 @@
             color: var(--text-secondary-light);
             margin-bottom: 0.5rem;
             font-size: var(--translation-font-size);
+            text-align: left;
+            direction: ltr;
         }
 
         body.dark-theme .ayah-translation {
@@ -1542,12 +1564,17 @@
         .surah-navigation {
             display: flex;
             justify-content: space-between;
-            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            background: inherit;
             position: sticky;
             bottom: 0;
-            background: inherit;
-            padding: 1rem 0;
             z-index: 10;
+            flex-shrink: 0;
+        }
+
+        body.dark-theme .surah-navigation {
+            border-top-color: var(--border-dark);
         }
 
         .nav-button {
@@ -1637,7 +1664,7 @@
             text-align: center;
             font-family: 'Lateef', serif;
             font-size: 2.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             padding: 1rem;
             border-bottom: 2px solid var(--accent-gold);
             color: var(--primary-dark);
@@ -1899,29 +1926,7 @@
 
         /* ИСПРАВЛЕНИЕ: Убраны кнопки управления аятом */
         .ayah-controls {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .ayah-play-btn {
-            background: var(--primary-main);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            padding: 0.25rem 0.75rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: none; /* Скрываем кнопки */
-        }
-
-        .ayah-play-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .ayah-play-btn.playing {
-            background: var(--accent-gold);
+            display: none; /* Полностью скрываем кнопки */
         }
     </style>
 </head>
@@ -2312,9 +2317,12 @@
                 <span id="current-reciter">Выберите чтеца</span>
             </div>
             
-            <div class="surah-content" id="surah-content">
-                <!-- Surah content will be loaded here -->
+            <div class="modal-body">
+                <div class="surah-content" id="surah-content">
+                    <!-- Surah content will be loaded here -->
+                </div>
             </div>
+            
             <div class="surah-navigation">
                 <button class="nav-button" id="prev-surah" onclick="navigateSurah(-1)">Предыдущая</button>
                 <button class="nav-button" id="next-surah" onclick="navigateSurah(1)">Следующая</button>
@@ -2424,7 +2432,7 @@
                     "Увеличивать потребление воды",
                     "Тренировать нафс на сабр: уменьшить зависимость от привычных удовольствий",
                     "Практиковать ранний сухур",
-                    "Изучить правила поста"
+                    "Изучать правила поста"
                 ]
             },
             {
@@ -2783,15 +2791,11 @@
                 e.stopPropagation();
             });
             
-            // Закрытие модального окна при клике на пустое место
-            document.getElementById('surah-content').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeSurahModal();
-                }
-            });
-
             // Переключение темы чтения Корана
             document.getElementById('quranThemeToggle').addEventListener('click', toggleQuranReadingTheme);
+            
+            // ИСПРАВЛЕНИЕ: Добавляем обработчик для кнопки закрытия
+            document.querySelector('.modal-close').addEventListener('click', closeSurahModal);
         }
 
         function setupAudioControls() {
@@ -3162,17 +3166,6 @@
             }).join('');
         }
 
-        function getGlobalAyah(surahNumber, ayahNumber) {
-            let globalAyah = ayahNumber;
-            for (let i = 1; i < surahNumber; i++) {
-                const prevSurah = allSurahs.find(s => s.number === i);
-                if (prevSurah) {
-                    globalAyah += prevSurah.numberOfAyahs;
-                }
-            }
-            return globalAyah;
-        }
-
         async function openSurah(surahNumber) {
             currentSurah = surahNumber;
             
@@ -3194,7 +3187,7 @@
                         const surahContent = document.getElementById('surah-content');
                         surahContent.innerHTML = '';
                         
-                        // ИСПРАВЛЕНИЕ: Добавляем тасмию отдельно отдельно (кроме суры Ат-Тауба)
+                        // ИСПРАВЛЕНИЕ: Добавляем тасмию отдельно (кроме суры Ат-Тауба)
                         if (surahNumber !== 9) {
                             const bismillah = document.createElement('div');
                             bismillah.className = 'bismillah';
@@ -3213,7 +3206,6 @@
                             // Помечаем последний прочитанный аят
                             const isLastRead = lastReadAyah.surah === surahNumber && lastReadAyah.ayah === arabicAyah.numberInSurah;
                             
-                            // ИСПРАВЛЕНИЕ: Не добавляем тасмию в первый аят
                             ayahContainer.innerHTML = `
                                 <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}
                                     onclick="playAyah(${arabicAyah.numberInSurah}, ${surahNumber})">
@@ -3222,11 +3214,7 @@
                                 <div class="ayah-translation">
                                     <strong>${arabicAyah.numberInSurah}.</strong> ${translationAyah.text}
                                 </div>
-                                <div class="ayah-controls">
-                                    <button class="ayah-play-btn" onclick="playAyah(${arabicAyah.numberInSurah}, ${surahNumber})" id="ayah-play-${arabicAyah.numberInSurah}">▶️ Воспроизвести</button>
-                                    <button class="ayah-play-btn" onclick="stopAudio()">⏹️ Остановить</button>
-                                </div>
-                                <button class="nav-button" onclick="setLastReadAyah(${surahNumber}, ${arabicAyah.numberInSurah})" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                                <button class="nav-button" onclick="setLastReadAyah(${surahNumber}, ${arabicAyah.numberInSurah})" style="font-size: 0.8rem; padding: 0.5rem 1rem; margin-top: 0.5rem;">
                                     Отметить как прочитанное
                                 </button>
                             `;
@@ -3250,16 +3238,7 @@
                             toggleButton.textContent = 'Приятная тема';
                         }
                         
-                        // ИСПРАВЛЕНИЕ: Делаем модальное окно статичным
-                        document.getElementById('surah-modal').style.position = 'fixed';
-                        document.getElementById('surah-modal').style.top = '0';
-                        document.getElementById('surah-modal').style.left = '0';
-                        document.getElementById('surah-modal').style.width = '100%';
-                        document.getElementById('surah-modal').style.height = '100%';
-                        document.getElementById('surah-modal').style.display = 'flex';
-                        document.getElementById('surah-modal').style.alignItems = 'center';
-                        document.getElementById('surah-modal').style.justifyContent = 'center';
-                        
+                        // ИСПРАВЛЕНИЕ: Открываем модальное окно
                         document.getElementById('surah-modal').classList.add('active');
                         
                         // ИСПРАВЛЕНИЕ: Предотвращаем скроллинг под модальным окном
@@ -3341,7 +3320,7 @@
             }
             
             if (isPlaying && currentAyah === ayahNumber) {
-                toggleAudio();
+                stopAudio();
                 return;
             }
             
@@ -3351,44 +3330,55 @@
             // Создаем аудио элемент
             currentAudio = new Audio();
             
-            // Вычисляем глобальный номер аята
-            const globalAyah = getGlobalAyah(surahNumber, ayahNumber);
+            // Формируем URL для API Al Quran Cloud
+            const audioUrl = `https://api.alquran.cloud/v1/ayah/${surahNumber}:${ayahNumber}/${currentReciter}`;
             
-            // Формируем прямой URL к аудио
-            currentAudio.src = `https://cdn.alquran.cloud/media/audio/ayah/${currentReciter}/${globalAyah}`;
-            
-            // ИСПРАВЛЕНИЕ: Добавляем атрибуты для PWA и iOS
-            currentAudio.setAttribute('playsinline', '');
-            currentAudio.setAttribute('webkit-playsinline', '');
-            currentAudio.preload = 'auto';
-            
-            // Пытаемся воспроизвести
-            const playPromise = currentAudio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // Обновляем UI
-                    document.getElementById('play-btn').classList.add('playing');
-                    document.getElementById('play-btn').textContent = '⏸️';
-                    isPlaying = true;
-                    
-                    // Подсвечиваем текущий аят
-                    highlightCurrentAyah(ayahNumber);
-                }).catch(error => {
-                    console.error('Ошибка воспроизведения:', error);
-                    showToast('Ошибка воспроизведения. Попробуйте еще раз.', 'error');
+            // Загружаем информацию об аяте для получения аудио URL
+            fetch(audioUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200 && data.data.audio) {
+                        currentAudio.src = data.data.audio;
+                        
+                        // ИСПРАВЛЕНИЕ: Добавляем обработчик для PWA
+                        currentAudio.setAttribute('playsinline', '');
+                        currentAudio.setAttribute('webkit-playsinline', '');
+                        
+                        // Пытаемся воспроизвести
+                        const playPromise = currentAudio.play();
+                        
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                // Обновляем UI
+                                document.getElementById('play-btn').classList.add('playing');
+                                document.getElementById('play-btn').textContent = '⏸️';
+                                isPlaying = true;
+                                
+                                // Подсвечиваем текущий аят
+                                highlightCurrentAyah(ayahNumber);
+                            }).catch(error => {
+                                console.error('Ошибка воспроизведения:', error);
+                                showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
+                            });
+                        }
+                        
+                        // Обработчики событий аудио
+                        currentAudio.addEventListener('ended', function() {
+                            stopAudio();
+                        });
+                        
+                        currentAudio.addEventListener('error', function() {
+                            showToast('Ошибка воспроизведения аята', 'error');
+                            stopAudio();
+                        });
+                    } else {
+                        throw new Error('Аудио не найдено');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки аудио:', error);
+                    showToast('Ошибка загрузки аудио', 'error');
                 });
-            }
-            
-            // Обработчики событий аудио
-            currentAudio.addEventListener('ended', function() {
-                stopAudio();
-            });
-            
-            currentAudio.addEventListener('error', function() {
-                showToast('Ошибка загрузки аудио', 'error');
-                stopAudio();
-            });
         }
 
         function playSurahAudio(surahNumber) {
