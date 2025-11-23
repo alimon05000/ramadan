@@ -1492,6 +1492,18 @@
             text-align: right;
             letter-spacing: 1px;
             word-spacing: 3px;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .ayah-arabic:hover {
+            background: rgba(11, 91, 63, 0.05);
+        }
+
+        body.dark-theme .ayah-arabic:hover {
+            background: rgba(217, 180, 74, 0.05);
         }
 
         .ayah-translation {
@@ -1808,6 +1820,68 @@
 
         body.dark-theme .reading-progress-text {
             color: var(--text-secondary-dark);
+        }
+
+        /* Audio Player Styles */
+        .audio-player {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+        }
+
+        body.dark-theme .audio-player {
+            background: var(--border-dark);
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .play-btn {
+            background: var(--primary-main);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .play-btn.playing {
+            background: var(--accent-gold);
+        }
+
+        .reciter-select {
+            background: var(--bg-card-light);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        body.dark-theme .reciter-select {
+            background: var(--bg-card-dark);
+            border-color: var(--border-dark);
+            color: var(--text-primary-dark);
+        }
+
+        .ayah-playing {
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.1), rgba(217, 180, 74, 0.05));
+            border-radius: var(--radius-sm);
+            padding: 0.5rem;
+        }
+
+        body.dark-theme .ayah-playing {
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.2), rgba(217, 180, 74, 0.1));
         }
     </style>
 </head>
@@ -2183,6 +2257,21 @@
                     <button class="modal-close" onclick="closeSurahModal()">×</button>
                 </div>
             </div>
+            
+            <!-- Audio Player Controls -->
+            <div class="audio-player" id="audio-player">
+                <div class="audio-controls">
+                    <button class="play-btn" id="play-btn">▶️</button>
+                    <select class="reciter-select" id="reciter-select">
+                        <option value="ar.alafasy">Мишари Рашид Аль-Афаси</option>
+                        <option value="ar.husary">Махмуд Халиль Аль-Хусари</option>
+                        <option value="ar.hudhaify">Али ибн Абдуррахман Аль-Хузейфи</option>
+                        <option value="ar.abdulbasit">Абдульбасит Абдуссамад</option>
+                    </select>
+                </div>
+                <span id="current-reciter">Выберите чтеца</span>
+            </div>
+            
             <div class="surah-content" id="surah-content">
                 <!-- Surah content will be loaded here -->
             </div>
@@ -2218,6 +2307,12 @@
         let translationFontSize = parseInt(localStorage.getItem('translationFontSize')) || 16;
         let warmLightEnabled = localStorage.getItem('warmLightEnabled') === 'true';
         let quranProgress = JSON.parse(localStorage.getItem('quranProgress')) || { readAyahs: 0, totalAyahs: 6236 };
+        
+        // Audio variables
+        let currentAudio = null;
+        let isPlaying = false;
+        let currentAyah = null;
+        let currentReciter = 'ar.alafasy';
 
         // Данные для подготовки
         const preparationData = [
@@ -2539,6 +2634,7 @@
             updateFontSizes();
             setupWarmLight();
             updateQuranProgress();
+            setupAudioControls();
         }
 
         function setupTheme() {
@@ -2650,6 +2746,21 @@
 
             // Переключение темы чтения Корана
             document.getElementById('quranThemeToggle').addEventListener('click', toggleQuranReadingTheme);
+        }
+
+        function setupAudioControls() {
+            const playBtn = document.getElementById('play-btn');
+            const reciterSelect = document.getElementById('reciter-select');
+            
+            playBtn.addEventListener('click', toggleAudio);
+            reciterSelect.addEventListener('change', function() {
+                currentReciter = this.value;
+                document.getElementById('current-reciter').textContent = this.options[this.selectedIndex].text;
+                if (isPlaying) {
+                    stopAudio();
+                    playAyah(currentAyah);
+                }
+            });
         }
 
         function toggleTheme() {
@@ -2956,7 +3067,7 @@
                                 </div>
                                 <div class="surah-actions">
                                     <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(${surah.number})">🔖</button>
-                                    <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(${surah.number})">🔊</button>
+                                    <button class="surah-action-btn" onclick="event.stopPropagation(); playSurahAudio(${surah.number})">🔊</button>
                                 </div>
                             </div>
                         `;
@@ -2998,7 +3109,7 @@
                         </div>
                         <div class="surah-actions">
                             <button class="surah-action-btn" onclick="event.stopPropagation(); toggleBookmark(${surah.number})">🔖</button>
-                            <button class="surah-action-btn" onclick="event.stopPropagation(); playAudio(${surah.number})">🔊</button>
+                            <button class="surah-action-btn" onclick="event.stopPropagation(); playSurahAudio(${surah.number})">🔊</button>
                         </div>
                     </div>
                 `;
@@ -3047,7 +3158,8 @@
                             
                             // ИСПРАВЛЕНИЕ: Не добавляем тасмию в первый аят
                             ayahContainer.innerHTML = `
-                                <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}>
+                                <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}
+                                    onclick="playAyah(${arabicAyah.numberInSurah}, ${surahNumber})">
                                     ${arabicAyah.text} <span class="ayah-number">${arabicAyah.numberInSurah}</span>
                                 </div>
                                 <div class="ayah-translation">
@@ -3092,6 +3204,7 @@
 
         function closeSurahModal() {
             document.getElementById('surah-modal').classList.remove('active');
+            stopAudio();
         }
 
         function navigateSurah(direction) {
@@ -3140,8 +3253,106 @@
             updateReadingProgress(); // Обновляем прогресс чтения
         }
 
-        function playAudio(surahNumber) {
-            showToast(`Воспроизведение суры ${surahNumber}`);
+        // === АУДИО ФУНКЦИИ ===
+
+        function playAyah(ayahNumber, surahNumber = currentSurah) {
+            if (isPlaying && currentAyah === ayahNumber) {
+                toggleAudio();
+                return;
+            }
+            
+            stopAudio();
+            currentAyah = ayahNumber;
+            
+            // Создаем аудио элемент
+            currentAudio = new Audio();
+            
+            // Формируем URL для API Al Quran Cloud
+            const audioUrl = `https://api.alquran.cloud/v1/ayah/${surahNumber}:${ayahNumber}/${currentReciter}`;
+            
+            // Загружаем информацию об аяте для получения аудио URL
+            fetch(audioUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200 && data.data.audio) {
+                        currentAudio.src = data.data.audio;
+                        currentAudio.play();
+                        
+                        // Обновляем UI
+                        document.getElementById('play-btn').classList.add('playing');
+                        document.getElementById('play-btn').textContent = '⏸️';
+                        isPlaying = true;
+                        
+                        // Подсвечиваем текущий аят
+                        highlightCurrentAyah(ayahNumber);
+                        
+                        // Обработчики событий аудио
+                        currentAudio.addEventListener('ended', function() {
+                            stopAudio();
+                        });
+                        
+                        currentAudio.addEventListener('error', function() {
+                            showToast('Ошибка воспроизведения аята', 'error');
+                            stopAudio();
+                        });
+                    } else {
+                        throw new Error('Аудио не найдено');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки аудио:', error);
+                    showToast('Ошибка загрузки аудио', 'error');
+                });
+        }
+
+        function playSurahAudio(surahNumber) {
+            // Воспроизводим первый аят суры
+            playAyah(1, surahNumber);
+        }
+
+        function toggleAudio() {
+            if (isPlaying) {
+                stopAudio();
+            } else if (currentAyah) {
+                playAyah(currentAyah, currentSurah);
+            } else {
+                showToast('Сначала выберите аят для воспроизведения', 'warning');
+            }
+        }
+
+        function stopAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            
+            isPlaying = false;
+            document.getElementById('play-btn').classList.remove('playing');
+            document.getElementById('play-btn').textContent = '▶️';
+            
+            // Убираем подсветку с текущего аята
+            removeAyahHighlight();
+        }
+
+        function highlightCurrentAyah(ayahNumber) {
+            // Убираем предыдущую подсветку
+            removeAyahHighlight();
+            
+            // Находим контейнер аята и добавляем класс подсветки
+            const ayahContainers = document.querySelectorAll('.ayah-container');
+            ayahContainers.forEach(container => {
+                const ayahArabic = container.querySelector('.ayah-arabic');
+                if (ayahArabic && ayahArabic.textContent.includes(ayahNumber)) {
+                    container.classList.add('ayah-playing');
+                }
+            });
+        }
+
+        function removeAyahHighlight() {
+            const highlightedAyahs = document.querySelectorAll('.ayah-playing');
+            highlightedAyahs.forEach(ayah => {
+                ayah.classList.remove('ayah-playing');
+            });
         }
 
         async function loadPrayerTimes() {
