@@ -115,6 +115,9 @@
             -webkit-overflow-scrolling: touch;
             height: calc(100vh - 80px);
             position: relative;
+            /* ИСПРАВЛЕНИЕ: Улучшение прокрутки на Android */
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
 
         .tab-content.active {
@@ -1489,6 +1492,9 @@
             overflow-y: auto;
             padding: 1.5rem;
             -webkit-overflow-scrolling: touch;
+            /* ИСПРАВЛЕНИЕ: Улучшение прокрутки на Android */
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
 
         .surah-content {
@@ -1928,12 +1934,88 @@
         .ayah-controls {
             display: none; /* Полностью скрываем кнопки */
         }
+
+        /* === Книжный режим Корана === */
+        .book-mode-toggle {
+            background: var(--accent-gold);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-left: 1rem;
+        }
+
+        .book-mode-toggle:hover {
+            background: #e6a429;
+        }
+
+        .book-mode {
+            background-color: #f8f4e9;
+            font-family: 'Amiri Quran', serif;
+            direction: rtl;
+            text-align: justify;
+            line-height: 2.5;
+            padding: 1rem;
+        }
+
+        .book-mode .ayah-arabic {
+            font-family: 'Amiri Quran', serif;
+            font-size: 1.8rem;
+            line-height: 2.5;
+            text-align: justify;
+            margin-bottom: 0.5rem;
+            color: #2a1e08;
+        }
+
+        .book-mode .ayah-number {
+            background: transparent;
+            color: #8B4513;
+            font-size: 0.9rem;
+            margin-left: 0.25rem;
+            margin-right: 0.25rem;
+        }
+
+        .book-mode .ayah-translation {
+            display: none;
+        }
+
+        .book-mode .audio-player {
+            display: none;
+        }
+
+        .book-mode .surah-navigation {
+            display: none;
+        }
+
+        .page-break {
+            page-break-after: always;
+            break-after: page;
+            margin-bottom: 2rem;
+        }
+
+        .page-number {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #8B4513;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ИСПРАВЛЕНИЕ: Улучшение прокрутки на Android */
+        .touch-scroll-fix {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Home Tab -->
-        <div id="home-tab" class="tab-content active">
+        <div id="home-tab" class="tab-content active touch-scroll-fix">
             <!-- Header -->
             <header class="header">
                 <div class="header-top">
@@ -2032,7 +2114,7 @@
         </div>
 
         <!-- Preparation Tab -->
-        <div id="preparation-tab" class="tab-content">
+        <div id="preparation-tab" class="tab-content touch-scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2051,7 +2133,7 @@
         </div>
 
         <!-- Quran Tab -->
-        <div id="quran-tab" class="tab-content">
+        <div id="quran-tab" class="tab-content touch-scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2096,7 +2178,7 @@
         </div>
 
         <!-- Prayer Tab -->
-        <div id="prayer-tab" class="tab-content">
+        <div id="prayer-tab" class="tab-content touch-scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2123,7 +2205,7 @@
         </div>
 
         <!-- Community Tab -->
-        <div id="community-tab" class="tab-content">
+        <div id="community-tab" class="tab-content touch-scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2166,7 +2248,7 @@
         </div>
 
         <!-- Dua Tab -->
-        <div id="dua-tab" class="tab-content">
+        <div id="dua-tab" class="tab-content touch-scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2185,7 +2267,7 @@
         </div>
 
         <!-- Profile Tab -->
-        <div id="profile-tab" class="tab-content">
+        <div id="profile-tab" class="tab-content touch-scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2299,6 +2381,8 @@
                 <div>
                     <!-- ИСПРАВЛЕНИЕ: Кнопка темы чтения Корана теперь видима на белой теме -->
                     <button class="theme-toggle-quran" id="quranThemeToggle">Приятная тема</button>
+                    <!-- НОВОЕ: Кнопка книжного режима -->
+                    <button class="book-mode-toggle" id="bookModeToggle">Книжный режим</button>
                     <button class="modal-close" onclick="closeSurahModal()">×</button>
                 </div>
             </div>
@@ -2317,7 +2401,7 @@
                 <span id="current-reciter">Выберите чтеца</span>
             </div>
             
-            <div class="modal-body">
+            <div class="modal-body touch-scroll-fix">
                 <div class="surah-content" id="surah-content">
                     <!-- Surah content will be loaded here -->
                 </div>
@@ -2355,6 +2439,9 @@
         let translationFontSize = parseInt(localStorage.getItem('translationFontSize')) || 16;
         let warmLightEnabled = localStorage.getItem('warmLightEnabled') === 'true';
         let quranProgress = JSON.parse(localStorage.getItem('quranProgress')) || { readAyahs: 0, totalAyahs: 6236 };
+        let bookModeEnabled = localStorage.getItem('bookModeEnabled') === 'true';
+        let dailyVerse = JSON.parse(localStorage.getItem('dailyVerse')) || null;
+        let dailyVerseDate = localStorage.getItem('dailyVerseDate') || null;
         
         // Audio variables
         let currentAudio = null;
@@ -2561,7 +2648,7 @@
             ],
             evening: [
                 {
-                    arabic: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ",
+                    arabic: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْdُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ",
                     translation: "Мы дожили до вечера, и власть принадлежит Аллаху, хвала Аллаху, нет божества, кроме Аллаха, и нет у Него сотоварища",
                     source: "Муслим 2723"
                 },
@@ -2582,6 +2669,45 @@
                 }
             ]
         };
+
+        // Аяты для ежедневного обновления
+        const dailyVerses = [
+            {
+                arabic: "إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا",
+                translation: "Воистину, Аллах и Его ангелы благословляют Пророка. О те, которые уверовали! Благословляйте его и приветствуйте миром.",
+                source: "Коран, 33:56 (перевод Э. Кулиева)"
+            },
+            {
+                arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+                translation: "Господь наш! Даруй нам добро в этом мире и добро в Последней жизни и защити нас от мучений в Огне.",
+                source: "Коран, 2:201 (перевод Э. Кулиева)"
+            },
+            {
+                arabic: "وَمَنْ يَتَّقِ اللَّهَ يَجْعَلْ لَهُ مَخْرَجًا وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ",
+                translation: "А того, кто боится Аллаха, Он спасет от беды и дарует ему пропитание, откуда он даже не предполагает.",
+                source: "Коран, 65:2-3 (перевод Э. Кулиева)"
+            },
+            {
+                arabic: "إِنَّ مَعَ الْعُسْرِ يُسْرًا إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+                translation: "Воистину, за каждой тягостью наступает облегчение. Воистину, за каждой тягостью наступает облегчение.",
+                source: "Коран, 94:5-6 (перевод Э. Кулиева)"
+            },
+            {
+                arabic: "وَلَا تَيْأَسُوا مِن رَّوْحِ اللَّهِ إِنَّهُ لَا يَيْأَسُ مِن رَّوْحِ اللَّهِ إِلَّا الْقَوْمُ الْكَافِرُونَ",
+                translation: "Не отчаивайтесь в милости Аллаха, ибо отчаиваются в милости Аллаха только люди неверующие.",
+                source: "Коран, 12:87 (перевод Э. Кулиева)"
+            },
+            {
+                arabic: "وَمَا خَلَقْتُ الْجِنَّ وَالْإِنسَ إِلَّا لِيَعْبُدُونِ",
+                translation: "Я сотворил джиннов и людей только для того, чтобы они поклонялись Мне.",
+                source: "Коран, 51:56 (перевод Э. Кулиева)"
+            },
+            {
+                arabic: "قُلْ هُوَ اللَّهُ أَحَدٌ اللَّهُ الصَّمَدُ لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+                translation: "Скажи: «Он - Аллах Единый, Аллах Самодостаточный. Он не родил и не был рожден, и нет никого, равного Ему».",
+                source: "Коран, 112:1-4 (перевод Э. Кулиева)"
+            }
+        ];
 
         // === ОСНОВНЫЕ ФУНКЦИИ НАВИГАЦИИ ===
 
@@ -2684,6 +2810,7 @@
             setupWarmLight();
             updateQuranProgress();
             setupAudioControls();
+            updateDailyVerse();
             
             // ИСПРАВЛЕНИЕ: Добавляем обработчик для отслеживания взаимодействия пользователя
             document.addEventListener('click', function() {
@@ -2794,6 +2921,9 @@
             // Переключение темы чтения Корана
             document.getElementById('quranThemeToggle').addEventListener('click', toggleQuranReadingTheme);
             
+            // Переключение книжного режима
+            document.getElementById('bookModeToggle').addEventListener('click', toggleBookMode);
+            
             // ИСПРАВЛЕНИЕ: Добавляем обработчик для кнопки закрытия
             document.querySelector('.modal-close').addEventListener('click', closeSurahModal);
         }
@@ -2836,6 +2966,30 @@
             localStorage.setItem('quranReadingTheme', quranReadingTheme);
         }
 
+        function toggleBookMode() {
+            const modalContent = document.getElementById('modal-content');
+            const toggleButton = document.getElementById('bookModeToggle');
+            const audioPlayer = document.getElementById('audio-player');
+            const surahNavigation = document.querySelector('.surah-navigation');
+            
+            bookModeEnabled = !bookModeEnabled;
+            localStorage.setItem('bookModeEnabled', bookModeEnabled);
+            
+            if (bookModeEnabled) {
+                modalContent.classList.add('book-mode');
+                toggleButton.textContent = 'Обычный режим';
+                audioPlayer.style.display = 'none';
+                surahNavigation.style.display = 'none';
+            } else {
+                modalContent.classList.remove('book-mode');
+                toggleButton.textContent = 'Книжный режим';
+                audioPlayer.style.display = 'flex';
+                surahNavigation.style.display = 'flex';
+            }
+            
+            showToast(bookModeEnabled ? 'Книжный режим включен' : 'Книжный режим выключен');
+        }
+
         function toggleWarmLight() {
             warmLightEnabled = !warmLightEnabled;
             localStorage.setItem('warmLightEnabled', warmLightEnabled);
@@ -2856,17 +3010,6 @@
             showToast(warmLightEnabled ? 'Теплый свет включен' : 'Теплый свет выключен');
         }
 
-        function setupWarmLight() {
-            const quranTab = document.getElementById('quran-tab');
-            const toggleButton = document.querySelector('.warm-light-toggle');
-            
-            if (warmLightEnabled) {
-                quranTab.classList.add('quran-reading-theme');
-                toggleButton.textContent = 'Обычный свет';
-                toggleButton.style.background = '#1C7A5C';
-            }
-        }
-
         function changeArabicFontSize(delta) {
             arabicFontSize = Math.max(16, Math.min(48, arabicFontSize + delta));
             localStorage.setItem('arabicFontSize', arabicFontSize);
@@ -2884,6 +3027,33 @@
         function updateFontSizes() {
             document.documentElement.style.setProperty('--arabic-font-size', arabicFontSize + 'px');
             document.documentElement.style.setProperty('--translation-font-size', translationFontSize + 'px');
+        }
+
+        function updateDailyVerse() {
+            const today = new Date().toDateString();
+            
+            // Если аят дня не обновлялся сегодня или не существует
+            if (!dailyVerse || dailyVerseDate !== today) {
+                // Выбираем случайный аят из списка
+                const randomIndex = Math.floor(Math.random() * dailyVerses.length);
+                dailyVerse = dailyVerses[randomIndex];
+                dailyVerseDate = today;
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('dailyVerse', JSON.stringify(dailyVerse));
+                localStorage.setItem('dailyVerseDate', dailyVerseDate);
+            }
+            
+            // Обновляем отображение аята дня
+            const verseArabic = document.querySelector('.verse-arabic');
+            const verseTranslation = document.querySelector('.verse-translation');
+            const verseSource = document.querySelector('.verse-source');
+            
+            if (verseArabic && verseTranslation && verseSource) {
+                verseArabic.textContent = dailyVerse.arabic;
+                verseTranslation.textContent = dailyVerse.translation;
+                verseSource.textContent = dailyVerse.source;
+            }
         }
 
         function toggleMainTask() {
@@ -3236,6 +3406,23 @@
                         } else {
                             modalContent.classList.remove('quran-reading-theme');
                             toggleButton.textContent = 'Приятная тема';
+                        }
+                        
+                        // Применяем сохраненный книжный режим
+                        const bookModeToggle = document.getElementById('bookModeToggle');
+                        const audioPlayer = document.getElementById('audio-player');
+                        const surahNavigation = document.querySelector('.surah-navigation');
+                        
+                        if (bookModeEnabled) {
+                            modalContent.classList.add('book-mode');
+                            bookModeToggle.textContent = 'Обычный режим';
+                            audioPlayer.style.display = 'none';
+                            surahNavigation.style.display = 'none';
+                        } else {
+                            modalContent.classList.remove('book-mode');
+                            bookModeToggle.textContent = 'Книжный режим';
+                            audioPlayer.style.display = 'flex';
+                            surahNavigation.style.display = 'flex';
                         }
                         
                         // ИСПРАВЛЕНИЕ: Открываем модальное окно
