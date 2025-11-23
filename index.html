@@ -17,6 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
     
     <style>
         /* === CSS Variables === */
@@ -46,6 +47,10 @@
             --shadow-md: 0 4px 20px rgba(11, 91, 63, 0.12);
             --shadow-lg: 0 8px 32px rgba(11, 91, 63, 0.15);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Quran font sizes */
+            --arabic-font-size: 2rem;
+            --translation-font-size: 1rem;
         }
 
         /* === Base Styles === */
@@ -599,8 +604,8 @@
         }
 
         .verse-arabic {
-            font-family: 'Amiri Quran', serif;
-            font-size: 1.5rem;
+            font-family: 'Lateef', serif;
+            font-size: var(--arabic-font-size);
             text-align: right;
             line-height: 2;
             margin-bottom: 1.25rem;
@@ -615,6 +620,7 @@
             margin-bottom: 1rem;
             line-height: 1.6;
             color: var(--text-primary-light);
+            font-size: var(--translation-font-size);
         }
 
         body.dark-theme .verse-translation {
@@ -760,6 +766,7 @@
             transition: var(--transition);
             cursor: pointer;
             touch-action: manipulation;
+            position: relative;
         }
 
         body.dark-theme .surah-card {
@@ -1054,8 +1061,8 @@
         }
 
         .dua-arabic {
-            font-family: 'Amiri Quran', serif;
-            font-size: 1.3rem;
+            font-family: 'Lateef', serif;
+            font-size: var(--arabic-font-size);
             text-align: right;
             line-height: 1.8;
             margin-bottom: 1rem;
@@ -1069,6 +1076,7 @@
             margin-bottom: 0.75rem;
             color: var(--text-secondary-light);
             line-height: 1.6;
+            font-size: var(--translation-font-size);
         }
 
         body.dark-theme .dua-translation {
@@ -1457,8 +1465,8 @@
         .surah-content {
             text-align: right;
             direction: rtl;
-            font-family: 'Amiri Quran', serif;
-            font-size: 1.5rem;
+            font-family: 'Lateef', serif;
+            font-size: var(--arabic-font-size);
             line-height: 2.5;
             margin-bottom: 1.5rem;
             -webkit-overflow-scrolling: touch;
@@ -1477,8 +1485,8 @@
         }
 
         .ayah-arabic {
-            font-family: 'Amiri Quran', serif;
-            font-size: 1.5rem;
+            font-family: 'Lateef', serif;
+            font-size: var(--arabic-font-size);
             line-height: 2;
             margin-bottom: 0.5rem;
             text-align: right;
@@ -1491,6 +1499,7 @@
             line-height: 1.6;
             color: var(--text-secondary-light);
             margin-bottom: 0.5rem;
+            font-size: var(--translation-font-size);
         }
 
         body.dark-theme .ayah-translation {
@@ -1600,8 +1609,8 @@
 
         .bismillah {
             text-align: center;
-            font-family: 'Amiri Quran', serif;
-            font-size: 2rem;
+            font-family: 'Lateef', serif;
+            font-size: 2.5rem;
             margin-bottom: 1.5rem;
             padding: 1rem;
             border-bottom: 2px solid var(--accent-gold);
@@ -1626,6 +1635,107 @@
             justify-content: center;
             font-size: 0.7rem;
             font-weight: bold;
+        }
+
+        .last-read-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--primary-main);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .quran-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+        }
+
+        body.dark-theme .quran-controls {
+            background: var(--border-dark);
+        }
+
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .font-size-btn {
+            background: var(--primary-main);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .font-size-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .warm-light-toggle {
+            background: var(--accent-gold);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .warm-light-toggle:hover {
+            background: #e6a429;
+        }
+
+        .progress-reading {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+        }
+
+        body.dark-theme .progress-reading {
+            background: var(--border-dark);
+        }
+
+        .progress-reading-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .progress-reading-title {
+            color: var(--accent-gold);
+        }
+
+        .progress-reading-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary-light);
+        }
+
+        body.dark-theme .progress-reading-text {
+            color: var(--text-secondary-dark);
         }
     </style>
 </head>
@@ -1762,6 +1872,25 @@
                     </button>
                 </div>
             </header>
+
+            <div class="quran-controls">
+                <div class="font-size-control">
+                    <span class="font-size-label">Арабский:</span>
+                    <button class="font-size-btn" onclick="changeArabicFontSize(-1)">A-</button>
+                    <button class="font-size-btn" onclick="changeArabicFontSize(1)">A+</button>
+                </div>
+                <button class="warm-light-toggle" onclick="toggleWarmLight()">Теплый свет</button>
+                <div class="font-size-control">
+                    <span class="font-size-label">Перевод:</span>
+                    <button class="font-size-btn" onclick="changeTranslationFontSize(-1)">A-</button>
+                    <button class="font-size-btn" onclick="changeTranslationFontSize(1)">A+</button>
+                </div>
+            </div>
+
+            <div class="progress-reading">
+                <div class="progress-reading-title">Ваш прогресс чтения</div>
+                <div class="progress-reading-text" id="reading-progress-text">Вы еще не начали чтение Корана</div>
+            </div>
 
             <div class="quran-section" id="quran-section">
                 <!-- Surahs will be loaded dynamically -->
@@ -2005,6 +2134,9 @@
         let quranReadingTheme = localStorage.getItem('quranReadingTheme') || 'default';
         let lastReadAyah = JSON.parse(localStorage.getItem('lastReadAyah')) || { surah: 1, ayah: 1 };
         let bookmarks = JSON.parse(localStorage.getItem('quranBookmarks')) || {};
+        let arabicFontSize = parseInt(localStorage.getItem('arabicFontSize')) || 32;
+        let translationFontSize = parseInt(localStorage.getItem('translationFontSize')) || 16;
+        let warmLightEnabled = localStorage.getItem('warmLightEnabled') === 'true';
 
         // Данные для подготовки
         const preparationData = [
@@ -2251,6 +2383,11 @@
                     activeTab.scrollTop = 0;
                 }
             }, 50);
+            
+            // Обновить прогресс чтения при открытии вкладки Корана
+            if (tabId === 'quran-tab') {
+                updateReadingProgress();
+            }
         }
 
         function showToast(message, type = 'success') {
@@ -2318,6 +2455,8 @@
             calculateProgress();
             setupNotifications();
             requestNotificationPermission();
+            updateFontSizes();
+            setupWarmLight();
         }
 
         function setupTheme() {
@@ -2452,6 +2591,56 @@
             }
             
             localStorage.setItem('quranReadingTheme', quranReadingTheme);
+        }
+
+        function toggleWarmLight() {
+            warmLightEnabled = !warmLightEnabled;
+            localStorage.setItem('warmLightEnabled', warmLightEnabled);
+            
+            const quranTab = document.getElementById('quran-tab');
+            const toggleButton = document.querySelector('.warm-light-toggle');
+            
+            if (warmLightEnabled) {
+                quranTab.classList.add('quran-reading-theme');
+                toggleButton.textContent = 'Обычный свет';
+                toggleButton.style.background = '#1C7A5C';
+            } else {
+                quranTab.classList.remove('quran-reading-theme');
+                toggleButton.textContent = 'Теплый свет';
+                toggleButton.style.background = '';
+            }
+            
+            showToast(warmLightEnabled ? 'Теплый свет включен' : 'Теплый свет выключен');
+        }
+
+        function setupWarmLight() {
+            const quranTab = document.getElementById('quran-tab');
+            const toggleButton = document.querySelector('.warm-light-toggle');
+            
+            if (warmLightEnabled) {
+                quranTab.classList.add('quran-reading-theme');
+                toggleButton.textContent = 'Обычный свет';
+                toggleButton.style.background = '#1C7A5C';
+            }
+        }
+
+        function changeArabicFontSize(delta) {
+            arabicFontSize = Math.max(16, Math.min(48, arabicFontSize + delta));
+            localStorage.setItem('arabicFontSize', arabicFontSize);
+            updateFontSizes();
+            showToast(`Размер арабского шрифта: ${arabicFontSize}px`);
+        }
+
+        function changeTranslationFontSize(delta) {
+            translationFontSize = Math.max(12, Math.min(24, translationFontSize + delta));
+            localStorage.setItem('translationFontSize', translationFontSize);
+            updateFontSizes();
+            showToast(`Размер перевода: ${translationFontSize}px`);
+        }
+
+        function updateFontSizes() {
+            document.documentElement.style.setProperty('--arabic-font-size', arabicFontSize + 'px');
+            document.documentElement.style.setProperty('--translation-font-size', translationFontSize + 'px');
         }
 
         function toggleMainTask() {
@@ -2598,6 +2787,21 @@
                 `Открой мусхаф и прочитай ${pagesToRead} страниц с медленным тажвидом. Постарайтесь понять смысл прочитанного и подумать над аятами.`;
         }
 
+        function updateReadingProgress() {
+            const progressText = document.getElementById('reading-progress-text');
+            
+            if (lastReadAyah.surah && lastReadAyah.ayah) {
+                const surah = allSurahs.find(s => s.number === lastReadAyah.surah);
+                if (surah) {
+                    progressText.textContent = `Вы остановились на суре ${surah.englishName} (${surah.name}), аят ${lastReadAyah.ayah}`;
+                } else {
+                    progressText.textContent = `Вы остановились на суре ${lastReadAyah.surah}, аят ${lastReadAyah.ayah}`;
+                }
+            } else {
+                progressText.textContent = 'Вы еще не начали чтение Корана';
+            }
+        }
+
         function loadPreparationData() {
             const weekSection = document.getElementById('week-section');
             weekSection.innerHTML = '';
@@ -2653,9 +2857,10 @@
                         return `
                             <div class="surah-card" onclick="openSurah(${surah.number})">
                                 ${isBookmarked ? '<div class="bookmark-indicator">🔖</div>' : ''}
+                                ${isLastRead ? '<div class="last-read-indicator">📖</div>' : ''}
                                 <div class="surah-number">${surah.number}</div>
                                 <div class="surah-info">
-                                    <div class="surah-name">${surah.englishName} (${surah.name}) ${isLastRead ? '📖' : ''}</div>
+                                    <div class="surah-name">${surah.englishName} (${surah.name})</div>
                                     <div class="surah-details">${surah.numberOfAyahs} аятов • ${surah.revelationType === 'Meccan' ? 'Мекканская' : 'Мединская'}</div>
                                 </div>
                                 <div class="surah-actions">
@@ -2683,7 +2888,8 @@
                 { number: 2, name: "البقرة", englishName: "Al-Baqarah", numberOfAyahs: 286, revelationType: "Medinan" },
                 { number: 3, name: "آل عمران", englishName: "Ali 'Imran", numberOfAyahs: 200, revelationType: "Medinan" },
                 { number: 4, name: "النساء", englishName: "An-Nisa", numberOfAyahs: 176, revelationType: "Medinan" },
-                { number: 5, name: "المائدة", englishName: "Al-Ma'idah", numberOfAyahs: 120, revelationType: "Medinan" }
+                { number: 5, name: "المائدة", englishName: "Al-Ma'idah", numberOfAyahs: 120, revelationType: "Medinan" },
+                { number: 9, name: "التوبة", englishName: "At-Tawbah", numberOfAyahs: 129, revelationType: "Medinan" }
             ];
             
             quranSection.innerHTML = fallbackSurahs.map(surah => {
@@ -2693,9 +2899,10 @@
                 return `
                     <div class="surah-card" onclick="openSurah(${surah.number})">
                         ${isBookmarked ? '<div class="bookmark-indicator">🔖</div>' : ''}
+                        ${isLastRead ? '<div class="last-read-indicator">📖</div>' : ''}
                         <div class="surah-number">${surah.number}</div>
                         <div class="surah-info">
-                            <div class="surah-name">${surah.englishName} (${surah.name}) ${isLastRead ? '📖' : ''}</div>
+                            <div class="surah-name">${surah.englishName} (${surah.name})</div>
                             <div class="surah-details">${surah.numberOfAyahs} аятов • ${surah.revelationType === 'Meccan' ? 'Мекканская' : 'Мединская'}</div>
                         </div>
                         <div class="surah-actions">
@@ -2728,11 +2935,13 @@
                         const surahContent = document.getElementById('surah-content');
                         surahContent.innerHTML = '';
                         
-                        // Добавляем тасмию отдельно
-                        const bismillah = document.createElement('div');
-                        bismillah.className = 'bismillah';
-                        bismillah.textContent = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
-                        surahContent.appendChild(bismillah);
+                        // Добавляем тасмию отдельно (кроме суры Ат-Тауба)
+                        if (surahNumber !== 9) {
+                            const bismillah = document.createElement('div');
+                            bismillah.className = 'bismillah';
+                            bismillah.textContent = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+                            surahContent.appendChild(bismillah);
+                        }
                         
                         // Создаем контейнеры для каждого аята с арабским текстом и переводом
                         for (let i = 0; i < arabicEdition.ayahs.length; i++) {
@@ -2817,6 +3026,7 @@
             localStorage.setItem('lastReadAyah', JSON.stringify(lastReadAyah));
             showToast(`Отмечен аят ${ayahNumber} суры ${surahNumber} как прочитанный`);
             loadQuranData(); // Перезагружаем список сур для обновления индикаторов
+            updateReadingProgress(); // Обновляем прогресс чтения
         }
 
         function playAudio(surahNumber) {
