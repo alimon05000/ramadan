@@ -1952,42 +1952,84 @@
             background: #e6a429;
         }
 
+        /* ИСПРАВЛЕНИЕ: Книжный режим теперь корректно работает в темной теме */
         .book-mode {
-            background-color: #f8f4e9;
-            font-family: 'Amiri Quran', serif;
-            direction: rtl;
-            text-align: justify;
-            line-height: 2.5;
-            padding: 1rem;
+            background-color: #f8f4e9 !important;
+            font-family: 'Amiri Quran', serif !important;
+            direction: rtl !important;
+            text-align: justify !important;
+            line-height: 2.5 !important;
+            padding: 1rem !important;
+            color: #2a1e08 !important;
         }
 
         .book-mode .ayah-arabic {
-            font-family: 'Amiri Quran', serif;
-            font-size: 1.8rem;
-            line-height: 2.5;
-            text-align: justify;
-            margin-bottom: 0.5rem;
-            color: #2a1e08;
+            font-family: 'Amiri Quran', serif !important;
+            font-size: 1.8rem !important;
+            line-height: 2.5 !important;
+            text-align: justify !important;
+            margin-bottom: 0.5rem !important;
+            color: #2a1e08 !important;
         }
 
         .book-mode .ayah-number {
-            background: transparent;
-            color: #8B4513;
-            font-size: 0.9rem;
-            margin-left: 0.25rem;
-            margin-right: 0.25rem;
+            background: transparent !important;
+            color: #8B4513 !important;
+            font-size: 0.9rem !important;
+            margin-left: 0.25rem !important;
+            margin-right: 0.25rem !important;
         }
 
         .book-mode .ayah-translation {
-            display: none;
+            display: none !important;
         }
 
         .book-mode .audio-player {
-            display: none;
+            display: none !important;
         }
 
         .book-mode .surah-navigation {
-            display: none;
+            display: none !important;
+        }
+
+        .book-mode .modal-header {
+            background-color: #f8f4e9 !important;
+            border-bottom: 2px solid #D9B44A !important;
+        }
+
+        .book-mode .modal-title {
+            color: #8B4513 !important;
+        }
+
+        .book-mode .modal-close {
+            color: #8B4513 !important;
+        }
+
+        /* ИСПРАВЛЕНИЕ: Темная тема в книжном режиме */
+        body.dark-theme .book-mode {
+            background-color: #1a1200 !important;
+            color: #f0e6d1 !important;
+        }
+
+        body.dark-theme .book-mode .ayah-arabic {
+            color: #f0e6d1 !important;
+        }
+
+        body.dark-theme .book-mode .ayah-number {
+            color: #D9B44A !important;
+        }
+
+        body.dark-theme .book-mode .modal-header {
+            background-color: #1a1200 !important;
+            border-bottom: 2px solid #D9B44A !important;
+        }
+
+        body.dark-theme .book-mode .modal-title {
+            color: #D9B44A !important;
+        }
+
+        body.dark-theme .book-mode .modal-close {
+            color: #D9B44A !important;
         }
 
         .page-break {
