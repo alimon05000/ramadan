@@ -2420,6 +2420,88 @@
         body.dark-theme .level-10 .level-card {
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.2));
         }
+
+        /* Стили для заблокированных уровней */
+        .level-card.locked {
+            opacity: 0.6;
+            filter: grayscale(0.7);
+        }
+
+        .level-card.locked .level-requirements {
+            display: none;
+        }
+
+        .level-card.locked .level-progress {
+            display: none;
+        }
+
+        .locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: var(--radius-md);
+        }
+
+        /* Стили для отметки страниц в режиме чтения */
+        .page-mark-button {
+            background: var(--accent-gold);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .page-mark-button:hover {
+            background: #e6a429;
+        }
+
+        .page-mark-button.marked {
+            background: var(--success);
+        }
+
+        /* Анимация разблокировки уровня */
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-gold);
+            opacity: 0;
+            z-index: 4000;
+            animation: confetti 2s ease-out forwards;
+        }
+
+        /* Уникальные темы для каждого уровня */
+        .level-theme-1 { --primary-main: #10B981; --primary-dark: #059669; }
+        .level-theme-2 { --primary-main: #0EA5E9; --primary-dark: #0284C7; }
+        .level-theme-3 { --primary-main: #8B5CF6; --primary-dark: #7C3AED; }
+        .level-theme-4 { --primary-main: #F59E0B; --primary-dark: #D97706; }
+        .level-theme-5 { --primary-main: #EF4444; --primary-dark: #DC2626; }
+        .level-theme-6 { --primary-main: #EC4899; --primary-dark: #DB2777; }
+        .level-theme-7 { --primary-main: #06B6D4; --primary-dark: #0891B2; }
+        .level-theme-8 { --primary-main: #84CC16; --primary-dark: #65A30D; }
+        .level-theme-9 { --primary-main: #F97316; --primary-dark: #EA580C; }
+        .level-theme-10 { --primary-main: #8B5CF6; --primary-dark: #7C3AED; }
     </style>
 </head>
 <body>
@@ -2895,6 +2977,9 @@
                     <!-- Содержимое страницы будет загружено здесь -->
                 </div>
                 <div class="page-number" id="page-number">Страница 1</div>
+                <button class="page-mark-button" id="page-mark-button" onclick="togglePageMark()">
+                    <span>📌</span> Отметить страницу
+                </button>
             </div>
         </div>
     </div>
@@ -3381,6 +3466,10 @@
             legacyLeft: false
         };
 
+        // Переменные для отметки страниц
+        let markedPages = JSON.parse(localStorage.getItem('markedPages')) || [];
+        let currentPageMarked = false;
+
         // === ОСНОВНЫЕ ФУНКЦИИ НАВИГАЦИИ ===
 
         function showTab(tabId) {
@@ -3416,6 +3505,9 @@
             if (tabId === 'levels-tab' || tabId === 'profile-tab') {
                 loadLevels();
             }
+            
+            // Применяем тему текущего уровня
+            applyLevelTheme();
         }
 
         function showToast(message, type = 'success') {
@@ -3490,6 +3582,7 @@
             updateDailyVerse();
             loadLevels();
             setupBookMode();
+            applyLevelTheme();
             
             // ИСПРАВЛЕНИЕ: Добавляем обработчик для отслеживания взаимодействия пользователя
             document.addEventListener('click', function() {
@@ -4314,6 +4407,9 @@
                     // Применяем сохраненный размер шрифта
                     applyBookFontSize();
                     
+                    // Обновляем состояние кнопки отметки страницы
+                    updatePageMarkButton();
+                    
                 } else {
                     throw new Error('Не удалось загрузить страницу Корана');
                 }
@@ -4356,6 +4452,47 @@
                 
                 // Проверяем выполнение требований уровней
                 checkLevelRequirements();
+            }
+        }
+
+        // === ФУНКЦИИ ДЛЯ ОТМЕТКИ СТРАНИЦ ===
+
+        function togglePageMark() {
+            const pageMarkButton = document.getElementById('page-mark-button');
+            
+            if (currentPageMarked) {
+                // Убираем отметку
+                markedPages = markedPages.filter(page => page !== currentPage);
+                pageMarkButton.classList.remove('marked');
+                pageMarkButton.innerHTML = '<span>📌</span> Отметить страницу';
+                showToast('Страница удалена из отмеченных', 'warning');
+            } else {
+                // Добавляем отметку
+                if (!markedPages.includes(currentPage)) {
+                    markedPages.push(currentPage);
+                }
+                pageMarkButton.classList.add('marked');
+                pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
+                showToast('Страница отмечена!', 'success');
+                
+                // Обновляем статистику прочитанных страниц
+                updateReadingProgressAfterPage();
+            }
+            
+            currentPageMarked = !currentPageMarked;
+            localStorage.setItem('markedPages', JSON.stringify(markedPages));
+        }
+
+        function updatePageMarkButton() {
+            const pageMarkButton = document.getElementById('page-mark-button');
+            currentPageMarked = markedPages.includes(currentPage);
+            
+            if (currentPageMarked) {
+                pageMarkButton.classList.add('marked');
+                pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
+            } else {
+                pageMarkButton.classList.remove('marked');
+                pageMarkButton.innerHTML = '<span>📌</span> Отметить страницу';
             }
         }
 
@@ -4641,7 +4778,7 @@
 
         function createLevelCard(level) {
             const levelCard = document.createElement('div');
-            levelCard.className = `level-card level-${level.id} ${level.id === userProgress.currentLevel ? 'current' : ''}`;
+            levelCard.className = `level-card level-${level.id} ${level.id === userProgress.currentLevel ? 'current' : ''} ${level.id > userProgress.currentLevel ? 'locked' : ''}`;
             
             // Проверяем выполнение требований для этого уровня
             const requirementsStatus = checkLevelRequirementsStatus(level);
@@ -4653,23 +4790,29 @@
                     <div class="level-badge">Уровень ${level.id}</div>
                 </div>
                 <div class="level-description">${level.description}</div>
-                <div class="level-requirements">
-                    ${level.requirements.map(req => {
-                        const isCompleted = requirementsStatus.find(r => r.description === req.description)?.completed || false;
-                        return `
-                            <div class="requirement ${isCompleted ? 'completed' : ''}">
-                                ${isCompleted ? '✓' : '○'} ${req.description}
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-                <div class="level-progress">
-                    <div class="level-progress-fill" style="width: ${progress}%"></div>
-                </div>
-                ${level.id === userProgress.currentLevel && progress === 100 ? 
-                    `<button class="nav-button" style="margin-top: 1rem; width: 100%;" onclick="unlockNextLevel(${level.id})">
-                        Разблокировать следующий уровень
-                    </button>` : ''}
+                ${level.id <= userProgress.currentLevel ? `
+                    <div class="level-requirements">
+                        ${level.requirements.map(req => {
+                            const isCompleted = requirementsStatus.find(r => r.description === req.description)?.completed || false;
+                            return `
+                                <div class="requirement ${isCompleted ? 'completed' : ''}">
+                                    ${isCompleted ? '✓' : '○'} ${req.description}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div class="level-progress">
+                        <div class="level-progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    ${level.id === userProgress.currentLevel && progress === 100 ? 
+                        `<button class="nav-button" style="margin-top: 1rem; width: 100%;" onclick="unlockNextLevel(${level.id})">
+                            Разблокировать следующий уровень
+                        </button>` : ''}
+                ` : `
+                    <div class="locked-overlay">
+                        🔒 Уровень заблокирован
+                    </div>
+                `}
             `;
             
             return levelCard;
@@ -4790,6 +4933,9 @@
             
             // Обновляем отображение
             loadLevels();
+            
+            // Применяем новую тему уровня
+            applyLevelTheme();
         }
 
         function showLevelUnlockAnimation(level) {
@@ -4803,10 +4949,32 @@
             levelDua.textContent = level.dua;
             
             animation.classList.add('active');
+            
+            // Создаем конфетти
+            createConfetti();
         }
 
         function closeLevelUnlock() {
             document.getElementById('level-unlock-animation').classList.remove('active');
+        }
+
+        function createConfetti() {
+            const colors = ['#10B981', '#0EA5E9', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16', '#F97316'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                
+                document.body.appendChild(confetti);
+                
+                // Удаляем конфетти после анимации
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
         }
 
         function updateCurrentLevelDisplay() {
@@ -4825,6 +4993,20 @@
 
         function showAchievements() {
             showToast('Раздел "Достижения" находится в разработке!', 'warning');
+        }
+
+        // === ФУНКЦИИ ДЛЯ ТЕМ УРОВНЕЙ ===
+
+        function applyLevelTheme() {
+            const currentLevel = userProgress.currentLevel;
+            const themeClass = `level-theme-${currentLevel}`;
+            
+            // Удаляем предыдущие темы
+            document.body.classList.remove('level-theme-1', 'level-theme-2', 'level-theme-3', 'level-theme-4', 'level-theme-5', 
+                                         'level-theme-6', 'level-theme-7', 'level-theme-8', 'level-theme-9', 'level-theme-10');
+            
+            // Применяем новую тему
+            document.body.classList.add(themeClass);
         }
 
         async function setupServiceWorker() {
