@@ -2208,6 +2208,8 @@
             display: flex;
             align-items: center;
             gap: 0.25rem;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         body.dark-theme .requirement {
@@ -2217,6 +2219,11 @@
         .requirement.completed {
             background: var(--success);
             color: white;
+        }
+
+        .requirement:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
         .level-progress {
@@ -2930,6 +2937,7 @@
                         <option value="ar.husary">Махмуд Халиль Аль-Хусари</option>
                         <option value="ar.hudhaify">Али ибн Абдуррахман Аль-Хузейфи</option>
                         <option value="ar.abdulbasit">Абдульбасит Абдуссамад</option>
+                        <option value="ar.mahermuaiqly">Муайкли</option>
                     </select>
                 </div>
                 <span id="current-reciter">Выберите чтеца</span>
@@ -3246,7 +3254,7 @@
                     source: "Бухари 6363"
                 },
                 {
-                    arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ وَأَعُوذُ بِكَ مِنْ شَرِّ هَذِهِ اللَّيْلَةِ",
+                    arabic: "اللَّهُمَّ إِنِّi أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ وَأَعُوذُ بِكَ مِنْ شَرِّ هَذِهِ اللَّيْلَةِ",
                     translation: "О Аллах, я прошу у Тебя блага этой ночи и прибегаю к Тебе от зла этой ночи",
                     source: "Абу Дауд 5046"
                 }
@@ -3463,7 +3471,9 @@
             eventsLed: 0,
             quranCompleted: false,
             ramadanCompleted: false,
-            legacyLeft: false
+            legacyLeft: false,
+            // Добавляем хранение состояния отдельных требований
+            levelRequirements: {}
         };
 
         // Переменные для отметки страниц
@@ -4475,12 +4485,37 @@
                 pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
                 showToast('Страница отмечена!', 'success');
                 
+                // ИСПРАВЛЕНИЕ: Автоматически отмечаем предыдущие страницы
+                markPreviousPages(currentPage);
+                
                 // Обновляем статистику прочитанных страниц
                 updateReadingProgressAfterPage();
             }
             
             currentPageMarked = !currentPageMarked;
             localStorage.setItem('markedPages', JSON.stringify(markedPages));
+        }
+
+        // ИСПРАВЛЕНИЕ: Функция для автоматической отметки предыдущих страниц
+        function markPreviousPages(currentPage) {
+            for (let i = 1; i < currentPage; i++) {
+                if (!markedPages.includes(i)) {
+                    markedPages.push(i);
+                }
+            }
+            localStorage.setItem('markedPages', JSON.stringify(markedPages));
+            
+            // Обновляем статистику прочитанных страниц
+            userProgress.pagesRead = markedPages.length;
+            localStorage.setItem('userProgress', JSON.stringify(userProgress));
+            
+            // Обновляем отображение прогресса
+            updateQuranProgressDisplay();
+            
+            // Проверяем требования уровней
+            checkLevelRequirements();
+            
+            showToast(`Отмечены страницы 1-${currentPage}`, 'success');
         }
 
         function updatePageMarkButton() {
@@ -4517,55 +4552,65 @@
             // Создаем аудио элемент
             currentAudio = new Audio();
             
-            // Формируем URL для API Al Quran Cloud
-            const audioUrl = `https://api.alquran.cloud/v1/ayah/${surahNumber}:${ayahNumber}/${currentReciter}`;
+            // ИСПРАВЛЕНИЕ: Формируем правильный URL для API Al Quran Cloud
+            // Используем правильный формат для выбранного чтеца
+            let audioUrl;
             
-            // Загружаем информацию об аяте для получения аудио URL
-            fetch(audioUrl)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.code === 200 && data.data.audio) {
-                        currentAudio.src = data.data.audio;
-                        
-                        // ИСПРАВЛЕНИЕ: Добавляем обработчик для PWA
-                        currentAudio.setAttribute('playsinline', '');
-                        currentAudio.setAttribute('webkit-playsinline', '');
-                        
-                        // Пытаемся воспроизвести
-                        const playPromise = currentAudio.play();
-                        
-                        if (playPromise !== undefined) {
-                            playPromise.then(() => {
-                                // Обновляем UI
-                                document.getElementById('play-btn').classList.add('playing');
-                                document.getElementById('play-btn').textContent = '⏸️';
-                                isPlaying = true;
-                                
-                                // Подсвечиваем текущий аят
-                                highlightCurrentAyah(ayahNumber);
-                            }).catch(error => {
-                                console.error('Ошибка воспроизведения:', error);
-                                showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
-                            });
-                        }
-                        
-                        // Обработчики событий аудио
-                        currentAudio.addEventListener('ended', function() {
-                            stopAudio();
-                        });
-                        
-                        currentAudio.addEventListener('error', function() {
-                            showToast('Ошибка воспроизведения аята', 'error');
-                            stopAudio();
-                        });
-                    } else {
-                        throw new Error('Аудио не найдено');
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка загрузки аудио:', error);
-                    showToast('Ошибка загрузки аудио', 'error');
+            // Формируем URL в зависимости от выбранного чтеца
+            switch(currentReciter) {
+                case 'ar.alafasy':
+                    audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${surahNumber}/${ayahNumber}.mp3`;
+                    break;
+                case 'ar.husary':
+                    audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.husary/${surahNumber}/${ayahNumber}.mp3`;
+                    break;
+                case 'ar.hudhaify':
+                    audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.hudhaify/${surahNumber}/${ayahNumber}.mp3`;
+                    break;
+                case 'ar.abdulbasit':
+                    audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.abdulbasit/${surahNumber}/${ayahNumber}.mp3`;
+                    break;
+                case 'ar.mahermuaiqly':
+                    audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.mahermuaiqly/${surahNumber}/${ayahNumber}.mp3`;
+                    break;
+                default:
+                    audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${surahNumber}/${ayahNumber}.mp3`;
+            }
+            
+            // Загружаем и воспроизводим аудио
+            currentAudio.src = audioUrl;
+            
+            // ИСПРАВЛЕНИЕ: Добавляем обработчик для PWA
+            currentAudio.setAttribute('playsinline', '');
+            currentAudio.setAttribute('webkit-playsinline', '');
+            
+            // Пытаемся воспроизвести
+            const playPromise = currentAudio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Обновляем UI
+                    document.getElementById('play-btn').classList.add('playing');
+                    document.getElementById('play-btn').textContent = '⏸️';
+                    isPlaying = true;
+                    
+                    // Подсвечиваем текущий аят
+                    highlightCurrentAyah(ayahNumber);
+                }).catch(error => {
+                    console.error('Ошибка воспроизведения:', error);
+                    showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
                 });
+            }
+            
+            // Обработчики событий аудио
+            currentAudio.addEventListener('ended', function() {
+                stopAudio();
+            });
+            
+            currentAudio.addEventListener('error', function() {
+                showToast('Ошибка воспроизведения аята', 'error');
+                stopAudio();
+            });
         }
 
         function playSurahAudio(surahNumber) {
@@ -4795,7 +4840,8 @@
                         ${level.requirements.map(req => {
                             const isCompleted = requirementsStatus.find(r => r.description === req.description)?.completed || false;
                             return `
-                                <div class="requirement ${isCompleted ? 'completed' : ''}">
+                                <div class="requirement ${isCompleted ? 'completed' : ''}" 
+                                     onclick="toggleLevelRequirement(${level.id}, '${req.description}')">
                                     ${isCompleted ? '✓' : '○'} ${req.description}
                                 </div>
                             `;
@@ -4818,77 +4864,118 @@
             return levelCard;
         }
 
+        // ИСПРАВЛЕНИЕ: Функция для отметки выполнения отдельных требований уровня
+        function toggleLevelRequirement(levelId, requirementDescription) {
+            // Инициализируем хранилище требований, если его нет
+            if (!userProgress.levelRequirements) {
+                userProgress.levelRequirements = {};
+            }
+            
+            // Инициализируем требования для уровня, если их нет
+            if (!userProgress.levelRequirements[levelId]) {
+                userProgress.levelRequirements[levelId] = {};
+            }
+            
+            // Переключаем состояние требования
+            const currentState = userProgress.levelRequirements[levelId][requirementDescription] || false;
+            userProgress.levelRequirements[levelId][requirementDescription] = !currentState;
+            
+            // Сохраняем прогресс
+            localStorage.setItem('userProgress', JSON.stringify(userProgress));
+            
+            // Обновляем отображение уровней
+            loadLevels();
+            
+            // Показываем уведомление
+            if (!currentState) {
+                showToast('Требование выполнено!', 'success');
+            } else {
+                showToast('Требование отменено', 'warning');
+            }
+            
+            // Проверяем, можно ли разблокировать следующий уровень
+            checkLevelRequirements();
+        }
+
         function checkLevelRequirementsStatus(level) {
             return level.requirements.map(req => {
                 let completed = false;
                 
-                switch(req.type) {
-                    case 'pages':
-                        completed = userProgress.pagesRead >= req.target;
-                        break;
-                    case 'tasks':
-                        completed = userProgress.tasksCompleted >= req.target;
-                        break;
-                    case 'azkar':
-                        completed = userProgress.azkarMemorized >= req.target;
-                        break;
-                    case 'surah':
-                        completed = userProgress.surahsMemorized >= req.target;
-                        break;
-                    case 'prayer':
-                        completed = userProgress.prayersOnTime >= req.target;
-                        break;
-                    case 'fasting':
-                        completed = userProgress.fastingDays >= req.target;
-                        break;
-                    case 'charity':
-                        completed = userProgress.charityActs >= req.target;
-                        break;
-                    case 'companions':
-                        completed = userProgress.companionsStudied >= req.target;
-                        break;
-                    case 'tajweed':
-                        completed = userProgress.tajweedLearned;
-                        break;
-                    case 'sunnah':
-                        completed = userProgress.sunnahImplemented >= req.target;
-                        break;
-                    case 'community':
-                        completed = userProgress.communityHelped >= req.target;
-                        break;
-                    case 'teaching':
-                        completed = userProgress.peopleTaught >= req.target;
-                        break;
-                    case 'article':
-                        completed = userProgress.articlesWritten >= req.target;
-                        break;
-                    case 'tafsir':
-                        completed = userProgress.tafsirStudied >= req.target;
-                        break;
-                    case 'fiqh':
-                        completed = userProgress.fiqhLearned;
-                        break;
-                    case 'character':
-                        completed = userProgress.characterImproved >= req.target;
-                        break;
-                    case 'service':
-                        completed = userProgress.communityService >= req.target;
-                        break;
-                    case 'juz':
-                        completed = userProgress.juzMemorized >= req.target;
-                        break;
-                    case 'leadership':
-                        completed = userProgress.eventsLed >= req.target;
-                        break;
-                    case 'quran':
-                        completed = userProgress.quranCompleted;
-                        break;
-                    case 'ramadan':
-                        completed = userProgress.ramadanCompleted;
-                        break;
-                    case 'legacy':
-                        completed = userProgress.legacyLeft;
-                        break;
+                // Сначала проверяем ручную отметку требования
+                if (userProgress.levelRequirements && 
+                    userProgress.levelRequirements[level.id] && 
+                    userProgress.levelRequirements[level.id][req.description]) {
+                    completed = true;
+                } else {
+                    // Затем проверяем автоматическое выполнение
+                    switch(req.type) {
+                        case 'pages':
+                            completed = userProgress.pagesRead >= req.target;
+                            break;
+                        case 'tasks':
+                            completed = userProgress.tasksCompleted >= req.target;
+                            break;
+                        case 'azkar':
+                            completed = userProgress.azkarMemorized >= req.target;
+                            break;
+                        case 'surah':
+                            completed = userProgress.surahsMemorized >= req.target;
+                            break;
+                        case 'prayer':
+                            completed = userProgress.prayersOnTime >= req.target;
+                            break;
+                        case 'fasting':
+                            completed = userProgress.fastingDays >= req.target;
+                            break;
+                        case 'charity':
+                            completed = userProgress.charityActs >= req.target;
+                            break;
+                        case 'companions':
+                            completed = userProgress.companionsStudied >= req.target;
+                            break;
+                        case 'tajweed':
+                            completed = userProgress.tajweedLearned;
+                            break;
+                        case 'sunnah':
+                            completed = userProgress.sunnahImplemented >= req.target;
+                            break;
+                        case 'community':
+                            completed = userProgress.communityHelped >= req.target;
+                            break;
+                        case 'teaching':
+                            completed = userProgress.peopleTaught >= req.target;
+                            break;
+                        case 'article':
+                            completed = userProgress.articlesWritten >= req.target;
+                            break;
+                        case 'tafsir':
+                            completed = userProgress.tafsirStudied >= req.target;
+                            break;
+                        case 'fiqh':
+                            completed = userProgress.fiqhLearned;
+                            break;
+                        case 'character':
+                            completed = userProgress.characterImproved >= req.target;
+                            break;
+                        case 'service':
+                            completed = userProgress.communityService >= req.target;
+                            break;
+                        case 'juz':
+                            completed = userProgress.juzMemorized >= req.target;
+                            break;
+                        case 'leadership':
+                            completed = userProgress.eventsLed >= req.target;
+                            break;
+                        case 'quran':
+                            completed = userProgress.quranCompleted;
+                            break;
+                        case 'ramadan':
+                            completed = userProgress.ramadanCompleted;
+                            break;
+                        case 'legacy':
+                            completed = userProgress.legacyLeft;
+                            break;
+                    }
                 }
                 
                 return {
