@@ -2586,6 +2586,35 @@
             0% { width: 0%; }
             100% { width: var(--target-width); }
         }
+
+        /* === ИСПРАВЛЕНИЯ ДЛЯ КЛИКАБЕЛЬНОСТИ === */
+        button, .nav-item, .action-button, .task-checkbox, .task-item, .surah-card, .surah-action-btn, .community-button, .profile-action-btn, .requirement, .ayah-arabic {
+            cursor: pointer !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+            touch-action: manipulation !important;
+        }
+
+        /* Улучшение отзывчивости для мобильных устройств */
+        @media (max-width: 768px) {
+            button, .nav-item, .action-button, .task-checkbox, .task-item, .surah-card, .surah-action-btn, .community-button, .profile-action-btn, .requirement, .ayah-arabic {
+                min-height: 44px !important;
+                min-width: 44px !important;
+            }
+        }
+
+        /* Улучшение визуальной обратной связи при нажатии */
+        button:active, .nav-item:active, .action-button:active, .task-checkbox:active, .task-item:active, .surah-card:active, .surah-action-btn:active, .community-button:active, .profile-action-btn:active, .requirement:active {
+            transform: scale(0.98) !important;
+            transition: transform 0.1s ease !important;
+        }
+
+        /* Убедимся, что все интерактивные элементы видны и доступны */
+        .theme-toggle, .verse-bookmark, .modal-close, .font-size-btn, .warm-light-toggle, .book-mode-toggle, .theme-toggle-quran, .play-btn, .nav-button, .page-mark-button {
+            position: relative !important;
+            z-index: 10 !important;
+        }
     </style>
 </head>
 <body>
@@ -3168,7 +3197,7 @@
                 theme: "Сосредоточенность и регулярность",
                 tasks: [
                     "Совершать все намазы вовремя",
-                    "Готовиться к намазу за 5 минут",
+                    "Готовиться к намаз за 5 минут",
                     "Читать дополнительные суннат-намазы",
                     "Улучшать концентрацию в намазе",
                     "Изучать значения читаемого в намазе",
