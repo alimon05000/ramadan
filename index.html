@@ -3345,7 +3345,7 @@
             ],
             evening: [
                 {
-                    arabic: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْdُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ",
+                    arabic: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ",
                     translation: "Мы дожили до вечера, и власть принадлежит Аллаху, хвала Аллаху, нет божества, кроме Аллаха, и нет у Него сотоварища",
                     source: "Муслим 2723"
                 },
@@ -3360,7 +3360,7 @@
                     source: "Бухари 6363"
                 },
                 {
-                    arabic: "اللَّهُمَّ إِنِّi أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ وَأَعُوذُ بِكَ مِنْ شَرِّ هَذِهِ اللَّيْلَةِ",
+                    arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ وَأَعُوذُ بِكَ مِنْ شَرِّ هَذِهِ اللَّيْلَةِ",
                     translation: "О Аллах, я прошу у Тебя блага этой ночи и прибегаю к Тебе от зла этой ночи",
                     source: "Абу Дауд 5046"
                 }
@@ -3595,14 +3595,20 @@
             });
             
             // Показать выбранную вкладку
-            document.getElementById(tabId).classList.add('active');
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
             
             // Обновить навигацию
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            const activeNavItem = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
             
             // Сброс прокрутки для PWA
             setTimeout(() => {
@@ -3752,7 +3758,10 @@
             });
 
             // Отметка задачи как выполненной
-            document.getElementById('taskCheckbox').addEventListener('click', toggleMainTask);
+            const taskCheckbox = document.getElementById('taskCheckbox');
+            if (taskCheckbox) {
+                taskCheckbox.addEventListener('click', toggleMainTask);
+            }
 
             // Переключение тёмной темы через switch
             const darkThemeSwitch = document.getElementById('darkThemeSwitch');
@@ -3795,54 +3804,90 @@
             }, { passive: false });
 
             // ИСПРАВЛЕНИЕ: Закрытие модального окна при клике вне его
-            document.getElementById('surah-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeSurahModal();
-                }
-            });
+            const surahModal = document.getElementById('surah-modal');
+            if (surahModal) {
+                surahModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeSurahModal();
+                    }
+                });
+            }
 
             // Закрытие модального окна при клике на пустое место
-            document.getElementById('modal-content').addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
+            const modalContent = document.getElementById('modal-content');
+            if (modalContent) {
+                modalContent.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
             
             // Переключение темы чтения Корана
-            document.getElementById('quranThemeToggle').addEventListener('click', toggleQuranReadingTheme);
+            const quranThemeToggle = document.getElementById('quranThemeToggle');
+            if (quranThemeToggle) {
+                quranThemeToggle.addEventListener('click', toggleQuranReadingTheme);
+            }
             
             // Переключение книжного режима
-            document.getElementById('bookModeToggle').addEventListener('click', toggleBookMode);
+            const bookModeToggle = document.getElementById('bookModeToggle');
+            if (bookModeToggle) {
+                bookModeToggle.addEventListener('click', toggleBookMode);
+            }
             
             // ИСПРАВЛЕНИЕ: Добавляем обработчик для кнопки закрытия
-            document.querySelector('.modal-close').addEventListener('click', closeSurahModal);
+            const modalClose = document.querySelector('.modal-close');
+            if (modalClose) {
+                modalClose.addEventListener('click', closeSurahModal);
+            }
             
             // Обработчики для книжного режима
-            document.getElementById('book-mode-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeBookModeModal();
-                }
-            });
+            const bookModeModal = document.getElementById('book-mode-modal');
+            if (bookModeModal) {
+                bookModeModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeBookModeModal();
+                    }
+                });
+            }
             
-            document.getElementById('book-modal-content').addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
+            const bookModalContent = document.getElementById('book-modal-content');
+            if (bookModalContent) {
+                bookModalContent.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
             
-            document.getElementById('bookThemeToggle').addEventListener('click', toggleBookTheme);
-            document.getElementById('exitBookMode').addEventListener('click', closeBookModeModal);
+            const bookThemeToggle = document.getElementById('bookThemeToggle');
+            if (bookThemeToggle) {
+                bookThemeToggle.addEventListener('click', toggleBookTheme);
+            }
+            
+            const exitBookMode = document.getElementById('exitBookMode');
+            if (exitBookMode) {
+                exitBookMode.addEventListener('click', closeBookModeModal);
+            }
         }
 
         function setupAudioControls() {
             const playBtn = document.getElementById('play-btn');
             const reciterSelect = document.getElementById('reciter-select');
             
-            playBtn.addEventListener('click', toggleAudio);
-            reciterSelect.addEventListener('change', function() {
-                currentReciter = this.value;
-                document.getElementById('current-reciter').textContent = this.options[this.selectedIndex].text;
-                if (isPlaying) {
-                    stopAudio();
-                    playAyah(currentAyah);
-                }
-            });
+            if (playBtn) {
+                playBtn.addEventListener('click', toggleAudio);
+            }
+            
+            if (reciterSelect) {
+                reciterSelect.addEventListener('change', function() {
+                    currentReciter = this.value;
+                    const currentReciterSpan = document.getElementById('current-reciter');
+                    if (currentReciterSpan) {
+                        currentReciterSpan.textContent = this.options[this.selectedIndex].text;
+                    }
+                    if (isPlaying) {
+                        stopAudio();
+                        playAyah(currentAyah);
+                    }
+                });
+            }
         }
 
         function toggleTheme() {
@@ -3855,29 +3900,33 @@
             const modalContent = document.getElementById('modal-content');
             const toggleButton = document.getElementById('quranThemeToggle');
             
-            if (quranReadingTheme === 'default') {
-                modalContent.classList.add('quran-reading-theme');
-                toggleButton.textContent = 'Обычная тема';
-                quranReadingTheme = 'pleasant';
-            } else {
-                modalContent.classList.remove('quran-reading-theme');
-                toggleButton.textContent = 'Приятная тема';
-                quranReadingTheme = 'default';
+            if (modalContent && toggleButton) {
+                if (quranReadingTheme === 'default') {
+                    modalContent.classList.add('quran-reading-theme');
+                    toggleButton.textContent = 'Обычная тема';
+                    quranReadingTheme = 'pleasant';
+                } else {
+                    modalContent.classList.remove('quran-reading-theme');
+                    toggleButton.textContent = 'Приятная тема';
+                    quranReadingTheme = 'default';
+                }
+                
+                localStorage.setItem('quranReadingTheme', quranReadingTheme);
             }
-            
-            localStorage.setItem('quranReadingTheme', quranReadingTheme);
         }
 
         function toggleBookTheme() {
             const modalContent = document.getElementById('book-modal-content');
             const toggleButton = document.getElementById('bookThemeToggle');
             
-            if (modalContent.classList.contains('quran-reading-theme')) {
-                modalContent.classList.remove('quran-reading-theme');
-                toggleButton.textContent = 'Приятная тема';
-            } else {
-                modalContent.classList.add('quran-reading-theme');
-                toggleButton.textContent = 'Обычная тема';
+            if (modalContent && toggleButton) {
+                if (modalContent.classList.contains('quran-reading-theme')) {
+                    modalContent.classList.remove('quran-reading-theme');
+                    toggleButton.textContent = 'Приятная тема';
+                } else {
+                    modalContent.classList.add('quran-reading-theme');
+                    toggleButton.textContent = 'Обычная тема';
+                }
             }
         }
 
@@ -3887,22 +3936,24 @@
             const audioPlayer = document.getElementById('audio-player');
             const surahNavigation = document.querySelector('.surah-navigation');
             
-            bookModeEnabled = !bookModeEnabled;
-            localStorage.setItem('bookModeEnabled', bookModeEnabled);
-            
-            if (bookModeEnabled) {
-                modalContent.classList.add('book-mode');
-                toggleButton.textContent = 'Обычный режим';
-                audioPlayer.style.display = 'none';
-                surahNavigation.style.display = 'none';
-            } else {
-                modalContent.classList.remove('book-mode');
-                toggleButton.textContent = 'Книжный режим';
-                audioPlayer.style.display = 'flex';
-                surahNavigation.style.display = 'flex';
+            if (modalContent && toggleButton) {
+                bookModeEnabled = !bookModeEnabled;
+                localStorage.setItem('bookModeEnabled', bookModeEnabled);
+                
+                if (bookModeEnabled) {
+                    modalContent.classList.add('book-mode');
+                    toggleButton.textContent = 'Обычный режим';
+                    if (audioPlayer) audioPlayer.style.display = 'none';
+                    if (surahNavigation) surahNavigation.style.display = 'none';
+                } else {
+                    modalContent.classList.remove('book-mode');
+                    toggleButton.textContent = 'Книжный режим';
+                    if (audioPlayer) audioPlayer.style.display = 'flex';
+                    if (surahNavigation) surahNavigation.style.display = 'flex';
+                }
+                
+                showToast(bookModeEnabled ? 'Книжный режим включен' : 'Книжный режим выключен');
             }
-            
-            showToast(bookModeEnabled ? 'Книжный режим включен' : 'Книжный режим выключен');
         }
 
         function toggleWarmLight() {
@@ -3912,17 +3963,19 @@
             const quranTab = document.getElementById('quran-tab');
             const toggleButton = document.querySelector('.warm-light-toggle');
             
-            if (warmLightEnabled) {
-                quranTab.classList.add('quran-reading-theme');
-                toggleButton.textContent = 'Обычный свет';
-                toggleButton.style.background = '#1C7A5C';
-            } else {
-                quranTab.classList.remove('quran-reading-theme');
-                toggleButton.textContent = 'Теплый свет';
-                toggleButton.style.background = '';
+            if (quranTab && toggleButton) {
+                if (warmLightEnabled) {
+                    quranTab.classList.add('quran-reading-theme');
+                    toggleButton.textContent = 'Обычный свет';
+                    toggleButton.style.background = '#1C7A5C';
+                } else {
+                    quranTab.classList.remove('quran-reading-theme');
+                    toggleButton.textContent = 'Теплый свет';
+                    toggleButton.style.background = '';
+                }
+                
+                showToast(warmLightEnabled ? 'Теплый свет включен' : 'Теплый свет выключен');
             }
-            
-            showToast(warmLightEnabled ? 'Теплый свет включен' : 'Теплый свет выключен');
         }
 
         function changeArabicFontSize(delta) {
@@ -4081,8 +4134,10 @@
             const progressFill = document.getElementById('progressFill');
             const progressPercent = document.getElementById('progressPercent');
             
-            progressFill.style.width = `${currentProgress}%`;
-            progressPercent.textContent = `${Math.round(currentProgress)}%`;
+            if (progressFill && progressPercent) {
+                progressFill.style.width = `${currentProgress}%`;
+                progressPercent.textContent = `${Math.round(currentProgress)}%`;
+            }
         }
 
         function updateStats() {
@@ -4091,8 +4146,12 @@
                 return sum + (weeklyTasks[week] ? weeklyTasks[week].filter(task => task).length : 0);
             }, 0);
             
-            document.getElementById('completedTasks').textContent = userProgress.tasksCompleted;
-            document.getElementById('quranPages').textContent = userProgress.pagesRead;
+            const completedTasksEl = document.getElementById('completedTasks');
+            const quranPagesEl = document.getElementById('quranPages');
+            const streakDaysEl = document.getElementById('streakDays');
+            
+            if (completedTasksEl) completedTasksEl.textContent = userProgress.tasksCompleted;
+            if (quranPagesEl) quranPagesEl.textContent = userProgress.pagesRead;
             
             // Рассчитываем серию выполненных дней подряд
             const dates = Object.keys(dailyTasks).sort();
@@ -4111,7 +4170,7 @@
                 }
             }
             
-            document.getElementById('streakDays').textContent = streak;
+            if (streakDaysEl) streakDaysEl.textContent = streak;
         }
 
         function updateCurrentDate() {
@@ -4122,8 +4181,10 @@
                 year: 'numeric',
                 weekday: 'long'
             };
-            document.getElementById('currentDate').textContent = 
-                now.toLocaleDateString('ru-RU', options);
+            const currentDateEl = document.getElementById('currentDate');
+            if (currentDateEl) {
+                currentDateEl.textContent = now.toLocaleDateString('ru-RU', options);
+            }
         }
 
         function updateDailyTask() {
@@ -4131,10 +4192,12 @@
             const checkbox = document.getElementById('checkbox');
             
             // Проверяем, выполнена ли сегодняшняя задача
-            if (dailyTasks[today]) {
-                checkbox.classList.add('checked');
-            } else {
-                checkbox.classList.remove('checked');
+            if (checkbox) {
+                if (dailyTasks[today]) {
+                    checkbox.classList.add('checked');
+                } else {
+                    checkbox.classList.remove('checked');
+                }
             }
             
             // Обновляем задачу чтения Корана с учетом прогресса
@@ -4142,37 +4205,51 @@
             const daysPassed = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
             const pagesToRead = Math.min(daysPassed + 1, 604); // 604 страницы в Коране
             
-            document.getElementById('taskTitle').textContent = `Прочитать ${pagesToRead} страниц Корана`;
-            document.getElementById('taskDescription').textContent = 
-                `Открой мусхаф и прочитай ${pagesToRead} страниц с медленным тажвидом. Постарайтесь понять смысл прочитанного и подумать над аятами.`;
+            const taskTitle = document.getElementById('taskTitle');
+            const taskDescription = document.getElementById('taskDescription');
+            
+            if (taskTitle && taskDescription) {
+                taskTitle.textContent = `Прочитать ${pagesToRead} страниц Корана`;
+                taskDescription.textContent = 
+                    `Открой мусхаф и прочитай ${pagesToRead} страниц с медленным тажвидом. Постарайтесь понять смысл прочитанного и подумать над аятами.`;
+            }
         }
 
         function updateReadingProgress() {
             const progressText = document.getElementById('reading-progress-text');
             
-            if (lastReadAyah.surah && lastReadAyah.ayah) {
-                const surah = allSurahs.find(s => s.number === lastReadAyah.surah);
-                if (surah) {
-                    progressText.textContent = `Вы остановились на суре ${surah.englishName} (${surah.name}), аят ${lastReadAyah.ayah}`;
+            if (progressText) {
+                if (lastReadAyah.surah && lastReadAyah.ayah) {
+                    const surah = allSurahs.find(s => s.number === lastReadAyah.surah);
+                    if (surah) {
+                        progressText.textContent = `Вы остановились на суре ${surah.englishName} (${surah.name}), аят ${lastReadAyah.ayah}`;
+                    } else {
+                        progressText.textContent = `Вы остановились на суре ${lastReadAyah.surah}, аят ${lastReadAyah.ayah}`;
+                    }
                 } else {
-                    progressText.textContent = `Вы остановились на суре ${lastReadAyah.surah}, аят ${lastReadAyah.ayah}`;
+                    progressText.textContent = 'Вы еще не начали чтение Корана';
                 }
-            } else {
-                progressText.textContent = 'Вы еще не начали чтение Корана';
             }
         }
 
         function updateQuranProgress() {
             const progressPercent = Math.round((quranProgress.readAyahs / quranProgress.totalAyahs) * 100);
-            document.getElementById('quranProgressPercent').textContent = `${progressPercent}%`;
-            document.getElementById('quranProgressFill').style.width = `${progressPercent}%`;
-            
+            const progressPercentEl = document.getElementById('quranProgressPercent');
+            const progressFillEl = document.getElementById('quranProgressFill');
             const progressText = document.getElementById('reading-progress-text');
-            progressText.textContent = `Прочитано ${quranProgress.readAyahs} из ${quranProgress.totalAyahs} аятов (${progressPercent}%)`;
+            
+            if (progressPercentEl) progressPercentEl.textContent = `${progressPercent}%`;
+            if (progressFillEl) progressFillEl.style.width = `${progressPercent}%`;
+            
+            if (progressText) {
+                progressText.textContent = `Прочитано ${quranProgress.readAyahs} из ${quranProgress.totalAyahs} аятов (${progressPercent}%)`;
+            }
         }
 
         function loadPreparationData() {
             const weekSection = document.getElementById('week-section');
+            if (!weekSection) return;
+            
             weekSection.innerHTML = '';
             
             preparationData.forEach((weekData, weekIndex) => {
@@ -4209,6 +4286,8 @@
 
         async function loadQuranData() {
             const quranSection = document.getElementById('quran-section');
+            if (!quranSection) return;
+            
             quranSection.innerHTML = '<div class="loading">Загрузка Корана...</div>';
             
             try {
@@ -4252,6 +4331,8 @@
 
         function loadFallbackQuranData() {
             const quranSection = document.getElementById('quran-section');
+            if (!quranSection) return;
+            
             const fallbackSurahs = [
                 { number: 1, name: "الفاتحة", englishName: "Al-Fatihah", numberOfAyahs: 7, revelationType: "Meccan" },
                 { number: 2, name: "البقرة", englishName: "Al-Baqarah", numberOfAyahs: 286, revelationType: "Medinan" },
@@ -4303,61 +4384,70 @@
                         if (arabicEdition && translationEdition) {
                             const surah = allSurahs.find(s => s.number === surahNumber);
                             
-                            document.getElementById('surah-modal-title').textContent = 
-                                `Сура ${surah.englishName} (${surah.name})`;
-                            
-                            const surahContent = document.getElementById('surah-content');
-                            surahContent.innerHTML = '';
-                            
-                            // ИСПРАВЛЕНИЕ: Добавляем тасмию отдельно (кроме суры Ат-Тауба)
-                            if (surahNumber !== 9) {
-                                const bismillah = document.createElement('div');
-                                bismillah.className = 'bismillah';
-                                bismillah.textContent = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
-                                surahContent.appendChild(bismillah);
+                            const modalTitle = document.getElementById('surah-modal-title');
+                            if (modalTitle) {
+                                modalTitle.textContent = `Сура ${surah.englishName} (${surah.name})`;
                             }
                             
-                            // Создаем контейнеры для каждого аята с арабским текстом и переводом
-                            for (let i = 0; i < arabicEdition.ayahs.length; i++) {
-                                const arabicAyah = arabicEdition.ayahs[i];
-                                const translationAyah = translationEdition.ayahs[i];
+                            const surahContent = document.getElementById('surah-content');
+                            if (surahContent) {
+                                surahContent.innerHTML = '';
                                 
-                                const ayahContainer = document.createElement('div');
-                                ayahContainer.className = 'ayah-container';
+                                // ИСПРАВЛЕНИЕ: Добавляем тасмию отдельно (кроме суры Ат-Тауба)
+                                if (surahNumber !== 9) {
+                                    const bismillah = document.createElement('div');
+                                    bismillah.className = 'bismillah';
+                                    bismillah.textContent = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+                                    surahContent.appendChild(bismillah);
+                                }
                                 
-                                // Помечаем последний прочитанный аят
-                                const isLastRead = lastReadAyah.surah === surahNumber && lastReadAyah.ayah === arabicAyah.numberInSurah;
-                                
-                                ayahContainer.innerHTML = `
-                                    <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}
-                                        onclick="playAyah(${arabicAyah.numberInSurah}, ${surahNumber})">
-                                        ${arabicAyah.text} <span class="ayah-number">${arabicAyah.numberInSurah}</span>
-                                    </div>
-                                    <div class="ayah-translation">
-                                        <strong>${arabicAyah.numberInSurah}.</strong> ${translationAyah.text}
-                                    </div>
-                                    <button class="nav-button" onclick="setLastReadAyah(${surahNumber}, ${arabicAyah.numberInSurah})" style="font-size: 0.8rem; padding: 0.5rem 1rem; margin-top: 0.5rem;">
-                                        Отметить как прочитанное
-                                    </button>
-                                `;
-                                
-                                surahContent.appendChild(ayahContainer);
+                                // Создаем контейнеры для каждого аята с арабским текстом и переводом
+                                for (let i = 0; i < arabicEdition.ayahs.length; i++) {
+                                    const arabicAyah = arabicEdition.ayahs[i];
+                                    const translationAyah = translationEdition.ayahs[i];
+                                    
+                                    const ayahContainer = document.createElement('div');
+                                    ayahContainer.className = 'ayah-container';
+                                    
+                                    // Помечаем последний прочитанный аят
+                                    const isLastRead = lastReadAyah.surah === surahNumber && lastReadAyah.ayah === arabicAyah.numberInSurah;
+                                    
+                                    ayahContainer.innerHTML = `
+                                        <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}
+                                            onclick="playAyah(${arabicAyah.numberInSurah}, ${surahNumber})">
+                                            ${arabicAyah.text} <span class="ayah-number">${arabicAyah.numberInSurah}</span>
+                                        </div>
+                                        <div class="ayah-translation">
+                                            <strong>${arabicAyah.numberInSurah}.</strong> ${translationAyah.text}
+                                        </div>
+                                        <button class="nav-button" onclick="setLastReadAyah(${surahNumber}, ${arabicAyah.numberInSurah})" style="font-size: 0.8rem; padding: 0.5rem 1rem; margin-top: 0.5rem;">
+                                            Отметить как прочитанное
+                                        </button>
+                                    `;
+                                    
+                                    surahContent.appendChild(ayahContainer);
+                                }
                             }
                             
                             // Обновляем навигацию
-                            document.getElementById('prev-surah').disabled = surahNumber <= 1;
-                            document.getElementById('next-surah').disabled = surahNumber >= allSurahs.length;
+                            const prevSurah = document.getElementById('prev-surah');
+                            const nextSurah = document.getElementById('next-surah');
+                            
+                            if (prevSurah) prevSurah.disabled = surahNumber <= 1;
+                            if (nextSurah) nextSurah.disabled = surahNumber >= allSurahs.length;
                             
                             // Применяем сохраненную тему чтения Корана
                             const modalContent = document.getElementById('modal-content');
                             const toggleButton = document.getElementById('quranThemeToggle');
                             
-                            if (quranReadingTheme === 'pleasant') {
-                                modalContent.classList.add('quran-reading-theme');
-                                toggleButton.textContent = 'Обычная тема';
-                            } else {
-                                modalContent.classList.remove('quran-reading-theme');
-                                toggleButton.textContent = 'Приятная тема';
+                            if (modalContent && toggleButton) {
+                                if (quranReadingTheme === 'pleasant') {
+                                    modalContent.classList.add('quran-reading-theme');
+                                    toggleButton.textContent = 'Обычная тема';
+                                } else {
+                                    modalContent.classList.remove('quran-reading-theme');
+                                    toggleButton.textContent = 'Приятная тема';
+                                }
                             }
                             
                             // Применяем сохраненный книжный режим
@@ -4365,20 +4455,25 @@
                             const audioPlayer = document.getElementById('audio-player');
                             const surahNavigation = document.querySelector('.surah-navigation');
                             
-                            if (bookModeEnabled) {
-                                modalContent.classList.add('book-mode');
-                                bookModeToggle.textContent = 'Обычный режим';
-                                audioPlayer.style.display = 'none';
-                                surahNavigation.style.display = 'none';
-                            } else {
-                                modalContent.classList.remove('book-mode');
-                                bookModeToggle.textContent = 'Книжный режим';
-                                audioPlayer.style.display = 'flex';
-                                surahNavigation.style.display = 'flex';
+                            if (modalContent && bookModeToggle) {
+                                if (bookModeEnabled) {
+                                    modalContent.classList.add('book-mode');
+                                    bookModeToggle.textContent = 'Обычный режим';
+                                    if (audioPlayer) audioPlayer.style.display = 'none';
+                                    if (surahNavigation) surahNavigation.style.display = 'none';
+                                } else {
+                                    modalContent.classList.remove('book-mode');
+                                    bookModeToggle.textContent = 'Книжный режим';
+                                    if (audioPlayer) audioPlayer.style.display = 'flex';
+                                    if (surahNavigation) surahNavigation.style.display = 'flex';
+                                }
                             }
                             
                             // ИСПРАВЛЕНИЕ: Открываем модальное окно
-                            document.getElementById('surah-modal').classList.add('active');
+                            const surahModal = document.getElementById('surah-modal');
+                            if (surahModal) {
+                                surahModal.classList.add('active');
+                            }
                             
                             // ИСПРАВЛЕНИЕ: Предотвращаем скроллинг под модальным окном
                             document.body.style.overflow = 'hidden';
@@ -4396,7 +4491,10 @@
         }
 
         function closeSurahModal() {
-            document.getElementById('surah-modal').classList.remove('active');
+            const surahModal = document.getElementById('surah-modal');
+            if (surahModal) {
+                surahModal.classList.remove('active');
+            }
             stopAudio();
             
             // ИСПРАВЛЕНИЕ: Восстанавливаем скроллинг
@@ -4466,12 +4564,18 @@
             }
             
             loadQuranPage(currentPage);
-            document.getElementById('book-mode-modal').classList.add('active');
+            const bookModal = document.getElementById('book-mode-modal');
+            if (bookModal) {
+                bookModal.classList.add('active');
+            }
             document.body.style.overflow = 'hidden';
         }
 
         function closeBookModeModal() {
-            document.getElementById('book-mode-modal').classList.remove('active');
+            const bookModal = document.getElementById('book-mode-modal');
+            if (bookModal) {
+                bookModal.classList.remove('active');
+            }
             document.body.style.overflow = '';
         }
 
@@ -4485,44 +4589,51 @@
                     const pageData = data.data;
                     
                     // Обновляем заголовок
-                    document.getElementById('book-modal-title').textContent = 
-                        `Чтение Корана - Страница ${pageNumber}`;
-                    document.getElementById('page-number').textContent = `Страница ${pageNumber}`;
+                    const modalTitle = document.getElementById('book-modal-title');
+                    const pageNumberEl = document.getElementById('page-number');
+                    
+                    if (modalTitle) modalTitle.textContent = `Чтение Корана - Страница ${pageNumber}`;
+                    if (pageNumberEl) pageNumberEl.textContent = `Страница ${pageNumber}`;
                     
                     // Отображаем аяты страницы
                     const pageContent = document.getElementById('book-page-content');
-                    pageContent.innerHTML = '';
-                    
-                    // Группируем аяты по строкам для правильного отображения
-                    let currentLine = '';
-                    let ayahsInLine = [];
-                    
-                    pageData.ayahs.forEach(ayah => {
-                        const ayahText = ayah.text;
-                        const ayahNumber = ayah.numberInSurah;
+                    if (pageContent) {
+                        pageContent.innerHTML = '';
                         
-                        // Добавляем аят к текущей строке
-                        currentLine += `<span class="ayah">${ayahText}<span class="ayah-number">${ayahNumber}</span></span>`;
-                        ayahsInLine.push(ayah.number);
+                        // Группируем аяты по строкам для правильного отображения
+                        let currentLine = '';
+                        let ayahsInLine = [];
                         
-                        // Если строка заполнена или это последний аят, создаем новую строку
-                        if (ayah.words && ayah.words[ayah.words.length - 1].lineEnd || 
-                            ayah === pageData.ayahs[pageData.ayahs.length - 1]) {
+                        pageData.ayahs.forEach(ayah => {
+                            const ayahText = ayah.text;
+                            const ayahNumber = ayah.numberInSurah;
                             
-                            const lineDiv = document.createElement('div');
-                            lineDiv.className = 'quran-line';
-                            lineDiv.innerHTML = currentLine;
-                            pageContent.appendChild(lineDiv);
+                            // Добавляем аят к текущей строке
+                            currentLine += `<span class="ayah">${ayahText}<span class="ayah-number">${ayahNumber}</span></span>`;
+                            ayahsInLine.push(ayah.number);
                             
-                            // Сбрасываем для следующей строки
-                            currentLine = '';
-                            ayahsInLine = [];
-                        }
-                    });
+                            // Если строка заполнена или это последний аят, создаем новую строку
+                            if (ayah.words && ayah.words[ayah.words.length - 1].lineEnd || 
+                                ayah === pageData.ayahs[pageData.ayahs.length - 1]) {
+                                
+                                const lineDiv = document.createElement('div');
+                                lineDiv.className = 'quran-line';
+                                lineDiv.innerHTML = currentLine;
+                                pageContent.appendChild(lineDiv);
+                                
+                                // Сбрасываем для следующей строки
+                                currentLine = '';
+                                ayahsInLine = [];
+                            }
+                        });
+                    }
                     
                     // Обновляем навигацию
-                    document.getElementById('prev-page').disabled = pageNumber <= 1;
-                    document.getElementById('next-page').disabled = pageNumber >= totalPages;
+                    const prevPage = document.getElementById('prev-page');
+                    const nextPage = document.getElementById('next-page');
+                    
+                    if (prevPage) prevPage.disabled = pageNumber <= 1;
+                    if (nextPage) nextPage.disabled = pageNumber >= totalPages;
                     
                     // Применяем сохраненный размер шрифта
                     applyBookFontSize();
@@ -4537,8 +4648,11 @@
                 console.error('Ошибка загрузки страницы Корана:', error);
                 showToast('Ошибка загрузки страницы Корана', 'error');
                 // Запасной вариант - сообщение об ошибке
-                document.getElementById('book-page-content').innerHTML = 
-                    '<div style="text-align: center; padding: 2rem;">Не удалось загрузить страницу Корана. Пожалуйста, проверьте подключение к интернету.</div>';
+                const pageContent = document.getElementById('book-page-content');
+                if (pageContent) {
+                    pageContent.innerHTML = 
+                        '<div style="text-align: center; padding: 2rem;">Не удалось загрузить страницу Корана. Пожалуйста, проверьте подключение к интернету.</div>';
+                }
             }
         }
 
@@ -4583,16 +4697,20 @@
             if (currentPageMarked) {
                 // Убираем отметку
                 markedPages = markedPages.filter(page => page !== currentPage);
-                pageMarkButton.classList.remove('marked');
-                pageMarkButton.innerHTML = '<span>📌</span> Отметить страницу';
+                if (pageMarkButton) {
+                    pageMarkButton.classList.remove('marked');
+                    pageMarkButton.innerHTML = '<span>📌</span> Отметить страницу';
+                }
                 showToast('Страница удалена из отмеченных', 'warning');
             } else {
                 // Добавляем отметку
                 if (!markedPages.includes(currentPage)) {
                     markedPages.push(currentPage);
                 }
-                pageMarkButton.classList.add('marked');
-                pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
+                if (pageMarkButton) {
+                    pageMarkButton.classList.add('marked');
+                    pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
+                }
                 showToast('Страница отмечена!', 'success');
                 
                 // ИСПРАВЛЕНИЕ: Автоматически отмечаем предыдущие страницы
@@ -4630,14 +4748,16 @@
 
         function updatePageMarkButton() {
             const pageMarkButton = document.getElementById('page-mark-button');
-            currentPageMarked = markedPages.includes(currentPage);
-            
-            if (currentPageMarked) {
-                pageMarkButton.classList.add('marked');
-                pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
-            } else {
-                pageMarkButton.classList.remove('marked');
-                pageMarkButton.innerHTML = '<span>📌</span> Отметить страницу';
+            if (pageMarkButton) {
+                currentPageMarked = markedPages.includes(currentPage);
+                
+                if (currentPageMarked) {
+                    pageMarkButton.classList.add('marked');
+                    pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
+                } else {
+                    pageMarkButton.classList.remove('marked');
+                    pageMarkButton.innerHTML = '<span>📌</span> Отметить страницу';
+                }
             }
         }
 
@@ -4700,8 +4820,11 @@
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     // Обновляем UI
-                    document.getElementById('play-btn').classList.add('playing');
-                    document.getElementById('play-btn').textContent = '⏸️';
+                    const playBtn = document.getElementById('play-btn');
+                    if (playBtn) {
+                        playBtn.classList.add('playing');
+                        playBtn.textContent = '⏸️';
+                    }
                     isPlaying = true;
                     
                     // Подсвечиваем текущий аят
@@ -4745,8 +4868,11 @@
             }
             
             isPlaying = false;
-            document.getElementById('play-btn').classList.remove('playing');
-            document.getElementById('play-btn').textContent = '▶️';
+            const playBtn = document.getElementById('play-btn');
+            if (playBtn) {
+                playBtn.classList.remove('playing');
+                playBtn.textContent = '▶️';
+            }
             
             // Убираем подсветку с текущего аята
             removeAyahHighlight();
@@ -4775,6 +4901,8 @@
 
         async function loadPrayerTimes() {
             const prayerList = document.getElementById('prayer-list');
+            if (!prayerList) return;
+            
             prayerList.innerHTML = '<div class="loading">Загрузка времени намазов...</div>';
             
             try {
@@ -4802,7 +4930,10 @@
                     updatePrayerList(prayerTimes);
                     
                     // Обновляем местоположение
-                    document.getElementById('prayer-location').textContent = data.data.meta.timezone;
+                    const prayerLocation = document.getElementById('prayer-location');
+                    if (prayerLocation) {
+                        prayerLocation.textContent = data.data.meta.timezone;
+                    }
                     
                 } else {
                     throw new Error('Не удалось получить время намазов');
@@ -4816,7 +4947,7 @@
         }
 
         function getCurrentPosition() {
-            return new Promise((resolve, reject) {
+            return new Promise((resolve, reject) => {
                 if (!navigator.geolocation) {
                     reject(new Error('Геолокация не поддерживается'));
                 }
@@ -4844,6 +4975,8 @@
 
         function updatePrayerList(prayerTimes) {
             const prayerList = document.getElementById('prayer-list');
+            if (!prayerList) return;
+            
             const now = new Date();
             const currentHour = now.getHours();
             const currentMinutes = now.getMinutes();
@@ -4872,6 +5005,7 @@
 
         function loadAzkarsData() {
             const duaSection = document.getElementById('dua-section');
+            if (!duaSection) return;
             
             duaSection.innerHTML = `
                 <div class="dua-category">
@@ -5148,28 +5282,33 @@
             const levelDescription = document.getElementById('unlock-level-description');
             const levelDua = document.getElementById('unlock-level-dua');
             
-            levelName.textContent = `Уровень ${level.id} разблокирован: ${level.name}`;
-            levelDescription.textContent = level.description;
-            levelDua.textContent = level.dua;
-            
-            animation.classList.add('active');
-            
-            // Создаем конфетти
-            createConfetti();
-            
-            // Добавляем дополнительные эффекты
-            setTimeout(() => {
-                const levelCards = document.querySelectorAll('.level-card');
-                levelCards.forEach(card => {
-                    if (parseInt(card.className.match(/level-(\d+)/)[1]) === level.id) {
-                        card.classList.add('unlocking');
-                    }
-                });
-            }, 500);
+            if (animation && levelName && levelDescription && levelDua) {
+                levelName.textContent = `Уровень ${level.id} разблокирован: ${level.name}`;
+                levelDescription.textContent = level.description;
+                levelDua.textContent = level.dua;
+                
+                animation.classList.add('active');
+                
+                // Создаем конфетти
+                createConfetti();
+                
+                // Добавляем дополнительные эффекты
+                setTimeout(() => {
+                    const levelCards = document.querySelectorAll('.level-card');
+                    levelCards.forEach(card => {
+                        if (parseInt(card.className.match(/level-(\d+)/)[1]) === level.id) {
+                            card.classList.add('unlocking');
+                        }
+                    });
+                }, 500);
+            }
         }
 
         function closeLevelUnlock() {
-            document.getElementById('level-unlock-animation').classList.remove('active');
+            const animation = document.getElementById('level-unlock-animation');
+            if (animation) {
+                animation.classList.remove('active');
+            }
             
             // Убираем класс анимации с карточек уровней
             const levelCards = document.querySelectorAll('.level-card');
@@ -5201,14 +5340,23 @@
             const currentLevel = levelsData[userProgress.currentLevel - 1];
             if (!currentLevel) return;
             
-            document.getElementById('current-level-icon').textContent = currentLevel.icon;
-            document.getElementById('current-level-icon').className = `level-icon level-${currentLevel.id}`;
-            document.getElementById('current-level-title').textContent = currentLevel.name;
-            document.getElementById('current-level-subtitle').textContent = `Уровень ${userProgress.currentLevel} из ${levelsData.length}`;
+            const levelIcon = document.getElementById('current-level-icon');
+            const levelTitle = document.getElementById('current-level-title');
+            const levelSubtitle = document.getElementById('current-level-subtitle');
+            
+            if (levelIcon) {
+                levelIcon.textContent = currentLevel.icon;
+                levelIcon.className = `level-icon level-${currentLevel.id}`;
+            }
+            if (levelTitle) levelTitle.textContent = currentLevel.name;
+            if (levelSubtitle) levelSubtitle.textContent = `Уровень ${userProgress.currentLevel} из ${levelsData.length}`;
         }
 
         function updateQuranProgressDisplay() {
-            document.getElementById('quranPages').textContent = userProgress.pagesRead;
+            const quranPages = document.getElementById('quranPages');
+            if (quranPages) {
+                quranPages.textContent = userProgress.pagesRead;
+            }
         }
 
         function showAchievements() {
