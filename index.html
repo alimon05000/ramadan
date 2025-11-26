@@ -115,7 +115,6 @@
             -webkit-overflow-scrolling: touch;
             height: calc(100vh - 80px);
             position: relative;
-            /* ИСПРАВЛЕНИЕ: Улучшение прокрутки на Android */
             overscroll-behavior: contain;
             scroll-behavior: smooth;
         }
@@ -124,7 +123,6 @@
             display: block;
         }
 
-        /* Фикс для PWA прокрутки */
         .tab-content::-webkit-scrollbar {
             display: none;
         }
@@ -1492,7 +1490,6 @@
             overflow-y: auto;
             padding: 1.5rem;
             -webkit-overflow-scrolling: touch;
-            /* ИСПРАВЛЕНИЕ: Улучшение прокрутки на Android */
             overscroll-behavior: contain;
             scroll-behavior: smooth;
         }
@@ -1649,7 +1646,6 @@
             color: #5a4c30;
         }
 
-        /* ИСПРАВЛЕНИЕ: Кнопка темы чтения Корана теперь видима на белой теме */
         .theme-toggle-quran {
             background: var(--primary-main);
             border: none;
@@ -1797,7 +1793,6 @@
             color: var(--text-secondary-dark);
         }
 
-        /* ИСПРАВЛЕНИЕ: Прогресс-бар для чтения Корана */
         .reading-progress-container {
             margin-top: 1rem;
             padding: 1rem;
@@ -1930,9 +1925,8 @@
             background: linear-gradient(135deg, rgba(11, 91, 63, 0.2), rgba(217, 180, 74, 0.1));
         }
 
-        /* ИСПРАВЛЕНИЕ: Убраны кнопки управления аятом */
         .ayah-controls {
-            display: none; /* Полностью скрываем кнопки */
+            display: none;
         }
 
         /* === Книжный режим Корана === */
@@ -1952,7 +1946,6 @@
             background: #e6a429;
         }
 
-        /* ИСПРАВЛЕНИЕ: Книжный режим теперь корректно работает в темной теме */
         .book-mode {
             background-color: #f8f4e9 !important;
             font-family: 'Amiri Quran', serif !important;
@@ -2005,7 +1998,6 @@
             color: #8B4513 !important;
         }
 
-        /* ИСПРАВЛЕНИЕ: Темная тема в книжном режиме */
         body.dark-theme .book-mode {
             background-color: #1a1200 !important;
             color: #f0e6d1 !important;
@@ -2046,11 +2038,387 @@
             margin-bottom: 2rem;
         }
 
-        /* ИСПРАВЛЕНИЕ: Улучшение прокрутки на Android */
         .touch-scroll-fix {
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
             scroll-behavior: smooth;
+        }
+
+        /* === Стили для книжного режима Корана === */
+        .book-mode-page {
+            background-color: #f8f4e9;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            direction: rtl;
+            text-align: justify;
+            font-family: 'Amiri Quran', serif;
+            line-height: 2.5;
+        }
+
+        .book-mode-page .ayah {
+            display: inline;
+            margin-left: 8px;
+        }
+
+        .book-mode-page .ayah-number {
+            background: transparent;
+            color: #8B4513;
+            font-size: 0.9rem;
+            margin: 0 4px;
+            padding: 0;
+            display: inline;
+        }
+
+        .book-mode-page .page-number {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: #8B4513;
+            font-weight: bold;
+        }
+
+        .book-mode-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+
+        body.dark-theme .book-mode-controls {
+            background: var(--border-dark);
+        }
+
+        .page-nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* === Стили для системы уровней === */
+        .levels-section {
+            padding: 1.5rem;
+            background: var(--bg-card-light);
+            border-radius: var(--radius-lg);
+            margin: 1rem 0.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        body.dark-theme .levels-section {
+            background: var(--bg-card-dark);
+        }
+
+        .levels-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            text-align: center;
+        }
+
+        body.dark-theme .levels-title {
+            color: var(--accent-gold);
+        }
+
+        .level-card {
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-main);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-theme .level-card {
+            background: var(--border-dark);
+        }
+
+        .level-card.current {
+            background: linear-gradient(135deg, rgba(11, 91, 63, 0.1), rgba(217, 180, 74, 0.05));
+            border-left-color: var(--accent-gold);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        .level-card.level-1 { border-left-color: #10B981; }
+        .level-card.level-2 { border-left-color: #0EA5E9; }
+        .level-card.level-3 { border-left-color: #8B5CF6; }
+        .level-card.level-4 { border-left-color: #F59E0B; }
+        .level-card.level-5 { border-left-color: #EF4444; }
+        .level-card.level-6 { border-left-color: #EC4899; }
+        .level-card.level-7 { border-left-color: #06B6D4; }
+        .level-card.level-8 { border-left-color: #84CC16; }
+        .level-card.level-9 { border-left-color: #F97316; }
+        .level-card.level-10 { border-left-color: #8B5CF6; border-left-width: 6px; }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .level-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+        }
+
+        body.dark-theme .level-name {
+            color: var(--accent-gold);
+        }
+
+        .level-badge {
+            background: var(--primary-main);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .level-description {
+            color: var(--text-secondary-light);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        body.dark-theme .level-description {
+            color: var(--text-secondary-dark);
+        }
+
+        .level-requirements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .requirement {
+            background: rgba(11, 91, 63, 0.1);
+            padding: 0.4rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        body.dark-theme .requirement {
+            background: rgba(217, 180, 74, 0.1);
+        }
+
+        .requirement.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        .level-progress {
+            height: 6px;
+            background: var(--border-light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        body.dark-theme .level-progress {
+            background: var(--border-dark);
+        }
+
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-main), var(--accent-gold));
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.8s ease;
+        }
+
+        .level-unlock-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .level-unlock-animation.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .unlock-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.8);
+            transition: transform 0.5s ease;
+        }
+
+        .level-unlock-animation.active .unlock-content {
+            transform: scale(1);
+        }
+
+        .unlock-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .unlock-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        .unlock-description {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .unlock-dua {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--accent-cream);
+            border-radius: var(--radius-md);
+        }
+
+        body.dark-theme .unlock-dua {
+            background: #2d2a1a;
+        }
+
+        /* === Дополнительные стили для профиля === */
+        .profile-level-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .level-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-main), var(--accent-gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .level-info {
+            text-align: left;
+        }
+
+        .level-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .level-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary-light);
+        }
+
+        body.dark-theme .level-subtitle {
+            color: var(--text-secondary-dark);
+        }
+
+        .profile-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .profile-action-btn {
+            background: var(--primary-main);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .profile-action-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .profile-action-btn.secondary {
+            background: var(--bg-light);
+            color: var(--text-primary-light);
+        }
+
+        body.dark-theme .profile-action-btn.secondary {
+            background: var(--border-dark);
+            color: var(--text-primary-dark);
+        }
+
+        /* Индивидуальный дизайн для каждого уровня */
+        .level-1 .level-icon { background: linear-gradient(135deg, #10B981, #059669); }
+        .level-2 .level-icon { background: linear-gradient(135deg, #0EA5E9, #0284C7); }
+        .level-3 .level-icon { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .level-4 .level-icon { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .level-5 .level-icon { background: linear-gradient(135deg, #EF4444, #DC2626); }
+        .level-6 .level-icon { background: linear-gradient(135deg, #EC4899, #DB2777); }
+        .level-7 .level-icon { background: linear-gradient(135deg, #06B6D4, #0891B2); }
+        .level-8 .level-icon { background: linear-gradient(135deg, #84CC16, #65A30D); }
+        .level-9 .level-icon { background: linear-gradient(135deg, #F97316, #EA580C); }
+        .level-10 .level-icon { 
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED, #6D28D9);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .level-1 .level-card { border-left-color: #10B981; }
+        .level-2 .level-card { border-left-color: #0EA5E9; }
+        .level-3 .level-card { border-left-color: #8B5CF6; }
+        .level-4 .level-card { border-left-color: #F59E0B; }
+        .level-5 .level-card { border-left-color: #EF4444; }
+        .level-6 .level-card { border-left-color: #EC4899; }
+        .level-7 .level-card { border-left-color: #06B6D4; }
+        .level-8 .level-card { border-left-color: #84CC16; }
+        .level-9 .level-card { border-left-color: #F97316; }
+        .level-10 .level-card { 
+            border-left-color: #8B5CF6; 
+            border-left-width: 6px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(124, 58, 237, 0.1));
+        }
+
+        body.dark-theme .level-10 .level-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.2));
         }
     </style>
 </head>
@@ -2202,7 +2570,6 @@
                 </div>
             </div>
 
-            <!-- ИСПРАВЛЕНИЕ: Добавлен прогресс-бар чтения Корана -->
             <div class="reading-progress-container">
                 <div class="reading-progress-header">
                     <span class="reading-progress-title">Ваш прогресс чтения Корана</span>
@@ -2308,6 +2675,28 @@
             </div>
         </div>
 
+        <!-- Levels Tab -->
+        <div id="levels-tab" class="tab-content touch-scroll-fix">
+            <header class="header">
+                <div class="header-top">
+                    <div class="logo">
+                        <div class="logo-icon">📊</div>
+                        <div class="logo-text">Система уровней</div>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle8" aria-label="Переключить тему">
+                        🌙
+                    </button>
+                </div>
+            </header>
+
+            <div class="levels-section">
+                <h3 class="levels-title">10 ступеней духовного роста</h3>
+                <div id="all-levels-container">
+                    <!-- Все уровни будут загружены динамически -->
+                </div>
+            </div>
+        </div>
+
         <!-- Profile Tab -->
         <div id="profile-tab" class="tab-content touch-scroll-fix">
             <header class="header">
@@ -2325,8 +2714,14 @@
             <div class="profile-section">
                 <div class="profile-card">
                     <div class="profile-avatar">🕌</div>
-                    <h2 class="profile-name">Муслим</h2>
-                    <div class="profile-level">Начинающий • Уровень 1</div>
+                    
+                    <div class="profile-level-display">
+                        <div class="level-icon" id="current-level-icon">1</div>
+                        <div class="level-info">
+                            <div class="level-title" id="current-level-title">Начинающий</div>
+                            <div class="level-subtitle" id="current-level-subtitle">Уровень 1 из 10</div>
+                        </div>
+                    </div>
                     
                     <div class="stats-grid">
                         <div class="stat-item">
@@ -2341,6 +2736,23 @@
                             <div class="stat-value" id="streakDays">0</div>
                             <div class="stat-label">Дней подряд</div>
                         </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="profile-action-btn" onclick="showTab('levels-tab')">
+                            📊 Мои уровни
+                        </button>
+                        <button class="profile-action-btn secondary" onclick="showAchievements()">
+                            🏆 Достижения
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Новая секция с уровнями в профиле -->
+                <div class="levels-section">
+                    <h3 class="levels-title">Ваш прогресс по уровням</h3>
+                    <div id="levels-container">
+                        <!-- Уровни будут загружены динамически -->
                     </div>
                 </div>
 
@@ -2404,9 +2816,9 @@
                 <div class="nav-icon">📖</div>
                 <span class="nav-text">Коран</span>
             </div>
-            <div class="nav-item" data-tab="dua-tab" onclick="showTab('dua-tab')">
-                <div class="nav-icon">📿</div>
-                <span class="nav-text">Дуа</span>
+            <div class="nav-item" data-tab="levels-tab" onclick="showTab('levels-tab')">
+                <div class="nav-icon">📊</div>
+                <span class="nav-text">Уровни</span>
             </div>
             <div class="nav-item" data-tab="profile-tab" onclick="showTab('profile-tab')">
                 <div class="nav-icon">👤</div>
@@ -2421,9 +2833,7 @@
             <div class="modal-header">
                 <h3 class="modal-title" id="surah-modal-title">Сура Аль-Фатиха</h3>
                 <div>
-                    <!-- ИСПРАВЛЕНИЕ: Кнопка темы чтения Корана теперь видима на белой теме -->
                     <button class="theme-toggle-quran" id="quranThemeToggle">Приятная тема</button>
-                    <!-- НОВОЕ: Кнопка книжного режима -->
                     <button class="book-mode-toggle" id="bookModeToggle">Книжный режим</button>
                     <button class="modal-close" onclick="closeSurahModal()">×</button>
                 </div>
@@ -2453,6 +2863,52 @@
                 <button class="nav-button" id="prev-surah" onclick="navigateSurah(-1)">Предыдущая</button>
                 <button class="nav-button" id="next-surah" onclick="navigateSurah(1)">Следующая</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для книжного режима Корана -->
+    <div class="modal" id="book-mode-modal">
+        <div class="modal-content" id="book-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="book-modal-title">Чтение Корана - Страница 1</h3>
+                <div>
+                    <button class="theme-toggle-quran" id="bookThemeToggle">Приятная тема</button>
+                    <button class="book-mode-toggle" id="exitBookMode">Обычный режим</button>
+                    <button class="modal-close" onclick="closeBookModeModal()">×</button>
+                </div>
+            </div>
+            
+            <div class="book-mode-controls">
+                <div class="page-nav-buttons">
+                    <button class="nav-button" id="prev-page" onclick="navigatePage(-1)">← Предыдущая</button>
+                    <button class="nav-button" id="next-page" onclick="navigatePage(1)">Следующая →</button>
+                </div>
+                <div class="font-size-control">
+                    <span class="font-size-label">Шрифт:</span>
+                    <button class="font-size-btn" onclick="changeBookFontSize(-1)">A-</button>
+                    <button class="font-size-btn" onclick="changeBookFontSize(1)">A+</button>
+                </div>
+            </div>
+            
+            <div class="modal-body touch-scroll-fix">
+                <div class="book-mode-page" id="book-page-content">
+                    <!-- Содержимое страницы будет загружено здесь -->
+                </div>
+                <div class="page-number" id="page-number">Страница 1</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Анимация разблокировки уровня -->
+    <div class="level-unlock-animation" id="level-unlock-animation">
+        <div class="unlock-content">
+            <div class="unlock-icon">🏆</div>
+            <h2 class="unlock-title" id="unlock-level-name">Поздравляем!</h2>
+            <p class="unlock-description" id="unlock-level-description">Вы достигли нового уровня в своем духовном пути</p>
+            <div class="unlock-dua" id="unlock-level-dua">
+                "О Аллах, сделай это благо постоянным, сделай эту благодарность искренней, и прими наши скромные усилия"
+            </div>
+            <button class="nav-button" onclick="closeLevelUnlock()">Продолжить</button>
         </div>
     </div>
 
@@ -2490,7 +2946,7 @@
         let isPlaying = false;
         let currentAyah = null;
         let currentReciter = 'ar.alafasy';
-        let userInteracted = false; // Флаг для отслеживания взаимодействия пользователя
+        let userInteracted = false;
 
         // Данные для подготовки
         const preparationData = [
@@ -2751,6 +3207,180 @@
             }
         ];
 
+        // === ДОПОЛНИТЕЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+        let currentPage = 1;
+        const totalPages = 604; // Всего страниц в Коране
+        let bookFontSize = parseInt(localStorage.getItem('bookFontSize')) || 24;
+        
+        // Система уровней
+        const levelsData = [
+            {
+                id: 1,
+                name: "Начинающий",
+                description: "Вы только начинаете свой духовный путь",
+                icon: "🌱",
+                requirements: [
+                    { type: "pages", target: 10, completed: false, description: "Прочитать 10 страниц Корана" },
+                    { type: "tasks", target: 5, completed: false, description: "Выполнить 5 ежедневных задач" },
+                    { type: "azkar", target: 7, completed: false, description: "Запомнить 7 утренних азкаров" }
+                ],
+                dua: "О Аллах, направь меня на прямой путь и укрепи мои намерения",
+                unlocked: true
+            },
+            {
+                id: 2,
+                name: "Искатель знаний",
+                description: "Вы активно изучаете основы ислама",
+                icon: "📚",
+                requirements: [
+                    { type: "pages", target: 50, completed: false, description: "Прочитать 50 страниц Корана" },
+                    { type: "surah", target: 3, completed: false, description: "Выучить 3 короткие суры" },
+                    { type: "prayer", target: 21, completed: false, description: "Совершить 21 намаз вовремя" },
+                    { type: "hadith", target: 5, completed: false, description: "Изучить 5 достоверных хадисов" }
+                ],
+                dua: "О Аллах, прибавь мне знания и сделай его полезным",
+                unlocked: false
+            },
+            {
+                id: 3,
+                name: "Преданный",
+                description: "Вы стабильны в поклонении и изучении",
+                icon: "🕌",
+                requirements: [
+                    { type: "pages", target: 150, completed: false, description: "Прочитать 150 страниц Корана" },
+                    { type: "surah", target: 7, completed: false, description: "Выучить 7 сур" },
+                    { type: "fasting", target: 5, completed: false, description: "Соблюсти 5 суннат-постов" },
+                    { type: "charity", target: 3, completed: false, description: "Совершить 3 благотворительных акта" }
+                ],
+                dua: "О Аллах, сделай меня среди тех, кто кается и очищается",
+                unlocked: false
+            },
+            {
+                id: 4,
+                name: "Знающий",
+                description: "Вы углубляетесь в понимание религии",
+                icon: "🎓",
+                requirements: [
+                    { type: "pages", target: 300, completed: false, description: "Прочитать 300 страниц Корана" },
+                    { type: "juz", target: 1, completed: false, description: "Завершить чтение 1 джуза" },
+                    { type: "companions", target: 10, completed: false, description: "Изучить о 10 сподвижниках" },
+                    { type: "tajweed", target: 1, completed: false, description: "Изучить основы тажвида" }
+                ],
+                dua: "О Аллах, укрась меня благородным нравом и полезным знанием",
+                unlocked: false
+            },
+            {
+                id: 5,
+                name: "Практикующий",
+                description: "Вы применяете знания в повседневной жизни",
+                icon: "⚡",
+                requirements: [
+                    { type: "pages", target: 500, completed: false, description: "Прочитать 500 страниц Корана" },
+                    { type: "juz", target: 3, completed: false, description: "Завершить чтение 3 джузов" },
+                    { type: "sunnah", target: 15, completed: false, description: "Внедрить 15 сунн в жизнь" },
+                    { type: "community", target: 5, completed: false, description: "Помочь 5 людям в религии" }
+                ],
+                dua: "О Аллах, сделай меня искренним в словах и делах",
+                unlocked: false
+            },
+            {
+                id: 6,
+                name: "Наставник",
+                description: "Вы делитесь знаниями с другими",
+                icon: "👨‍🏫",
+                requirements: [
+                    { type: "pages", target: 800, completed: false, description: "Прочитать 800 страниц Корана" },
+                    { type: "juz", target: 6, completed: false, description: "Завершить чтение 6 джузов" },
+                    { type: "teaching", target: 3, completed: false, description: "Обучить 3 человека основам" },
+                    { type: "article", target: 1, completed: false, description: "Написать статью о исламе" }
+                ],
+                dua: "О Аллах, сделай меня причиной guidance для других",
+                unlocked: false
+            },
+            {
+                id: 7,
+                name: "Глубоко знающий",
+                description: "Вы понимаете глубины Корана и Сунны",
+                icon: "🔍",
+                requirements: [
+                    { type: "pages", target: 1200, completed: false, description: "Прочитать 1200 страниц Корана" },
+                    { type: "juz", target: 10, completed: false, description: "Завершить чтение 10 джузов" },
+                    { type: "tafsir", target: 5, completed: false, description: "Изучить тафсир 5 сур" },
+                    { type: "fiqh", target: 1, completed: false, description: "Изучить основы фикха" }
+                ],
+                dua: "О Аллах, открой мне врата Твоего милосердия и знания",
+                unlocked: false
+            },
+            {
+                id: 8,
+                name: "Праведный",
+                description: "Ваша вера проявляется во всех аспектах жизни",
+                icon: "⭐",
+                requirements: [
+                    { type: "pages", target: 2000, completed: false, description: "Прочитать 2000 страниц Корана" },
+                    { type: "juz", target: 15, completed: false, description: "Завершить чтение 15 джузов" },
+                    { type: "character", target: 10, completed: false, description: "Улучшить 10 качеств характера" },
+                    { type: "service", target: 10, completed: false, description: "Совершить 10 услуг обществу" }
+                ],
+                dua: "О Аллах, сделай меня среди праведных рабов Твоих",
+                unlocked: false
+            },
+            {
+                id: 9,
+                name: "Продвинутый",
+                description: "Вы достигли высокого уровня понимания и практики",
+                icon: "🚀",
+                requirements: [
+                    { type: "pages", target: 3500, completed: false, description: "Прочитать 3500 страниц Корана" },
+                    { type: "juz", target: 25, completed: false, description: "Завершить чтение 25 джузов" },
+                    { type: "memorization", target: 2, completed: false, description: "Запомнить 2 джуза Корана" },
+                    { type: "leadership", target: 5, completed: false, description: "Возглавить 5 религиозных мероприятий" }
+                ],
+                dua: "О Аллах, укрепи меня на прямом пути до конца жизни",
+                unlocked: false
+            },
+            {
+                id: 10,
+                name: "Мастер",
+                description: "Вы достигли вершины духовного развития",
+                icon: "👑",
+                requirements: [
+                    { type: "pages", target: 6040, completed: false, description: "Прочитать весь Коран (6040 страниц)" },
+                    { type: "quran", target: 1, completed: false, description: "Завершить чтение всего Корана" },
+                    { type: "ramadan", target: 1, completed: false, description: "Подготовиться и пройти Рамадан" },
+                    { type: "legacy", target: 1, completed: false, description: "Оставить наследие в общине" }
+                ],
+                dua: "О Аллах, прими мои скромные старания и сделай меня из числа обитателей Рая",
+                unlocked: false
+            }
+        ];
+
+        let userProgress = JSON.parse(localStorage.getItem('userProgress')) || {
+            currentLevel: 1,
+            pagesRead: 0,
+            tasksCompleted: 0,
+            azkarMemorized: 0,
+            surahsMemorized: 0,
+            prayersOnTime: 0,
+            fastingDays: 0,
+            charityActs: 0,
+            companionsStudied: 0,
+            tajweedLearned: false,
+            sunnahImplemented: 0,
+            communityHelped: 0,
+            peopleTaught: 0,
+            articlesWritten: 0,
+            tafsirStudied: 0,
+            fiqhLearned: false,
+            characterImproved: 0,
+            communityService: 0,
+            juzMemorized: 0,
+            eventsLed: 0,
+            quranCompleted: false,
+            ramadanCompleted: false,
+            legacyLeft: false
+        };
+
         // === ОСНОВНЫЕ ФУНКЦИИ НАВИГАЦИИ ===
 
         function showTab(tabId) {
@@ -2780,6 +3410,11 @@
             // Обновить прогресс чтения при открытии вкладки Корана
             if (tabId === 'quran-tab') {
                 updateReadingProgress();
+            }
+            
+            // Загружаем уровни при открытии соответствующей вкладки
+            if (tabId === 'levels-tab' || tabId === 'profile-tab') {
+                loadLevels();
             }
         }
 
@@ -2853,6 +3488,8 @@
             updateQuranProgress();
             setupAudioControls();
             updateDailyVerse();
+            loadLevels();
+            setupBookMode();
             
             // ИСПРАВЛЕНИЕ: Добавляем обработчик для отслеживания взаимодействия пользователя
             document.addEventListener('click', function() {
@@ -2968,6 +3605,20 @@
             
             // ИСПРАВЛЕНИЕ: Добавляем обработчик для кнопки закрытия
             document.querySelector('.modal-close').addEventListener('click', closeSurahModal);
+            
+            // Обработчики для книжного режима
+            document.getElementById('book-mode-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeBookModeModal();
+                }
+            });
+            
+            document.getElementById('book-modal-content').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            document.getElementById('bookThemeToggle').addEventListener('click', toggleBookTheme);
+            document.getElementById('exitBookMode').addEventListener('click', closeBookModeModal);
         }
 
         function setupAudioControls() {
@@ -3006,6 +3657,19 @@
             }
             
             localStorage.setItem('quranReadingTheme', quranReadingTheme);
+        }
+
+        function toggleBookTheme() {
+            const modalContent = document.getElementById('book-modal-content');
+            const toggleButton = document.getElementById('bookThemeToggle');
+            
+            if (modalContent.classList.contains('quran-reading-theme')) {
+                modalContent.classList.remove('quran-reading-theme');
+                toggleButton.textContent = 'Приятная тема';
+            } else {
+                modalContent.classList.add('quran-reading-theme');
+                toggleButton.textContent = 'Обычная тема';
+            }
         }
 
         function toggleBookMode() {
@@ -3066,9 +3730,28 @@
             showToast(`Размер перевода: ${translationFontSize}px`);
         }
 
+        function changeBookFontSize(delta) {
+            bookFontSize = Math.max(16, Math.min(36, bookFontSize + delta));
+            localStorage.setItem('bookFontSize', bookFontSize);
+            applyBookFontSize();
+            showToast(`Размер шрифта: ${bookFontSize}px`);
+        }
+
         function updateFontSizes() {
             document.documentElement.style.setProperty('--arabic-font-size', arabicFontSize + 'px');
             document.documentElement.style.setProperty('--translation-font-size', translationFontSize + 'px');
+        }
+
+        function applyBookFontSize() {
+            const pageContent = document.getElementById('book-page-content');
+            if (pageContent) {
+                pageContent.style.fontSize = `${bookFontSize}px`;
+            }
+        }
+
+        function setupBookMode() {
+            // Применяем сохраненный размер шрифта для книжного режима
+            applyBookFontSize();
         }
 
         function updateDailyVerse() {
@@ -3107,18 +3790,25 @@
                 checkbox.classList.add('checked');
                 dailyTasks[today] = true;
                 completedTasks++;
+                userProgress.tasksCompleted++;
                 updateProgress();
                 updateStats();
                 showToast('Задача выполнена!', 'success');
                 localStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
+                localStorage.setItem('userProgress', JSON.stringify(userProgress));
+                
+                // Проверяем требования уровней
+                checkLevelRequirements();
             } else {
                 checkbox.classList.remove('checked');
                 dailyTasks[today] = false;
                 completedTasks = Math.max(0, completedTasks - 1);
+                userProgress.tasksCompleted = Math.max(0, userProgress.tasksCompleted - 1);
                 updateProgress();
                 updateStats();
                 showToast('Задача отменена', 'warning');
                 localStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
+                localStorage.setItem('userProgress', JSON.stringify(userProgress));
             }
         }
 
@@ -3129,19 +3819,25 @@
                 taskElement.classList.add('completed');
                 if (!weeklyTasks[weekIndex]) weeklyTasks[weekIndex] = [];
                 weeklyTasks[weekIndex][taskIndex] = true;
+                userProgress.tasksCompleted++;
                 showToast('Задача выполнена!', 'success');
             } else {
                 taskElement.classList.remove('completed');
                 if (weeklyTasks[weekIndex]) weeklyTasks[weekIndex][taskIndex] = false;
+                userProgress.tasksCompleted = Math.max(0, userProgress.tasksCompleted - 1);
                 showToast('Задача отменена', 'warning');
             }
             
             updateProgress();
             updateStats();
             localStorage.setItem('weeklyTasks', JSON.stringify(weeklyTasks));
+            localStorage.setItem('userProgress', JSON.stringify(userProgress));
             
             // Обновляем отображение прогресса недели
             updateWeekProgress(weekIndex);
+            
+            // Проверяем требования уровней
+            checkLevelRequirements();
         }
 
         function updateWeekProgress(weekIndex) {
@@ -3186,8 +3882,8 @@
                 return sum + (weeklyTasks[week] ? weeklyTasks[week].filter(task => task).length : 0);
             }, 0);
             
-            document.getElementById('completedTasks').textContent = dailyTaskCount + weeklyTaskCount;
-            document.getElementById('quranPages').textContent = Math.floor((dailyTaskCount + weeklyTaskCount) * 1.5);
+            document.getElementById('completedTasks').textContent = userProgress.tasksCompleted;
+            document.getElementById('quranPages').textContent = userProgress.pagesRead;
             
             // Рассчитываем серию выполненных дней подряд
             const dates = Object.keys(dailyTasks).sort();
@@ -3379,108 +4075,114 @@
         }
 
         async function openSurah(surahNumber) {
-            currentSurah = surahNumber;
-            
-            try {
-                // Загружаем данные суры из API
-                const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,ru.kuliev`);
-                const data = await response.json();
+            // Показываем выбор режима чтения
+            if (confirm('Выберите режим чтения:\n\n"ОК" - Книжный режим (постранично)\n"Отмена" - Обычный режим (посурочно)')) {
+                openBookMode(surahNumber);
+            } else {
+                // Стандартный режим чтения суры
+                currentSurah = surahNumber;
                 
-                if (data.code === 200) {
-                    const arabicEdition = data.data.find(edition => edition.edition.identifier === 'quran-uthmani');
-                    const translationEdition = data.data.find(edition => edition.edition.identifier === 'ru.kuliev');
+                try {
+                    // Загружаем данные суры из API
+                    const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,ru.kuliev`);
+                    const data = await response.json();
                     
-                    if (arabicEdition && translationEdition) {
-                        const surah = allSurahs.find(s => s.number === surahNumber);
+                    if (data.code === 200) {
+                        const arabicEdition = data.data.find(edition => edition.edition.identifier === 'quran-uthmani');
+                        const translationEdition = data.data.find(edition => edition.edition.identifier === 'ru.kuliev');
                         
-                        document.getElementById('surah-modal-title').textContent = 
-                            `Сура ${surah.englishName} (${surah.name})`;
-                        
-                        const surahContent = document.getElementById('surah-content');
-                        surahContent.innerHTML = '';
-                        
-                        // ИСПРАВЛЕНИЕ: Добавляем тасмию отдельно (кроме суры Ат-Тауба)
-                        if (surahNumber !== 9) {
-                            const bismillah = document.createElement('div');
-                            bismillah.className = 'bismillah';
-                            bismillah.textContent = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
-                            surahContent.appendChild(bismillah);
-                        }
-                        
-                        // Создаем контейнеры для каждого аята с арабским текстом и переводом
-                        for (let i = 0; i < arabicEdition.ayahs.length; i++) {
-                            const arabicAyah = arabicEdition.ayahs[i];
-                            const translationAyah = translationEdition.ayahs[i];
+                        if (arabicEdition && translationEdition) {
+                            const surah = allSurahs.find(s => s.number === surahNumber);
                             
-                            const ayahContainer = document.createElement('div');
-                            ayahContainer.className = 'ayah-container';
+                            document.getElementById('surah-modal-title').textContent = 
+                                `Сура ${surah.englishName} (${surah.name})`;
                             
-                            // Помечаем последний прочитанный аят
-                            const isLastRead = lastReadAyah.surah === surahNumber && lastReadAyah.ayah === arabicAyah.numberInSurah;
+                            const surahContent = document.getElementById('surah-content');
+                            surahContent.innerHTML = '';
                             
-                            ayahContainer.innerHTML = `
-                                <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}
-                                    onclick="playAyah(${arabicAyah.numberInSurah}, ${surahNumber})">
-                                    ${arabicAyah.text} <span class="ayah-number">${arabicAyah.numberInSurah}</span>
-                                </div>
-                                <div class="ayah-translation">
-                                    <strong>${arabicAyah.numberInSurah}.</strong> ${translationAyah.text}
-                                </div>
-                                <button class="nav-button" onclick="setLastReadAyah(${surahNumber}, ${arabicAyah.numberInSurah})" style="font-size: 0.8rem; padding: 0.5rem 1rem; margin-top: 0.5rem;">
-                                    Отметить как прочитанное
-                                </button>
-                            `;
+                            // ИСПРАВЛЕНИЕ: Добавляем тасмию отдельно (кроме суры Ат-Тауба)
+                            if (surahNumber !== 9) {
+                                const bismillah = document.createElement('div');
+                                bismillah.className = 'bismillah';
+                                bismillah.textContent = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+                                surahContent.appendChild(bismillah);
+                            }
                             
-                            surahContent.appendChild(ayahContainer);
-                        }
-                        
-                        // Обновляем навигацию
-                        document.getElementById('prev-surah').disabled = surahNumber <= 1;
-                        document.getElementById('next-surah').disabled = surahNumber >= allSurahs.length;
-                        
-                        // Применяем сохраненную тему чтения Корана
-                        const modalContent = document.getElementById('modal-content');
-                        const toggleButton = document.getElementById('quranThemeToggle');
-                        
-                        if (quranReadingTheme === 'pleasant') {
-                            modalContent.classList.add('quran-reading-theme');
-                            toggleButton.textContent = 'Обычная тема';
+                            // Создаем контейнеры для каждого аята с арабским текстом и переводом
+                            for (let i = 0; i < arabicEdition.ayahs.length; i++) {
+                                const arabicAyah = arabicEdition.ayahs[i];
+                                const translationAyah = translationEdition.ayahs[i];
+                                
+                                const ayahContainer = document.createElement('div');
+                                ayahContainer.className = 'ayah-container';
+                                
+                                // Помечаем последний прочитанный аят
+                                const isLastRead = lastReadAyah.surah === surahNumber && lastReadAyah.ayah === arabicAyah.numberInSurah;
+                                
+                                ayahContainer.innerHTML = `
+                                    <div class="ayah-arabic" ${isLastRead ? 'style="border-right: 3px solid var(--accent-gold); padding-right: 10px;"' : ''}
+                                        onclick="playAyah(${arabicAyah.numberInSurah}, ${surahNumber})">
+                                        ${arabicAyah.text} <span class="ayah-number">${arabicAyah.numberInSurah}</span>
+                                    </div>
+                                    <div class="ayah-translation">
+                                        <strong>${arabicAyah.numberInSurah}.</strong> ${translationAyah.text}
+                                    </div>
+                                    <button class="nav-button" onclick="setLastReadAyah(${surahNumber}, ${arabicAyah.numberInSurah})" style="font-size: 0.8rem; padding: 0.5rem 1rem; margin-top: 0.5rem;">
+                                        Отметить как прочитанное
+                                    </button>
+                                `;
+                                
+                                surahContent.appendChild(ayahContainer);
+                            }
+                            
+                            // Обновляем навигацию
+                            document.getElementById('prev-surah').disabled = surahNumber <= 1;
+                            document.getElementById('next-surah').disabled = surahNumber >= allSurahs.length;
+                            
+                            // Применяем сохраненную тему чтения Корана
+                            const modalContent = document.getElementById('modal-content');
+                            const toggleButton = document.getElementById('quranThemeToggle');
+                            
+                            if (quranReadingTheme === 'pleasant') {
+                                modalContent.classList.add('quran-reading-theme');
+                                toggleButton.textContent = 'Обычная тема';
+                            } else {
+                                modalContent.classList.remove('quran-reading-theme');
+                                toggleButton.textContent = 'Приятная тема';
+                            }
+                            
+                            // Применяем сохраненный книжный режим
+                            const bookModeToggle = document.getElementById('bookModeToggle');
+                            const audioPlayer = document.getElementById('audio-player');
+                            const surahNavigation = document.querySelector('.surah-navigation');
+                            
+                            if (bookModeEnabled) {
+                                modalContent.classList.add('book-mode');
+                                bookModeToggle.textContent = 'Обычный режим';
+                                audioPlayer.style.display = 'none';
+                                surahNavigation.style.display = 'none';
+                            } else {
+                                modalContent.classList.remove('book-mode');
+                                bookModeToggle.textContent = 'Книжный режим';
+                                audioPlayer.style.display = 'flex';
+                                surahNavigation.style.display = 'flex';
+                            }
+                            
+                            // ИСПРАВЛЕНИЕ: Открываем модальное окно
+                            document.getElementById('surah-modal').classList.add('active');
+                            
+                            // ИСПРАВЛЕНИЕ: Предотвращаем скроллинг под модальным окном
+                            document.body.style.overflow = 'hidden';
                         } else {
-                            modalContent.classList.remove('quran-reading-theme');
-                            toggleButton.textContent = 'Приятная тема';
+                            throw new Error('Не удалось загрузить текст суры');
                         }
-                        
-                        // Применяем сохраненный книжный режим
-                        const bookModeToggle = document.getElementById('bookModeToggle');
-                        const audioPlayer = document.getElementById('audio-player');
-                        const surahNavigation = document.querySelector('.surah-navigation');
-                        
-                        if (bookModeEnabled) {
-                            modalContent.classList.add('book-mode');
-                            bookModeToggle.textContent = 'Обычный режим';
-                            audioPlayer.style.display = 'none';
-                            surahNavigation.style.display = 'none';
-                        } else {
-                            modalContent.classList.remove('book-mode');
-                            bookModeToggle.textContent = 'Книжный режим';
-                            audioPlayer.style.display = 'flex';
-                            surahNavigation.style.display = 'flex';
-                        }
-                        
-                        // ИСПРАВЛЕНИЕ: Открываем модальное окно
-                        document.getElementById('surah-modal').classList.add('active');
-                        
-                        // ИСПРАВЛЕНИЕ: Предотвращаем скроллинг под модальным окном
-                        document.body.style.overflow = 'hidden';
                     } else {
-                        throw new Error('Не удалось загрузить текст суры');
+                        throw new Error('Не удалось загрузить данные суры');
                     }
-                } else {
-                    throw new Error('Не удалось загрузить данные суры');
+                } catch (error) {
+                    console.error('Ошибка загрузки суры:', error);
+                    showToast('Ошибка загрузки суры', 'error');
                 }
-            } catch (error) {
-                console.error('Ошибка загрузки суры:', error);
-                showToast('Ошибка загрузки суры', 'error');
             }
         }
 
@@ -3536,6 +4238,125 @@
             showToast(`Отмечен аят ${ayahNumber} суры ${surahNumber} как прочитанный`);
             loadQuranData(); // Перезагружаем список сур для обновления индикаторов
             updateReadingProgress(); // Обновляем прогресс чтения
+        }
+
+        // === ФУНКЦИИ ДЛЯ КНИЖНОГО РЕЖИМА КОРАНА ===
+
+        function openBookMode(surahNumber = null, pageNumber = 1) {
+            currentPage = pageNumber;
+            
+            // Если передана сура, определяем страницу начала суры
+            if (surahNumber) {
+                // Здесь должна быть логика определения страницы по номеру суры
+                // Для простоты используем приблизительные значения
+                currentPage = Math.min(Math.max(1, surahNumber * 2), totalPages);
+            }
+            
+            loadQuranPage(currentPage);
+            document.getElementById('book-mode-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBookModeModal() {
+            document.getElementById('book-mode-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        async function loadQuranPage(pageNumber) {
+            try {
+                // Используем API для получения страницы Корана
+                const response = await fetch(`https://api.alquran.cloud/v1/page/${pageNumber}/quran-uthmani`);
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    const pageData = data.data;
+                    
+                    // Обновляем заголовок
+                    document.getElementById('book-modal-title').textContent = 
+                        `Чтение Корана - Страница ${pageNumber}`;
+                    document.getElementById('page-number').textContent = `Страница ${pageNumber}`;
+                    
+                    // Отображаем аяты страницы
+                    const pageContent = document.getElementById('book-page-content');
+                    pageContent.innerHTML = '';
+                    
+                    // Группируем аяты по строкам для правильного отображения
+                    let currentLine = '';
+                    let ayahsInLine = [];
+                    
+                    pageData.ayahs.forEach(ayah => {
+                        const ayahText = ayah.text;
+                        const ayahNumber = ayah.numberInSurah;
+                        
+                        // Добавляем аят к текущей строке
+                        currentLine += `<span class="ayah">${ayahText}<span class="ayah-number">${ayahNumber}</span></span>`;
+                        ayahsInLine.push(ayah.number);
+                        
+                        // Если строка заполнена или это последний аят, создаем новую строку
+                        if (ayah.words && ayah.words[ayah.words.length - 1].lineEnd || 
+                            ayah === pageData.ayahs[pageData.ayahs.length - 1]) {
+                            
+                            const lineDiv = document.createElement('div');
+                            lineDiv.className = 'quran-line';
+                            lineDiv.innerHTML = currentLine;
+                            pageContent.appendChild(lineDiv);
+                            
+                            // Сбрасываем для следующей строки
+                            currentLine = '';
+                            ayahsInLine = [];
+                        }
+                    });
+                    
+                    // Обновляем навигацию
+                    document.getElementById('prev-page').disabled = pageNumber <= 1;
+                    document.getElementById('next-page').disabled = pageNumber >= totalPages;
+                    
+                    // Применяем сохраненный размер шрифта
+                    applyBookFontSize();
+                    
+                } else {
+                    throw new Error('Не удалось загрузить страницу Корана');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки страницы Корана:', error);
+                showToast('Ошибка загрузки страницы Корана', 'error');
+                // Запасной вариант - сообщение об ошибке
+                document.getElementById('book-page-content').innerHTML = 
+                    '<div style="text-align: center; padding: 2rem;">Не удалось загрузить страницу Корана. Пожалуйста, проверьте подключение к интернету.</div>';
+            }
+        }
+
+        function navigatePage(direction) {
+            const newPage = currentPage + direction;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                loadQuranPage(currentPage);
+                
+                // Обновляем прогресс чтения
+                updateReadingProgressAfterPage();
+            }
+        }
+
+        function updateReadingProgressAfterPage() {
+            // Обновляем количество прочитанных страниц
+            if (!userProgress.pagesReadHistory) {
+                userProgress.pagesReadHistory = [];
+            }
+            
+            // Добавляем страницу в историю, если ее там еще нет
+            if (!userProgress.pagesReadHistory.includes(currentPage)) {
+                userProgress.pagesReadHistory.push(currentPage);
+                userProgress.pagesRead = userProgress.pagesReadHistory.length;
+                
+                // Сохраняем прогресс
+                localStorage.setItem('userProgress', JSON.stringify(userProgress));
+                
+                // Обновляем отображение прогресса
+                updateQuranProgressDisplay();
+                
+                // Проверяем выполнение требований уровней
+                checkLevelRequirements();
+            }
         }
 
         // === АУДИО ФУНКЦИИ ===
@@ -3782,6 +4603,228 @@
                     `).join('')}
                 </div>
             `;
+        }
+
+        // === ФУНКЦИИ ДЛЯ СИСТЕМЫ УРОВНЕЙ ===
+
+        function loadLevels() {
+            const levelsContainer = document.getElementById('levels-container');
+            const allLevelsContainer = document.getElementById('all-levels-container');
+            
+            if (levelsContainer) {
+                levelsContainer.innerHTML = '';
+                
+                // Показываем только текущий и следующий уровни
+                const currentLevelIndex = userProgress.currentLevel - 1;
+                const levelsToShow = levelsData.slice(
+                    Math.max(0, currentLevelIndex - 1), 
+                    Math.min(levelsData.length, currentLevelIndex + 2)
+                );
+                
+                levelsToShow.forEach(level => {
+                    levelsContainer.appendChild(createLevelCard(level));
+                });
+            }
+            
+            if (allLevelsContainer) {
+                allLevelsContainer.innerHTML = '';
+                
+                // Показываем все уровни
+                levelsData.forEach(level => {
+                    allLevelsContainer.appendChild(createLevelCard(level));
+                });
+            }
+            
+            // Обновляем отображение текущего уровня в профиле
+            updateCurrentLevelDisplay();
+        }
+
+        function createLevelCard(level) {
+            const levelCard = document.createElement('div');
+            levelCard.className = `level-card level-${level.id} ${level.id === userProgress.currentLevel ? 'current' : ''}`;
+            
+            // Проверяем выполнение требований для этого уровня
+            const requirementsStatus = checkLevelRequirementsStatus(level);
+            const progress = calculateLevelProgress(level, requirementsStatus);
+            
+            levelCard.innerHTML = `
+                <div class="level-header">
+                    <div class="level-name">${level.icon} ${level.name}</div>
+                    <div class="level-badge">Уровень ${level.id}</div>
+                </div>
+                <div class="level-description">${level.description}</div>
+                <div class="level-requirements">
+                    ${level.requirements.map(req => {
+                        const isCompleted = requirementsStatus.find(r => r.description === req.description)?.completed || false;
+                        return `
+                            <div class="requirement ${isCompleted ? 'completed' : ''}">
+                                ${isCompleted ? '✓' : '○'} ${req.description}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="level-progress">
+                    <div class="level-progress-fill" style="width: ${progress}%"></div>
+                </div>
+                ${level.id === userProgress.currentLevel && progress === 100 ? 
+                    `<button class="nav-button" style="margin-top: 1rem; width: 100%;" onclick="unlockNextLevel(${level.id})">
+                        Разблокировать следующий уровень
+                    </button>` : ''}
+            `;
+            
+            return levelCard;
+        }
+
+        function checkLevelRequirementsStatus(level) {
+            return level.requirements.map(req => {
+                let completed = false;
+                
+                switch(req.type) {
+                    case 'pages':
+                        completed = userProgress.pagesRead >= req.target;
+                        break;
+                    case 'tasks':
+                        completed = userProgress.tasksCompleted >= req.target;
+                        break;
+                    case 'azkar':
+                        completed = userProgress.azkarMemorized >= req.target;
+                        break;
+                    case 'surah':
+                        completed = userProgress.surahsMemorized >= req.target;
+                        break;
+                    case 'prayer':
+                        completed = userProgress.prayersOnTime >= req.target;
+                        break;
+                    case 'fasting':
+                        completed = userProgress.fastingDays >= req.target;
+                        break;
+                    case 'charity':
+                        completed = userProgress.charityActs >= req.target;
+                        break;
+                    case 'companions':
+                        completed = userProgress.companionsStudied >= req.target;
+                        break;
+                    case 'tajweed':
+                        completed = userProgress.tajweedLearned;
+                        break;
+                    case 'sunnah':
+                        completed = userProgress.sunnahImplemented >= req.target;
+                        break;
+                    case 'community':
+                        completed = userProgress.communityHelped >= req.target;
+                        break;
+                    case 'teaching':
+                        completed = userProgress.peopleTaught >= req.target;
+                        break;
+                    case 'article':
+                        completed = userProgress.articlesWritten >= req.target;
+                        break;
+                    case 'tafsir':
+                        completed = userProgress.tafsirStudied >= req.target;
+                        break;
+                    case 'fiqh':
+                        completed = userProgress.fiqhLearned;
+                        break;
+                    case 'character':
+                        completed = userProgress.characterImproved >= req.target;
+                        break;
+                    case 'service':
+                        completed = userProgress.communityService >= req.target;
+                        break;
+                    case 'juz':
+                        completed = userProgress.juzMemorized >= req.target;
+                        break;
+                    case 'leadership':
+                        completed = userProgress.eventsLed >= req.target;
+                        break;
+                    case 'quran':
+                        completed = userProgress.quranCompleted;
+                        break;
+                    case 'ramadan':
+                        completed = userProgress.ramadanCompleted;
+                        break;
+                    case 'legacy':
+                        completed = userProgress.legacyLeft;
+                        break;
+                }
+                
+                return {
+                    ...req,
+                    completed: completed
+                };
+            });
+        }
+
+        function calculateLevelProgress(level, requirementsStatus) {
+            if (!requirementsStatus || requirementsStatus.length === 0) return 0;
+            
+            const completedCount = requirementsStatus.filter(req => req.completed).length;
+            return (completedCount / requirementsStatus.length) * 100;
+        }
+
+        function checkLevelRequirements() {
+            const currentLevel = levelsData[userProgress.currentLevel - 1];
+            if (!currentLevel) return;
+            
+            const requirementsStatus = checkLevelRequirementsStatus(currentLevel);
+            const progress = calculateLevelProgress(currentLevel, requirementsStatus);
+            
+            // Если все требования выполнены, предлагаем разблокировать следующий уровень
+            if (progress === 100 && userProgress.currentLevel < levelsData.length) {
+                showToast('Вы выполнили все требования текущего уровня!', 'success');
+            }
+            
+            // Обновляем отображение уровней
+            loadLevels();
+        }
+
+        function unlockNextLevel(currentLevelId) {
+            if (currentLevelId >= levelsData.length) return;
+            
+            const nextLevel = levelsData[currentLevelId];
+            userProgress.currentLevel = nextLevel.id;
+            localStorage.setItem('userProgress', JSON.stringify(userProgress));
+            
+            // Показываем анимацию разблокировки
+            showLevelUnlockAnimation(nextLevel);
+            
+            // Обновляем отображение
+            loadLevels();
+        }
+
+        function showLevelUnlockAnimation(level) {
+            const animation = document.getElementById('level-unlock-animation');
+            const levelName = document.getElementById('unlock-level-name');
+            const levelDescription = document.getElementById('unlock-level-description');
+            const levelDua = document.getElementById('unlock-level-dua');
+            
+            levelName.textContent = `Уровень ${level.id} разблокирован: ${level.name}`;
+            levelDescription.textContent = level.description;
+            levelDua.textContent = level.dua;
+            
+            animation.classList.add('active');
+        }
+
+        function closeLevelUnlock() {
+            document.getElementById('level-unlock-animation').classList.remove('active');
+        }
+
+        function updateCurrentLevelDisplay() {
+            const currentLevel = levelsData[userProgress.currentLevel - 1];
+            if (!currentLevel) return;
+            
+            document.getElementById('current-level-icon').textContent = currentLevel.icon;
+            document.getElementById('current-level-icon').className = `level-icon level-${currentLevel.id}`;
+            document.getElementById('current-level-title').textContent = currentLevel.name;
+            document.getElementById('current-level-subtitle').textContent = `Уровень ${userProgress.currentLevel} из ${levelsData.length}`;
+        }
+
+        function updateQuranProgressDisplay() {
+            document.getElementById('quranPages').textContent = userProgress.pagesRead;
+        }
+
+        function showAchievements() {
+            showToast('Раздел "Достижения" находится в разработке!', 'warning');
         }
 
         async function setupServiceWorker() {
