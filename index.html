@@ -3140,12 +3140,12 @@
         let dailyVerse = JSON.parse(localStorage.getItem('dailyVerse')) || null;
         let dailyVerseDate = localStorage.getItem('dailyVerseDate') || null;
         
-        // Audio variables
+        // Audio variables - ИСПРАВЛЕННЫЕ
         let currentAudio = null;
         let isPlaying = false;
         let currentAyah = null;
         let currentReciter = 'ar.alafasy';
-        let userInteracted = false;
+        let audioInitialized = false;
 
         // Данные для подготовки
         const preparationData = [
@@ -3706,10 +3706,8 @@
             setupBookMode();
             applyLevelTheme();
             
-            // ИСПРАВЛЕНИЕ: Добавляем обработчик для отслеживания взаимодействия пользователя
-            document.addEventListener('click', function() {
-                userInteracted = true;
-            }, { once: true });
+            // ИСПРАВЛЕНИЕ: Инициализируем аудио при первом взаимодействии
+            document.addEventListener('click', initializeAudio, { once: true });
         }
 
         function setupTheme() {
@@ -3886,6 +3884,25 @@
                         stopAudio();
                         playAyah(currentAyah);
                     }
+                });
+            }
+        }
+
+        // ИСПРАВЛЕНИЕ: Функция для инициализации аудио
+        function initializeAudio() {
+            audioInitialized = true;
+            // Создаем и сразу останавливаем пустой аудио элемент
+            const silentAudio = new Audio();
+            silentAudio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSw=';
+            silentAudio.volume = 0.01;
+            
+            const playPromise = silentAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    silentAudio.pause();
+                    silentAudio.currentTime = 0;
+                }).catch(error => {
+                    console.log('Аудио инициализация завершена');
                 });
             }
         }
@@ -4761,13 +4778,13 @@
             }
         }
 
-        // === АУДИО ФУНКЦИИ ===
+        // === ИСПРАВЛЕННЫЕ АУДИО ФУНКЦИИ ===
 
         function playAyah(ayahNumber, surahNumber = currentSurah) {
-            // ИСПРАВЛЕНИЕ: Проверяем, было ли взаимодействие пользователя
-            if (!userInteracted) {
+            // ИСПРАВЛЕНИЕ: Проверяем инициализацию аудио
+            if (!audioInitialized) {
                 showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
-                userInteracted = true;
+                initializeAudio();
                 return;
             }
             
@@ -4783,7 +4800,6 @@
             currentAudio = new Audio();
             
             // ИСПРАВЛЕНИЕ: Формируем правильный URL для API Al Quran Cloud
-            // Используем правильный формат для выбранного чтеца
             let audioUrl;
             
             // Формируем URL в зависимости от выбранного чтеца
@@ -4829,19 +4845,22 @@
                     
                     // Подсвечиваем текущий аят
                     highlightCurrentAyah(ayahNumber);
+                    
+                    showToast('Воспроизведение аята...', 'success');
                 }).catch(error => {
                     console.error('Ошибка воспроизведения:', error);
-                    showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
+                    showToast('Ошибка воспроизведения. Проверьте подключение к интернету', 'error');
                 });
             }
             
             // Обработчики событий аудио
             currentAudio.addEventListener('ended', function() {
                 stopAudio();
+                showToast('Воспроизведение завершено', 'success');
             });
             
             currentAudio.addEventListener('error', function() {
-                showToast('Ошибка воспроизведения аята', 'error');
+                showToast('Ошибка загрузки аудио', 'error');
                 stopAudio();
             });
         }
