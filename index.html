@@ -51,6 +51,29 @@
             /* Quran font sizes */
             --arabic-font-size: 2rem;
             --translation-font-size: 1rem;
+
+            /* Glass effect variables */
+            --c-glass: #bbbbbc;
+            --c-light: #fff;
+            --c-dark: #000;
+            --c-content: #224;
+            --c-action: #0052f5;
+            --c-bg: #E8E8E9;
+            --glass-reflex-dark: 1;
+            --glass-reflex-light: 1;
+            --saturation: 150%;
+        }
+
+        body.dark-theme {
+            --c-glass: #bbbbbc;
+            --c-light: #fff;
+            --c-dark: #000;
+            --c-content: #e1e1e1;
+            --c-action: #03d5ff;
+            --c-bg: #1b1b1d;
+            --glass-reflex-dark: 2;
+            --glass-reflex-light: 0.3;
+            --saturation: 150%;
         }
 
         /* === Base Styles === */
@@ -103,6 +126,62 @@
 
         body.dark-theme .app-container {
             background: var(--bg-dark);
+        }
+
+        /* === Glass Effect Components === */
+        .glass-container {
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .glass-filter {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            z-index: 1;
+        }
+
+        .glass-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent) 0%,
+                color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 5%), transparent) 100%
+            );
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .glass-specular {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 15%), transparent) 50%,
+                transparent 100%
+            );
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .glass-content {
+            position: relative;
+            z-index: 4;
         }
 
         /* === Tab Content === */
@@ -229,14 +308,23 @@
         /* === Progress Section === */
         .progress-section {
             padding: 1.5rem 1.25rem;
-            background: var(--bg-card-light);
             margin: 0.75rem;
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-        }
-
-        body.dark-theme .progress-section {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .progress-header {
@@ -306,21 +394,25 @@
 
         /* === Today's Task === */
         .task-card {
-            background: var(--bg-card-light);
             margin: 0.75rem;
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
             overflow: hidden;
             transition: var(--transition);
-        }
-
-        body.dark-theme .task-card {
-            background: var(--bg-card-dark);
-        }
-
-        .task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .task-header {
@@ -481,7 +573,6 @@
         }
 
         .action-button {
-            background: var(--bg-card-light);
             border: none;
             border-radius: var(--radius-lg);
             padding: 1.25rem 0.5rem;
@@ -492,17 +583,26 @@
             flex-direction: column;
             align-items: center;
             gap: 0.75rem;
-            box-shadow: var(--shadow-sm);
             touch-action: manipulation;
-        }
-
-        body.dark-theme .action-button {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .action-button:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
 
         .action-button.active {
@@ -548,7 +648,21 @@
             padding: 1.5rem;
             position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         body.dark-theme .verse-card {
@@ -641,16 +755,25 @@
         }
 
         .week-card {
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             padding: 1.5rem;
             margin-bottom: 1rem;
-            box-shadow: var(--shadow-sm);
             border-left: 4px solid var(--primary-main);
-        }
-
-        body.dark-theme .week-card {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .week-header {
@@ -756,11 +879,9 @@
         }
 
         .surah-card {
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             padding: 1.25rem;
             margin-bottom: 0.75rem;
-            box-shadow: var(--shadow-sm);
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -768,15 +889,24 @@
             cursor: pointer;
             touch-action: manipulation;
             position: relative;
-        }
-
-        body.dark-theme .surah-card {
-            background: var(--bg-card-dark);
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .surah-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
 
         .surah-number {
@@ -845,15 +975,24 @@
         }
 
         .prayer-times {
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             padding: 1.5rem;
             margin-bottom: 1rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        body.dark-theme .prayer-times {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .prayer-header {
@@ -934,15 +1073,24 @@
         }
 
         .community-card {
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             padding: 1.5rem;
             margin-bottom: 1rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        body.dark-theme .community-card {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .community-title {
@@ -1044,21 +1192,29 @@
         }
 
         .dua-card {
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             padding: 1.25rem;
             margin-bottom: 0.75rem;
-            box-shadow: var(--shadow-sm);
             transition: var(--transition);
-        }
-
-        body.dark-theme .dua-card {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .dua-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
 
         .dua-arabic {
@@ -1096,16 +1252,25 @@
         }
 
         .profile-card {
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             padding: 1.5rem;
             margin-bottom: 1rem;
-            box-shadow: var(--shadow-sm);
             text-align: center;
-        }
-
-        body.dark-theme .profile-card {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .profile-avatar {
@@ -1168,14 +1333,23 @@
         }
 
         .settings-section {
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        body.dark-theme .settings-section {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .settings-title {
@@ -1260,20 +1434,27 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--bg-card-light);
             display: flex;
             justify-content: space-around;
             padding: 0.75rem 0;
-            border-top: 1px solid var(--border-light);
             backdrop-filter: blur(10px);
             z-index: 1000;
             max-width: 480px;
             margin: 0 auto;
-        }
-
-        body.dark-theme .bottom-nav {
-            background: var(--bg-card-dark);
-            border-top-color: var(--border-dark);
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .nav-item {
@@ -2101,14 +2282,23 @@
         /* === Стили для системы уровней === */
         .levels-section {
             padding: 1.5rem;
-            background: var(--bg-card-light);
             border-radius: var(--radius-lg);
             margin: 1rem 0.75rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        body.dark-theme .levels-section {
-            background: var(--bg-card-dark);
+            position: relative;
+            background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+            backdrop-filter: blur(8px) saturate(var(--saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+            box-shadow: 
+                inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent), 
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent), 
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent), 
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent), 
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent), 
+                inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent), 
+                0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
         }
 
         .levels-title {
@@ -2142,7 +2332,6 @@
             background: linear-gradient(135deg, rgba(11, 91, 63, 0.1), rgba(217, 180, 74, 0.05));
             border-left-color: var(--accent-gold);
             transform: scale(1.02);
-            box-shadow: var(--shadow-md);
         }
 
         .level-card.level-1 { border-left-color: #10B981; }
@@ -2223,7 +2412,6 @@
 
         .requirement:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
         }
 
         .level-progress {
@@ -2406,7 +2594,6 @@
         .level-9 .level-icon { background: linear-gradient(135deg, #F97316, #EA580C); }
         .level-10 .level-icon { 
             background: linear-gradient(135deg, #8B5CF6, #7C3AED, #6D28D9);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
         }
 
         .level-1 .level-card { border-left-color: #10B981; }
@@ -2516,9 +2703,9 @@
         }
         
         @keyframes unlockPulse {
-            0% { transform: scale(1); box-shadow: var(--shadow-sm); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(217, 180, 74, 0.7); }
-            100% { transform: scale(1.02); box-shadow: var(--shadow-md); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1.02); }
         }
         
         .level-glow {
