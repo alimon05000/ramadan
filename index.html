@@ -3357,28 +3357,28 @@
 
         // === ИСПРАВЛЕННЫЕ АУДИО API ===
         const AUDIO_API_BASE = 'https://cdn.islamic.network/quran/audio/128';
-        const RECITERS = {
-            'ar.alafasy': {
-                name: 'Мишари Рашид Аль-Афаси',
-                baseUrl: `${AUDIO_API_BASE}/ar.alafasy`
-            },
-            'ar.husary': {
-                name: 'Махмуд Халиль Аль-Хусари', 
-                baseUrl: `${AUDIO_API_BASE}/ar.husary`
-            },
-            'ar.hudhaify': {
-                name: 'Али ибн Абдуррахман Аль-Хузейфи',
-                baseUrl: `${AUDIO_API_BASE}/ar.hudhaify`
-            },
-            'ar.abdulbasit': {
-                name: 'Абдульбасит Абдуссамад',
-                baseUrl: `${AUDIO_API_BASE}/ar.abdulbasit`
-            },
-            'ar.mahermuaiqly': {
-                name: 'Магер Аль-Муайкли',
-                baseUrl: `${AUDIO_API_BASE}/ar.mahermuaiqly`
-            }
-        };
+const RECITERS = {
+    'ar.alafasy': {
+        name: 'Мишари Рашид Аль-Афаси',
+        baseUrl: `${AUDIO_API_BASE}/ar.alafasy`
+    },
+    'ar.husary': {
+        name: 'Махмуд Халиль Аль-Хусари', 
+        baseUrl: `${AUDIO_API_BASE}/ar.husary`
+    },
+    'ar.hudhaify': {
+        name: 'Али ибн Абдуррахман Аль-Хузейфи',
+        baseUrl: `${AUDIO_API_BASE}/ar.hudhaify`
+    },
+    'ar.abdulbasit': {
+        name: 'Абдульбасит Абдуссамад',
+        baseUrl: `${AUDIO_API_BASE}/ar.abdulbasit`
+    },
+    'ar.mahermuaiqly': {
+        name: 'Магер Аль-Муайкли',
+        baseUrl: `${AUDIO_API_BASE}/ar.mahermuaiqly`
+    }
+};
 
         // Данные для подготовки
         const preparationData = [
@@ -5182,26 +5182,24 @@ async function openSurah(surahNumber) {
             }
         }
 
-        // === ИСПРАВЛЕННЫЕ АУДИО ФУНКЦИИ С НОВЫМ API ===
+        // === ИСПРАВЛЕННЫЕ АУДИО ФУНКЦИИ ===
 
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ВОСПРОИЗВЕДЕНИЯ АЯТА
-        // Флаг взаимодействия пользователя для обхода блокировки autoplay
+// Флаг для отслеживания первого взаимодействия
 let userInteracted = false;
 
 // Отслеживаем первый клик пользователя
-document.addEventListener('click', () => {
-    userInteracted = true;
+document.addEventListener('click', function() {
+    if (!userInteracted) {
+        userInteracted = true;
+        console.log('Пользователь взаимодействовал с приложением');
+    }
 }, { once: true });
 
 async function playAyah(ayahNumber, surahNumber = currentSurah) {
     // Проверяем, было ли взаимодействие пользователя
-    if (!audioInitialized) {
-        if (!userInteracted) {
-            showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
-            return;
-        }
-        showToast('Инициализация аудио...', 'info');
-        initializeAudio();
+    if (!userInteracted) {
+        showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
+        userInteracted = true;
         return;
     }
     
@@ -5218,16 +5216,34 @@ async function playAyah(ayahNumber, surahNumber = currentSurah) {
         const audioUrl = getAyahAudioUrl(surahNumber, ayahNumber);
         if (!audioUrl) throw new Error('Не удалось сформировать URL для аудио');
         
+        console.log('Загрузка аудио:', audioUrl);
+        
         currentAudio = new Audio();
         currentAudio.src = audioUrl;
+        
+        // Важные атрибуты для мобильных устройств
         currentAudio.setAttribute('playsinline', '');
         currentAudio.setAttribute('webkit-playsinline', '');
         currentAudio.preload = 'auto';
+        currentAudio.volume = 1.0;
+        
+        // Обработчики событий ДО воспроизведения
+        currentAudio.addEventListener('canplaythrough', function() {
+            console.log('Аудио готово к воспроизведению');
+        });
+        
+        currentAudio.addEventListener('error', function(e) {
+            console.error('Ошибка загрузки аудио:', e);
+            showToast('Ошибка загрузки аудио. Попробуйте другого чтеца', 'error');
+            stopAudio();
+        });
         
         // Пытаемся воспроизвести
         const playPromise = currentAudio.play();
+        
         if (playPromise !== undefined) {
             playPromise.then(() => {
+                console.log('Воспроизведение начато');
                 const playBtn = document.getElementById('play-btn');
                 if (playBtn) {
                     playBtn.classList.add('playing');
@@ -5238,24 +5254,17 @@ async function playAyah(ayahNumber, surahNumber = currentSurah) {
                 showToast('Воспроизведение аята...', 'success');
             }).catch(error => {
                 console.error('Ошибка воспроизведения:', error);
-                showToast('Ошибка воспроизведения. Нажмите на аят еще раз', 'warning');
+                showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
+                // Пробуем снова после взаимодействия
+                userInteracted = true;
             });
         }
         
-        // Обработчики событий
-        currentAudio.addEventListener('ended', () => {
+        // Обработчик завершения воспроизведения
+        currentAudio.addEventListener('ended', function() {
+            console.log('Воспроизведение завершено');
             stopAudio();
             showToast('Воспроизведение завершено', 'success');
-        });
-        
-        currentAudio.addEventListener('error', (e) => {
-            console.error('Ошибка аудио:', e);
-            showToast('Ошибка загрузки аудио. Попробуйте другого чтеца', 'error');
-            stopAudio();
-        });
-        
-        currentAudio.addEventListener('canplaythrough', () => {
-            console.log('Аудио готово к воспроизведению');
         });
         
     } catch (error) {
@@ -5265,7 +5274,6 @@ async function playAyah(ayahNumber, surahNumber = currentSurah) {
     }
 }
 
-// Остальной код остаётся без изменений
 function getAyahAudioUrl(surahNumber, ayahNumber) {
     const reciter = RECITERS[currentReciter];
     if (!reciter) {
@@ -5280,6 +5288,7 @@ function getAyahAudioUrl(surahNumber, ayahNumber) {
 }
 
 function playSurahAudio(surahNumber) {
+    // Воспроизводим первый аят суры
     playAyah(1, surahNumber);
 }
 
@@ -5296,6 +5305,7 @@ function toggleAudio() {
 function stopAudio() {
     if (currentAudio) {
         currentAudio.pause();
+        currentAudio.currentTime = 0;
         currentAudio = null;
     }
     
@@ -5322,9 +5332,10 @@ function highlightCurrentAyah(ayahNumber) {
 
 function removeAyahHighlight() {
     const highlightedAyahs = document.querySelectorAll('.ayah-playing');
-    highlightedAyahs.forEach(ayah => ayah.classList.remove('ayah-playing'));
+    highlightedAyahs.forEach(ayah => {
+        ayah.classList.remove('ayah-playing');
+    });
 }
-
         // === ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ВРЕМЕНИ НАМАЗОВ ===
         async function loadPrayerTimes() {
             const prayerList = document.getElementById('prayer-list');
