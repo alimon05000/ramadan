@@ -5284,7 +5284,7 @@ function getAyahAudioUrl(surahNumber, ayahNumber) {
     const formattedSurah = surahNumber.toString().padStart(3, '0');
     const formattedAyah = ayahNumber.toString().padStart(3, '0');
     
-    return `${reciter.baseUrl}/${formattedSurah}${formattedAyah}.mp3`;
+    return `${reciter.baseUrl}/${surahNumber}/${ayahNumber}.mp3`;
 }
 
 function playSurahAudio(surahNumber) {
