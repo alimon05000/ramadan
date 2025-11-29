@@ -3356,27 +3356,32 @@
         let audioInitialized = false;
 
         // === ИСПРАВЛЕННЫЕ АУДИО API ===
-        const AUDIO_API_BASE = 'https://cdn.islamic.network/quran/audio/128';
+        const AUDIO_API_BASE = 'https://api.quran.com/api/v4/recitations';
 const RECITERS = {
     'ar.alafasy': {
         name: 'Мишари Рашид Аль-Афаси',
-        baseUrl: `${AUDIO_API_BASE}/ar.alafasy`
+        id: 7, // ID чтеца в API
+        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.alafasy`
     },
     'ar.husary': {
         name: 'Махмуд Халиль Аль-Хусари', 
-        baseUrl: `${AUDIO_API_BASE}/ar.husary`
+        id: 9,
+        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.husary`
     },
     'ar.hudhaify': {
         name: 'Али ибн Абдуррахман Аль-Хузейфи',
-        baseUrl: `${AUDIO_API_BASE}/ar.hudhaify`
+        id: 10,
+        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.hudhaify`
     },
     'ar.abdulbasit': {
         name: 'Абдульбасит Абдуссамад',
-        baseUrl: `${AUDIO_API_BASE}/ar.abdulbasit`
+        id: 2,
+        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.abdulbasit`
     },
     'ar.mahermuaiqly': {
         name: 'Магер Аль-Муайкли',
-        baseUrl: `${AUDIO_API_BASE}/ar.mahermuaiqly`
+        id: 8,
+        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.mahermuaiqly`
     }
 };
 
@@ -5281,12 +5286,13 @@ function getAyahAudioUrl(surahNumber, ayahNumber) {
         return null;
     }
     
+    // ПРАВИЛЬНЫЙ ФОРМАТ: /surah_number/ayah_number.mp3
     const formattedSurah = surahNumber.toString().padStart(3, '0');
     const formattedAyah = ayahNumber.toString().padStart(3, '0');
     
-    return `${reciter.baseUrl}/${surahNumber}/${ayahNumber}.mp3`;
+    return `${reciter.baseUrl}/${formattedSurah}${formattedAyah}.mp3`;
 }
-
+        
 function playSurahAudio(surahNumber) {
     // Воспроизводим первый аят суры
     playAyah(1, surahNumber);
