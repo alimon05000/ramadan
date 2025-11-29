@@ -3356,35 +3356,22 @@
         let audioInitialized = false;
 
         // === ИСПРАВЛЕННЫЕ АУДИО API ===
-        const AUDIO_API_BASE = 'https://api.quran.com/api/v4/recitations';
+        // АЛЬТЕРНАТИВНЫЙ API
 const RECITERS = {
     'ar.alafasy': {
         name: 'Мишари Рашид Аль-Афаси',
-        id: 7, // ID чтеца в API
-        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.alafasy`
+        baseUrl: `https://everyayah.com/data/Alafasy_128kbps`
     },
     'ar.husary': {
         name: 'Махмуд Халиль Аль-Хусари', 
-        id: 9,
-        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.husary`
+        baseUrl: `https://everyayah.com/data/Husary_128kbps`
     },
     'ar.hudhaify': {
         name: 'Али ибн Абдуррахман Аль-Хузейфи',
-        id: 10,
-        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.hudhaify`
-    },
-    'ar.abdulbasit': {
-        name: 'Абдульбасит Абдуссамад',
-        id: 2,
-        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.abdulbasit`
-    },
-    'ar.mahermuaiqly': {
-        name: 'Магер Аль-Муайкли',
-        id: 8,
-        baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.mahermuaiqly`
+        baseUrl: `https://everyayah.com/data/Hudhaify_128kbps`
     }
 };
-
+        
         // Данные для подготовки
         const preparationData = [
             {
@@ -5286,7 +5273,6 @@ function getAyahAudioUrl(surahNumber, ayahNumber) {
         return null;
     }
     
-    // ПРАВИЛЬНЫЙ ФОРМАТ: /surah_number/ayah_number.mp3
     const formattedSurah = surahNumber.toString().padStart(3, '0');
     const formattedAyah = ayahNumber.toString().padStart(3, '0');
     
