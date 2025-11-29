@@ -5185,153 +5185,145 @@ async function openSurah(surahNumber) {
         // === ИСПРАВЛЕННЫЕ АУДИО ФУНКЦИИ С НОВЫМ API ===
 
         // ИСПРАВЛЕННАЯ ФУНКЦИЯ ВОСПРОИЗВЕДЕНИЯ АЯТА
-        async function playAyah(ayahNumber, surahNumber = currentSurah) {
-            if (!audioInitialized) {
-                showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
-                initializeAudio();
-                return;
-            }
-            
-            if (isPlaying && currentAyah === ayahNumber) {
-                stopAudio();
-                return;
-            }
-            
+        // Флаг взаимодействия пользователя для обхода блокировки autoplay
+let userInteracted = false;
+
+// Отслеживаем первый клик пользователя
+document.addEventListener('click', () => {
+    userInteracted = true;
+}, { once: true });
+
+async function playAyah(ayahNumber, surahNumber = currentSurah) {
+    // Проверяем, было ли взаимодействие пользователя
+    if (!audioInitialized) {
+        if (!userInteracted) {
+            showToast('Нажмите на аят еще раз для воспроизведения', 'warning');
+            return;
+        }
+        showToast('Инициализация аудио...', 'info');
+        initializeAudio();
+        return;
+    }
+    
+    if (isPlaying && currentAyah === ayahNumber) {
+        stopAudio();
+        return;
+    }
+    
+    stopAudio();
+    currentAyah = ayahNumber;
+    
+    try {
+        // Формируем URL для аудио
+        const audioUrl = getAyahAudioUrl(surahNumber, ayahNumber);
+        if (!audioUrl) throw new Error('Не удалось сформировать URL для аудио');
+        
+        currentAudio = new Audio();
+        currentAudio.src = audioUrl;
+        currentAudio.setAttribute('playsinline', '');
+        currentAudio.setAttribute('webkit-playsinline', '');
+        currentAudio.preload = 'auto';
+        
+        // Пытаемся воспроизвести
+        const playPromise = currentAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                const playBtn = document.getElementById('play-btn');
+                if (playBtn) {
+                    playBtn.classList.add('playing');
+                    playBtn.textContent = '⏸️';
+                }
+                isPlaying = true;
+                highlightCurrentAyah(ayahNumber);
+                showToast('Воспроизведение аята...', 'success');
+            }).catch(error => {
+                console.error('Ошибка воспроизведения:', error);
+                showToast('Ошибка воспроизведения. Нажмите на аят еще раз', 'warning');
+            });
+        }
+        
+        // Обработчики событий
+        currentAudio.addEventListener('ended', () => {
             stopAudio();
-            currentAyah = ayahNumber;
-            
-            try {
-                // Формируем URL для нового API
-                const audioUrl = getAyahAudioUrl(surahNumber, ayahNumber);
-                
-                if (!audioUrl) {
-                    throw new Error('Не удалось сформировать URL для аудио');
-                }
-                
-                // Создаем аудио элемент
-                currentAudio = new Audio();
-                currentAudio.src = audioUrl;
-                
-                // Добавляем обработчики для PWA
-                currentAudio.setAttribute('playsinline', '');
-                currentAudio.setAttribute('webkit-playsinline', '');
-                currentAudio.preload = 'auto';
-                
-                // Пытаемся воспроизвести
-                const playPromise = currentAudio.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // Обновляем UI
-                        const playBtn = document.getElementById('play-btn');
-                        if (playBtn) {
-                            playBtn.classList.add('playing');
-                            playBtn.textContent = '⏸️';
-                        }
-                        isPlaying = true;
-                        
-                        // Подсвечиваем текущий аят
-                        highlightCurrentAyah(ayahNumber);
-                        
-                        showToast('Воспроизведение аята...', 'success');
-                    }).catch(error => {
-                        console.error('Ошибка воспроизведения:', error);
-                        showToast('Ошибка воспроизведения. Проверьте подключение к интернету', 'error');
-                        stopAudio();
-                    });
-                }
-                
-                // Обработчики событий аудио
-                currentAudio.addEventListener('ended', function() {
-                    stopAudio();
-                    showToast('Воспроизведение завершено', 'success');
-                });
-                
-                currentAudio.addEventListener('error', function(e) {
-                    console.error('Ошибка аудио:', e);
-                    showToast('Ошибка загрузки аудио. Попробуйте другого чтеца', 'error');
-                    stopAudio();
-                });
-                
-                currentAudio.addEventListener('canplaythrough', function() {
-                    console.log('Аудио готово к воспроизведению');
-                });
-                
-            } catch (error) {
-                console.error('Ошибка при воспроизведении аята:', error);
-                showToast('Ошибка воспроизведения аята', 'error');
-                stopAudio();
-            }
-        }
+            showToast('Воспроизведение завершено', 'success');
+        });
+        
+        currentAudio.addEventListener('error', (e) => {
+            console.error('Ошибка аудио:', e);
+            showToast('Ошибка загрузки аудио. Попробуйте другого чтеца', 'error');
+            stopAudio();
+        });
+        
+        currentAudio.addEventListener('canplaythrough', () => {
+            console.log('Аудио готово к воспроизведению');
+        });
+        
+    } catch (error) {
+        console.error('Ошибка при воспроизведении аята:', error);
+        showToast('Ошибка воспроизведения аята', 'error');
+        stopAudio();
+    }
+}
 
-        // Функция для формирования URL аудио
-        function getAyahAudioUrl(surahNumber, ayahNumber) {
-            const reciter = RECITERS[currentReciter];
-            if (!reciter) {
-                console.error('Чтец не найден:', currentReciter);
-                return null;
-            }
-            
-            // Форматируем номера для URL (добавляем ведущие нули)
-            const formattedSurah = surahNumber.toString().padStart(3, '0');
-            const formattedAyah = ayahNumber.toString().padStart(3, '0');
-            
-            // Формируем URL в зависимости от чтеца
-            return `${reciter.baseUrl}/${formattedSurah}${formattedAyah}.mp3`;
-        }
+// Остальной код остаётся без изменений
+function getAyahAudioUrl(surahNumber, ayahNumber) {
+    const reciter = RECITERS[currentReciter];
+    if (!reciter) {
+        console.error('Чтец не найден:', currentReciter);
+        return null;
+    }
+    
+    const formattedSurah = surahNumber.toString().padStart(3, '0');
+    const formattedAyah = ayahNumber.toString().padStart(3, '0');
+    
+    return `${reciter.baseUrl}/${formattedSurah}${formattedAyah}.mp3`;
+}
 
-        function playSurahAudio(surahNumber) {
-            // Воспроизводим первый аят суры
-            playAyah(1, surahNumber);
-        }
+function playSurahAudio(surahNumber) {
+    playAyah(1, surahNumber);
+}
 
-        function toggleAudio() {
-            if (isPlaying) {
-                stopAudio();
-            } else if (currentAyah) {
-                playAyah(currentAyah, currentSurah);
-            } else {
-                showToast('Сначала выберите аят для воспроизведения', 'warning');
-            }
-        }
+function toggleAudio() {
+    if (isPlaying) {
+        stopAudio();
+    } else if (currentAyah) {
+        playAyah(currentAyah, currentSurah);
+    } else {
+        showToast('Сначала выберите аят для воспроизведения', 'warning');
+    }
+}
 
-        function stopAudio() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-            }
-            
-            isPlaying = false;
-            const playBtn = document.getElementById('play-btn');
-            if (playBtn) {
-                playBtn.classList.remove('playing');
-                playBtn.textContent = '▶️';
-            }
-            
-            // Убираем подсветку с текущего аята
-            removeAyahHighlight();
-        }
+function stopAudio() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
+    
+    isPlaying = false;
+    const playBtn = document.getElementById('play-btn');
+    if (playBtn) {
+        playBtn.classList.remove('playing');
+        playBtn.textContent = '▶️';
+    }
+    
+    removeAyahHighlight();
+}
 
-        function highlightCurrentAyah(ayahNumber) {
-            // Убираем предыдущую подсветку
-            removeAyahHighlight();
-            
-            // Находим контейнер аята и добавляем класс подсветки
-            const ayahContainers = document.querySelectorAll('.ayah-container');
-            ayahContainers.forEach(container => {
-                const ayahArabic = container.querySelector('.ayah-arabic');
-                if (ayahArabic && ayahArabic.textContent.includes(ayahNumber)) {
-                    container.classList.add('ayah-playing');
-                }
-            });
+function highlightCurrentAyah(ayahNumber) {
+    removeAyahHighlight();
+    const ayahContainers = document.querySelectorAll('.ayah-container');
+    ayahContainers.forEach(container => {
+        const ayahArabic = container.querySelector('.ayah-arabic');
+        if (ayahArabic && ayahArabic.textContent.includes(ayahNumber)) {
+            container.classList.add('ayah-playing');
         }
+    });
+}
 
-        function removeAyahHighlight() {
-            const highlightedAyahs = document.querySelectorAll('.ayah-playing');
-            highlightedAyahs.forEach(ayah => {
-                ayah.classList.remove('ayah-playing');
-            });
-        }
+function removeAyahHighlight() {
+    const highlightedAyahs = document.querySelectorAll('.ayah-playing');
+    highlightedAyahs.forEach(ayah => ayah.classList.remove('ayah-playing'));
+}
 
         // === ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ВРЕМЕНИ НАМАЗОВ ===
         async function loadPrayerTimes() {
