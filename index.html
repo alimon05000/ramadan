@@ -200,6 +200,10 @@
             position: relative;
             overscroll-behavior: contain;
             scroll-behavior: smooth;
+            /* ИСПРАВЛЕНИЕ ПРОКРУТКИ */
+            touch-action: pan-y;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .tab-content.active {
@@ -1677,6 +1681,8 @@
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
             scroll-behavior: smooth;
+            /* ИСПРАВЛЕНИЕ ПРОКРУТКИ */
+            touch-action: pan-y;
         }
 
         .surah-content {
@@ -2227,6 +2233,10 @@
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
             scroll-behavior: smooth;
+            /* ИСПРАВЛЕНИЕ ПРОКРУТКИ */
+            touch-action: pan-y;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* === Стили для книжного режима Корана === */
@@ -2806,12 +2816,35 @@
             position: relative !important;
             z-index: 10 !important;
         }
+
+        /* === ИСПРАВЛЕНИЕ ПРОКРУТКИ ДЛЯ ANDROID === */
+        .scroll-fix {
+            -webkit-overflow-scrolling: touch !important;
+            overflow-scrolling: touch !important;
+            scroll-behavior: smooth !important;
+            touch-action: pan-y !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        /* Предотвращение блокировки скролла на Android */
+        .prevent-scroll-lock {
+            overscroll-behavior: contain !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        /* Фикс для скролла в модальных окнах */
+        .modal-body {
+            -webkit-overflow-scrolling: touch !important;
+            overflow-scrolling: touch !important;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Home Tab -->
-        <div id="home-tab" class="tab-content active touch-scroll-fix">
+        <div id="home-tab" class="tab-content active touch-scroll-fix scroll-fix">
             <!-- Header -->
             <header class="header">
                 <div class="header-top">
@@ -2910,7 +2943,7 @@
         </div>
 
         <!-- Preparation Tab -->
-        <div id="preparation-tab" class="tab-content touch-scroll-fix">
+        <div id="preparation-tab" class="tab-content touch-scroll-fix scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2929,7 +2962,7 @@
         </div>
 
         <!-- Quran Tab -->
-        <div id="quran-tab" class="tab-content touch-scroll-fix">
+        <div id="quran-tab" class="tab-content touch-scroll-fix scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -2973,7 +3006,7 @@
         </div>
 
         <!-- Prayer Tab -->
-        <div id="prayer-tab" class="tab-content touch-scroll-fix">
+        <div id="prayer-tab" class="tab-content touch-scroll-fix scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -3000,7 +3033,7 @@
         </div>
 
         <!-- Community Tab -->
-        <div id="community-tab" class="tab-content touch-scroll-fix">
+        <div id="community-tab" class="tab-content touch-scroll-fix scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -3043,7 +3076,7 @@
         </div>
 
         <!-- Dua Tab -->
-        <div id="dua-tab" class="tab-content touch-scroll-fix">
+        <div id="dua-tab" class="tab-content touch-scroll-fix scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -3062,7 +3095,7 @@
         </div>
 
         <!-- Levels Tab -->
-        <div id="levels-tab" class="tab-content touch-scroll-fix">
+        <div id="levels-tab" class="tab-content touch-scroll-fix scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -3084,7 +3117,7 @@
         </div>
 
         <!-- Profile Tab -->
-        <div id="profile-tab" class="tab-content touch-scroll-fix">
+        <div id="profile-tab" class="tab-content touch-scroll-fix scroll-fix">
             <header class="header">
                 <div class="header-top">
                     <div class="logo">
@@ -3266,7 +3299,7 @@
                 <span id="current-reciter">Выберите чтеца</span>
             </div>
             
-            <div class="modal-body touch-scroll-fix">
+            <div class="modal-body touch-scroll-fix scroll-fix prevent-scroll-lock">
                 <div class="surah-content" id="surah-content">
                     <!-- Surah content will be loaded here -->
                 </div>
@@ -3303,7 +3336,7 @@
                 </div>
             </div>
             
-            <div class="modal-body touch-scroll-fix">
+            <div class="modal-body touch-scroll-fix scroll-fix prevent-scroll-lock">
                 <div class="book-mode-page" id="book-page-content">
                     <!-- Содержимое страницы будет загружено здесь -->
                 </div>
@@ -3875,46 +3908,46 @@
         }
 
         async function registerBackgroundSync() {
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-        try {
-            const registration = await navigator.serviceWorker.ready;
-            await registration.sync.register('prayer-notifications');
-            console.log('Background Sync зарегистрирован');
-            return true;
-        } catch (error) {
-            console.error('Ошибка регистрации Background Sync:', error);
-            return false;
-        }
-    } else {
-        console.log('Background Sync не поддерживается');
-        return false;
-    }
-}
-
-// Функция для запроса разрешения на фоновую работу
-async function requestBackgroundPermission() {
-    if ('serviceWorker' in navigator && 'Notification' in window) {
-        try {
-            // Запрашиваем разрешение на уведомления
-            const permission = await Notification.requestPermission();
-            
-            if (permission === 'granted') {
-                // Регистрируем Background Sync
-                const syncRegistered = await registerBackgroundSync();
-                
-                if (syncRegistered) {
-                    showToast('Фоновые уведомления активированы', 'success');
+            if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                try {
+                    const registration = await navigator.serviceWorker.ready;
+                    await registration.sync.register('prayer-notifications');
+                    console.log('Background Sync зарегистрирован');
                     return true;
+                } catch (error) {
+                    console.error('Ошибка регистрации Background Sync:', error);
+                    return false;
+                }
+            } else {
+                console.log('Background Sync не поддерживается');
+                return false;
+            }
+        }
+
+        // Функция для запроса разрешения на фоновую работу
+        async function requestBackgroundPermission() {
+            if ('serviceWorker' in navigator && 'Notification' in window) {
+                try {
+                    // Запрашиваем разрешение на уведомления
+                    const permission = await Notification.requestPermission();
+                    
+                    if (permission === 'granted') {
+                        // Регистрируем Background Sync
+                        const syncRegistered = await registerBackgroundSync();
+                        
+                        if (syncRegistered) {
+                            showToast('Фоновые уведомления активированы', 'success');
+                            return true;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка запроса фоновых разрешений:', error);
                 }
             }
-        } catch (error) {
-            console.error('Ошибка запроса фоновых разрешений:', error);
+            
+            showToast('Фоновые уведомления недоступны', 'warning');
+            return false;
         }
-    }
-    
-    showToast('Фоновые уведомления недоступны', 'warning');
-    return false;
-}
 
         // Настройка Firebase Messaging
         function setupFirebaseMessaging() {
@@ -3973,31 +4006,31 @@ async function requestBackgroundPermission() {
         }
 
         // Новая функция для инициализации фоновых уведомлений
-async function initializeBackgroundNotifications() {
-    if ('serviceWorker' in navigator) {
-        try {
-            const registration = await navigator.serviceWorker.ready;
-            
-            // Проверяем поддержку Periodic Background Sync
-            if ('periodicSync' in registration) {
+        async function initializeBackgroundNotifications() {
+            if ('serviceWorker' in navigator) {
                 try {
-                    await registration.periodicSync.register('update-prayer-times', {
-                        minInterval: 24 * 60 * 60 * 1000 // 24 часа
-                    });
-                    console.log('Periodic Background Sync зарегистрирован');
+                    const registration = await navigator.serviceWorker.ready;
+                    
+                    // Проверяем поддержку Periodic Background Sync
+                    if ('periodicSync' in registration) {
+                        try {
+                            await registration.periodicSync.register('update-prayer-times', {
+                                minInterval: 24 * 60 * 60 * 1000 // 24 часа
+                            });
+                            console.log('Periodic Background Sync зарегистрирован');
+                        } catch (error) {
+                            console.log('Periodic Sync не поддерживается:', error);
+                        }
+                    }
+                    
+                    // Запрашиваем разрешение на фоновую работу
+                    await requestBackgroundPermission();
+                    
                 } catch (error) {
-                    console.log('Periodic Sync не поддерживается:', error);
+                    console.error('Ошибка инициализации фоновых уведомлений:', error);
                 }
             }
-            
-            // Запрашиваем разрешение на фоновую работу
-            await requestBackgroundPermission();
-            
-        } catch (error) {
-            console.error('Ошибка инициализации фоновых уведомлений:', error);
         }
-    }
-}
 
         // Получение FCM токена
         async function getFCMToken() {
@@ -5451,53 +5484,22 @@ async function initializeBackgroundNotifications() {
                 showToast('Страница удалена из отмеченных', 'warning');
             } else {
                 // Добавляем отметку
-                if (!markedPages.includes(currentPage)) {
-                    markedPages.push(currentPage);
-                }
+                markedPages.push(currentPage);
                 if (pageMarkButton) {
                     pageMarkButton.classList.add('marked');
                     pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
                 }
-                showToast('Страница отмечена!', 'success');
-                
-                // ИСПРАВЛЕНИЕ: Автоматически отмечаем предыдущие страницы
-                markPreviousPages(currentPage);
-                
-                // Обновляем статистику прочитанных страниц
-                updateReadingProgressAfterPage();
+                showToast('Страница добавлена в отмеченные', 'success');
             }
             
             currentPageMarked = !currentPageMarked;
             localStorage.setItem('markedPages', JSON.stringify(markedPages));
         }
 
-        // ИСПРАВЛЕНИЕ: Функция для автоматической отметки предыдущих страниц
-        function markPreviousPages(currentPage) {
-            for (let i = 1; i < currentPage; i++) {
-                if (!markedPages.includes(i)) {
-                    markedPages.push(i);
-                }
-            }
-            localStorage.setItem('markedPages', JSON.stringify(markedPages));
-            
-            // Обновляем статистику прочитанных страниц
-            userProgress.pagesRead = markedPages.length;
-            localStorage.setItem('userProgress', JSON.stringify(userProgress));
-            
-            // Обновляем отображение прогресса
-            updateQuranProgressDisplay();
-            
-            // Проверяем требования уровней
-            checkLevelRequirements();
-            
-            showToast(`Отмечены страницы 1-${currentPage}`, 'success');
-        }
-
         function updatePageMarkButton() {
             const pageMarkButton = document.getElementById('page-mark-button');
             if (pageMarkButton) {
                 currentPageMarked = markedPages.includes(currentPage);
-                
                 if (currentPageMarked) {
                     pageMarkButton.classList.add('marked');
                     pageMarkButton.innerHTML = '<span>✅</span> Страница отмечена';
@@ -5508,187 +5510,72 @@ async function initializeBackgroundNotifications() {
             }
         }
 
-        // === ИСПРАВЛЕННЫЕ АУДИО ФУНКЦИИ ===
-
-        // Флаг для отслеживания первого взаимодействия
-        let userInteracted = false;
-
-        // Отслеживаем первый клик пользователя
-        document.addEventListener('click', function() {
-            if (!userInteracted) {
-                userInteracted = true;
-                console.log('Пользователь взаимодействовал с приложением, аудио теперь доступно');
-            }
-        });
-
-        function playAyah(ayahNumber, surahNumber) {
-            if (!userInteracted) {
-                showToast('Пожалуйста, нажмите на экран еще раз для активации аудио', 'warning');
-                return;
-            }
-
-            if (isPlaying && currentAyah === ayahNumber && currentSurah === surahNumber) {
-                toggleAudio();
-                return;
-            }
-
-            stopAudio();
-            currentAyah = ayahNumber;
-            currentSurah = surahNumber;
-
-            // Создаем новый аудио элемент
-            currentAudio = new Audio();
-            
-            // Формируем URL для аудио файла
-            const audioUrl = `${RECITERS[currentReciter].baseUrl}/${surahNumber.toString().padStart(3, '0')}${ayahNumber.toString().padStart(3, '0')}.mp3`;
-            
-            currentAudio.src = audioUrl;
-            currentAudio.preload = 'auto';
-
-            const playBtn = document.getElementById('play-btn');
-            if (playBtn) {
-                playBtn.classList.add('playing');
-                playBtn.textContent = '⏸️';
-            }
-
-            currentAudio.play().then(() => {
-                isPlaying = true;
-                showToast(`Воспроизведение аята ${ayahNumber} суры ${surahNumber}`);
-            }).catch(error => {
-                console.error('Ошибка воспроизведения:', error);
-                showToast('Ошибка воспроизведения аудио', 'error');
-                
-                if (playBtn) {
-                    playBtn.classList.remove('playing');
-                    playBtn.textContent = '▶️';
-                }
-            });
-
-            currentAudio.onended = function() {
-                isPlaying = false;
-                currentAudio = null;
-                if (playBtn) {
-                    playBtn.classList.remove('playing');
-                    playBtn.textContent = '▶️';
-                }
-            };
-
-            currentAudio.onerror = function() {
-                console.error('Ошибка загрузки аудио');
-                showToast('Ошибка загрузки аудио', 'error');
-                isPlaying = false;
-                currentAudio = null;
-                if (playBtn) {
-                    playBtn.classList.remove('playing');
-                    playBtn.textContent = '▶️';
-                }
-            };
-        }
-
-        function playSurahAudio(surahNumber) {
-            showToast('Воспроизведение всей суры скоро будет доступно', 'info');
-        }
-
-        function toggleAudio() {
-            if (!currentAudio) return;
-
-            if (isPlaying) {
-                stopAudio();
-            } else {
-                currentAudio.play().then(() => {
-                    isPlaying = true;
-                    const playBtn = document.getElementById('play-btn');
-                    if (playBtn) {
-                        playBtn.classList.add('playing');
-                        playBtn.textContent = '⏸️';
-                    }
-                }).catch(error => {
-                    console.error('Ошибка возобновления:', error);
-                    showToast('Ошибка воспроизведения', 'error');
-                });
-            }
-        }
-
-        function stopAudio() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                isPlaying = false;
-            }
-            
-            const playBtn = document.getElementById('play-btn');
-            if (playBtn) {
-                playBtn.classList.remove('playing');
-                playBtn.textContent = '▶️';
-            }
-        }
-
-        // === ФУНКЦИИ ДЛЯ СИСТЕМЫ УРОВНЕЙ ===
+        // === СИСТЕМА УРОВНЕЙ ===
 
         function loadLevels() {
-            const allLevelsContainer = document.getElementById('all-levels-container');
             const levelsContainer = document.getElementById('levels-container');
+            const allLevelsContainer = document.getElementById('all-levels-container');
             
-            if (allLevelsContainer) {
-                allLevelsContainer.innerHTML = levelsData.map(level => createLevelCard(level)).join('');
-            }
+            if (!levelsContainer && !allLevelsContainer) return;
             
-            if (levelsContainer) {
-                // В профиле показываем только текущий и следующий уровни
-                const currentLevelIndex = userProgress.currentLevel - 1;
-                const levelsToShow = levelsData.slice(Math.max(0, currentLevelIndex - 1), Math.min(levelsData.length, currentLevelIndex + 3));
-                
-                levelsContainer.innerHTML = levelsToShow.map(level => createLevelCard(level)).join('');
-            }
+            const containers = [];
+            if (levelsContainer) containers.push(levelsContainer);
+            if (allLevelsContainer) containers.push(allLevelsContainer);
             
-            updateLevelProgress();
-        }
-
-        function createLevelCard(level) {
-            const isCurrent = level.id === userProgress.currentLevel;
-            const isUnlocked = level.unlocked || level.id <= userProgress.currentLevel;
-            const isLocked = !isUnlocked;
-            
-            // Рассчитываем прогресс для уровня
-            const progress = calculateLevelProgress(level);
-            
-            return `
-                <div class="level-card ${isCurrent ? 'current' : ''} ${isLocked ? 'locked' : ''} level-${level.id}">
-                    ${isLocked ? '<div class="locked-overlay">🔒</div>' : ''}
-                    <div class="level-glow"></div>
-                    <div class="level-header">
-                        <div class="level-name">${level.icon} ${level.name}</div>
-                        <div class="level-badge">Уровень ${level.id}</div>
-                    </div>
-                    <p class="level-description">${level.description}</p>
-                    <div class="level-requirements">
-                        ${level.requirements.map(req => {
-                            const isCompleted = checkRequirementCompletion(req);
-                            return `
-                                <div class="requirement ${isCompleted ? 'completed' : ''}" 
-                                     onclick="toggleRequirement(${level.id}, '${req.type}', ${req.target})">
-                                    ${isCompleted ? '✅' : '⏳'} ${req.description}
+            containers.forEach(container => {
+                container.innerHTML = levelsData.map(level => {
+                    const isCurrent = userProgress.currentLevel === level.id;
+                    const isUnlocked = level.unlocked || userProgress.currentLevel >= level.id;
+                    const progress = calculateLevelProgress(level);
+                    
+                    return `
+                        <div class="level-card ${isCurrent ? 'current' : ''} ${!isUnlocked ? 'locked' : ''} level-${level.id}">
+                            ${!isUnlocked ? '<div class="locked-overlay">🔒</div>' : ''}
+                            <div class="level-glow"></div>
+                            <div class="level-header">
+                                <h4 class="level-name">${level.icon} ${level.name}</h4>
+                                <span class="level-badge">Уровень ${level.id}</span>
+                            </div>
+                            <p class="level-description">${level.description}</p>
+                            
+                            ${isUnlocked ? `
+                                <div class="level-requirements">
+                                    ${level.requirements.map(req => {
+                                        const isCompleted = checkRequirementCompletion(req);
+                                        return `
+                                            <div class="requirement ${isCompleted ? 'completed' : ''}" 
+                                                 onclick="showRequirementInfo('${req.description}')">
+                                                ${isCompleted ? '✅' : '⏳'} ${req.description}
+                                            </div>
+                                        `;
+                                    }).join('')}
                                 </div>
-                            `;
-                        }).join('')}
-                    </div>
-                    ${!isLocked ? `
-                        <div class="level-progress">
-                            <div class="level-progress-fill" style="width: ${progress}%"></div>
+                                
+                                <div class="level-progress">
+                                    <div class="level-progress-fill" style="width: ${progress}%"></div>
+                                </div>
+                            ` : ''}
                         </div>
-                    ` : ''}
-                </div>
-            `;
+                    `;
+                }).join('');
+            });
+            
+            // Обновляем отображение текущего уровня в профиле
+            updateCurrentLevelDisplay();
         }
 
         function calculateLevelProgress(level) {
-            if (!level.unlocked && level.id > userProgress.currentLevel) return 0;
+            if (!level.unlocked && userProgress.currentLevel < level.id) return 0;
             
-            const completedRequirements = level.requirements.filter(req => checkRequirementCompletion(req)).length;
+            const completedRequirements = level.requirements.filter(req => 
+                checkRequirementCompletion(req)
+            ).length;
+            
             return (completedRequirements / level.requirements.length) * 100;
         }
 
         function checkRequirementCompletion(requirement) {
+            // Проверяем выполнение требования на основе типа
             switch (requirement.type) {
                 case 'pages':
                     return userProgress.pagesRead >= requirement.target;
@@ -5739,158 +5626,56 @@ async function initializeBackgroundNotifications() {
             }
         }
 
-        function toggleRequirement(levelId, type, target) {
-            // Находим уровень
-            const level = levelsData.find(l => l.id === levelId);
-            if (!level) return;
+        function checkLevelRequirements() {
+            let levelUp = false;
             
-            // Находим требование
-            const requirement = level.requirements.find(req => req.type === type && req.target === target);
-            if (!requirement) return;
+            // Проверяем каждый уровень
+            levelsData.forEach(level => {
+                if (userProgress.currentLevel === level.id) {
+                    const allCompleted = level.requirements.every(req => 
+                        checkRequirementCompletion(req)
+                    );
+                    
+                    if (allCompleted && !levelUp) {
+                        // Переход на следующий уровень
+                        userProgress.currentLevel++;
+                        levelUp = true;
+                        
+                        // Разблокируем следующий уровень
+                        if (level.id < levelsData.length) {
+                            levelsData[level.id].unlocked = true;
+                        }
+                        
+                        // Показываем анимацию разблокировки
+                        showLevelUnlockAnimation(level.id + 1);
+                        
+                        // Сохраняем прогресс
+                        localStorage.setItem('userProgress', JSON.stringify(userProgress));
+                        
+                        showToast(`Поздравляем! Вы достигли уровня ${userProgress.currentLevel}`, 'success');
+                    }
+                }
+            });
             
-            const isCompleted = checkRequirementCompletion(requirement);
-            
-            if (!isCompleted) {
-                // Отмечаем требование как выполненное
-                markRequirementCompleted(type, target);
-                showToast('Требование выполнено!', 'success');
-                
-                // Проверяем, выполнились ли все требования уровня
-                checkLevelCompletion(level);
-            } else {
-                // Снимаем отметку (если нужно)
-                markRequirementIncomplete(type, target);
-                showToast('Требование отменено', 'warning');
-            }
-            
-            // Обновляем отображение уровней
-            loadLevels();
-        }
-
-        function markRequirementCompleted(type, target) {
-            switch (type) {
-                case 'pages':
-                    userProgress.pagesRead = Math.max(userProgress.pagesRead, target);
-                    break;
-                case 'tasks':
-                    userProgress.tasksCompleted = Math.max(userProgress.tasksCompleted, target);
-                    break;
-                case 'azkar':
-                    userProgress.azkarMemorized = Math.max(userProgress.azkarMemorized, target);
-                    break;
-                case 'surah':
-                    userProgress.surahsMemorized = Math.max(userProgress.surahsMemorized, target);
-                    break;
-                case 'prayer':
-                    userProgress.prayersOnTime = Math.max(userProgress.prayersOnTime, target);
-                    break;
-                case 'fasting':
-                    userProgress.fastingDays = Math.max(userProgress.fastingDays, target);
-                    break;
-                case 'charity':
-                    userProgress.charityActs = Math.max(userProgress.charityActs, target);
-                    break;
-                case 'companions':
-                    userProgress.companionsStudied = Math.max(userProgress.companionsStudied, target);
-                    break;
-                case 'tajweed':
-                    userProgress.tajweedLearned = true;
-                    break;
-                case 'sunnah':
-                    userProgress.sunnahImplemented = Math.max(userProgress.sunnahImplemented, target);
-                    break;
-                case 'community':
-                    userProgress.communityHelped = Math.max(userProgress.communityHelped, target);
-                    break;
-                case 'teaching':
-                    userProgress.peopleTaught = Math.max(userProgress.peopleTaught, target);
-                    break;
-                case 'article':
-                    userProgress.articlesWritten = Math.max(userProgress.articlesWritten, target);
-                    break;
-                case 'tafsir':
-                    userProgress.tafsirStudied = Math.max(userProgress.tafsirStudied, target);
-                    break;
-                case 'fiqh':
-                    userProgress.fiqhLearned = true;
-                    break;
-                case 'character':
-                    userProgress.characterImproved = Math.max(userProgress.characterImproved, target);
-                    break;
-                case 'service':
-                    userProgress.communityService = Math.max(userProgress.communityService, target);
-                    break;
-                case 'juz':
-                    userProgress.juzMemorized = Math.max(userProgress.juzMemorized, target);
-                    break;
-                case 'leadership':
-                    userProgress.eventsLed = Math.max(userProgress.eventsLed, target);
-                    break;
-                case 'quran':
-                    userProgress.quranCompleted = true;
-                    break;
-                case 'ramadan':
-                    userProgress.ramadanCompleted = true;
-                    break;
-                case 'legacy':
-                    userProgress.legacyLeft = true;
-                    break;
-            }
-            
-            // Сохраняем прогресс
-            localStorage.setItem('userProgress', JSON.stringify(userProgress));
-            
-            // Обновляем статистику
-            updateStats();
-        }
-
-        function markRequirementIncomplete(type, target) {
-            // В большинстве случаев мы не хотим уменьшать прогресс,
-            // но если нужно, можно реализовать эту логику
-            showToast('Отмена выполнения требования', 'info');
-        }
-
-        function checkLevelCompletion(level) {
-            const allCompleted = level.requirements.every(req => checkRequirementCompletion(req));
-            
-            if (allCompleted && level.id === userProgress.currentLevel) {
-                // Разблокируем следующий уровень
-                unlockNextLevel(level.id);
-            }
-        }
-
-        function unlockNextLevel(currentLevelId) {
-            const nextLevelId = currentLevelId + 1;
-            const nextLevel = levelsData.find(l => l.id === nextLevelId);
-            
-            if (nextLevel) {
-                nextLevel.unlocked = true;
-                userProgress.currentLevel = nextLevelId;
-                
-                // Сохраняем прогресс
-                localStorage.setItem('userProgress', JSON.stringify(userProgress));
-                
-                // Показываем анимацию разблокировки
-                showLevelUnlockAnimation(nextLevel);
-                
-                // Обновляем отображение
+            // Перезагружаем отображение уровней
+            if (levelUp) {
                 loadLevels();
-                updateProfileLevelDisplay();
-                
-                showToast(`Поздравляем! Вы достигли уровня ${nextLevel.name}`, 'success');
             }
         }
 
-        function showLevelUnlockAnimation(level) {
+        function showLevelUnlockAnimation(newLevelId) {
+            const newLevel = levelsData.find(level => level.id === newLevelId);
+            if (!newLevel) return;
+            
             const animation = document.getElementById('level-unlock-animation');
             const levelName = document.getElementById('unlock-level-name');
             const levelDescription = document.getElementById('unlock-level-description');
             const levelDua = document.getElementById('unlock-level-dua');
             
             if (animation && levelName && levelDescription && levelDua) {
-                levelName.textContent = level.name;
-                levelDescription.textContent = level.description;
-                levelDua.textContent = level.dua;
+                levelName.textContent = newLevel.name;
+                levelDescription.textContent = newLevel.description;
+                levelDua.textContent = newLevel.dua;
                 
                 animation.classList.add('active');
                 
@@ -5907,7 +5692,7 @@ async function initializeBackgroundNotifications() {
         }
 
         function createConfetti() {
-            const colors = ['#FFC700', '#FF6B00', '#FF0080', '#00FF88', '#0088FF', '#8800FF'];
+            const colors = ['#FFC700', '#FF6B00', '#FF0080', '#00FF88', '#00AAFF'];
             
             for (let i = 0; i < 50; i++) {
                 const confetti = document.createElement('div');
@@ -5927,12 +5712,8 @@ async function initializeBackgroundNotifications() {
             }
         }
 
-        function updateLevelProgress() {
-            // Эта функция теперь вызывается в loadLevels()
-        }
-
-        function updateProfileLevelDisplay() {
-            const currentLevel = levelsData.find(l => l.id === userProgress.currentLevel);
+        function updateCurrentLevelDisplay() {
+            const currentLevel = levelsData.find(level => level.id === userProgress.currentLevel);
             if (!currentLevel) return;
             
             const levelIcon = document.getElementById('current-level-icon');
@@ -5945,87 +5726,79 @@ async function initializeBackgroundNotifications() {
         }
 
         function applyLevelTheme() {
-            const currentLevel = levelsData.find(l => l.id === userProgress.currentLevel);
-            if (!currentLevel) return;
-            
             // Применяем тему текущего уровня
-            document.documentElement.classList.remove('level-theme-1', 'level-theme-2', 'level-theme-3', 'level-theme-4', 'level-theme-5', 
-                                                     'level-theme-6', 'level-theme-7', 'level-theme-8', 'level-theme-9', 'level-theme-10');
-            document.documentElement.classList.add(`level-theme-${userProgress.currentLevel}`);
-        }
-
-        function checkLevelRequirements() {
-            // Проверяем все требования для текущего уровня
-            const currentLevel = levelsData.find(l => l.id === userProgress.currentLevel);
-            if (currentLevel) {
-                checkLevelCompletion(currentLevel);
-            }
+            document.body.classList.remove('level-theme-1', 'level-theme-2', 'level-theme-3', 'level-theme-4', 'level-theme-5', 
+                                         'level-theme-6', 'level-theme-7', 'level-theme-8', 'level-theme-9', 'level-theme-10');
             
-            // Обновляем отображение уровней
-            loadLevels();
-        }
-
-        function updateQuranProgressDisplay() {
-            // Обновляем отображение прогресса чтения Корана
-            const progressPercent = Math.round((userProgress.pagesRead / 604) * 100);
-            const progressPercentEl = document.getElementById('quranProgressPercent');
-            const progressFillEl = document.getElementById('quranProgressFill');
-            const progressText = document.getElementById('reading-progress-text');
-            
-            if (progressPercentEl) progressPercentEl.textContent = `${progressPercent}%`;
-            if (progressFillEl) progressFillEl.style.width = `${progressPercent}%`;
-            
-            if (progressText) {
-                progressText.textContent = `Прочитано ${userProgress.pagesRead} из 604 страниц (${progressPercent}%)`;
+            if (userProgress.currentLevel <= 10) {
+                document.body.classList.add(`level-theme-${userProgress.currentLevel}`);
             }
         }
 
-        // === ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ===
+        function showRequirementInfo(description) {
+            showToast(description, 'info');
+        }
 
         function showAchievements() {
-            showToast('Раздел "Достижения" скоро будет доступен!', 'info');
+            showToast('Раздел "Достижения" находится в разработке!', 'info');
         }
+
+        // === SERVICE WORKER РЕГИСТРАЦИЯ ===
 
         function setupServiceWorker() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('Service Worker зарегистрирован:', registration);
+                    .then(function(registration) {
+                        console.log('Service Worker зарегистрирован успешно:', registration);
+                        
+                        // Отправляем сообщение Service Worker для регистрации Background Sync
+                        if (registration.sync) {
+                            registration.sync.register('prayer-notifications')
+                                .then(() => console.log('Background Sync зарегистрирован'))
+                                .catch(err => console.error('Ошибка Background Sync:', err));
+                        }
                     })
-                    .catch(error => {
+                    .catch(function(error) {
                         console.log('Ошибка регистрации Service Worker:', error);
                     });
             }
         }
 
+        // === УВЕДОМЛЕНИЯ И НАПОМИНАНИЯ ===
+
         function setupNotifications() {
-    if (!('Notification' in window)) {
-        console.log('Браузер не поддерживает уведомления');
-        return;
-    }
-
-    // Запрашиваем расширенные разрешения
-    if (Notification.permission === 'default') {
-        setTimeout(() => {
-            showToast('Разрешите уведомления для работы при выключенном экране', 'info');
-        }, 3000);
-    }
-
-    setupIntervalNotifications();
-    initializeBackgroundNotifications();
-}
-        function requestNotificationPermission() {
+            // Проверяем поддержку уведомлений
             if (!('Notification' in window)) {
-                showToast('Браузер не поддерживает уведомления', 'error');
+                console.log('Браузер не поддерживает уведомления');
                 return;
             }
+            
+            // Запрашиваем разрешение при загрузке
+            if (Notification.permission === 'default') {
+                setTimeout(() => {
+                    requestNotificationPermission();
+                }, 3000);
+            }
+            
+            // Настраиваем интервальные напоминания
+            setupIntervalNotifications();
+        }
 
-            Notification.requestPermission().then(permission => {
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) return;
+            
+            Notification.requestPermission().then(function(permission) {
                 if (permission === 'granted') {
-                    showToast('Уведомления разрешены', 'success');
-                    setupIntervalNotifications();
+                    console.log('Разрешение на уведомления получено');
+                    showToast('Уведомления активированы', 'success');
+                    
+                    // Запрашиваем FCM токен для push-уведомлений
+                    if (isFirebaseInitialized) {
+                        getFCMToken();
+                    }
                 } else {
-                    showToast('Уведомления запрещены', 'warning');
+                    console.log('Разрешение на уведомления не получено');
+                    showToast('Уведомления отключены', 'warning');
                 }
             });
         }
@@ -6035,107 +5808,30 @@ async function initializeBackgroundNotifications() {
             if (notificationInterval) {
                 clearInterval(notificationInterval);
             }
-
-            // Проверяем намазы каждую минуту
+            
+            // Проверяем настройки пользователя
+            const notificationsEnabled = document.getElementById('notificationsSwitch')?.checked;
+            if (!notificationsEnabled) return;
+            
+            // Напоминания каждые 4 часа о зикре
             notificationInterval = setInterval(() => {
-                checkPrayerTimesForNotifications();
-            }, 60000);
-        }
-
-        function checkPrayerTimesForNotifications() {
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-
-            // Здесь должна быть логика проверки времени намазов
-            // Для демонстрации используем фиксированные времена
-            const prayerTimes = {
-                fajr: 5 * 60 + 30,  // 5:30
-                dhuhr: 12 * 60 + 0, // 12:00
-                asr: 15 * 60 + 30,  // 15:30
-                maghrib: 18 * 60 + 0, // 18:00
-                isha: 19 * 60 + 30  // 19:30
-            };
-
-            // Проверяем каждый намаз
-            Object.keys(prayerTimes).forEach(prayer => {
-                const prayerTime = prayerTimes[prayer];
-                if (Math.abs(currentTime - prayerTime) < 5) { // ±5 минут
-                    showNotification(`Время намаза ${getPrayerName(prayer)}!`, true);
-                }
-            });
-
-            // Напоминание об аср намазе (только один раз)
-            if (!asrReminderSent && currentTime >= prayerTimes.asr - 30 && currentTime < prayerTimes.asr) {
-                showNotification('До намаза Аср осталось 30 минут. Не забудьте подготовиться!', true);
-                asrReminderSent = true;
-            }
-
-            // Сбрасываем флаг после аср
-            if (currentTime >= prayerTimes.asr + 60) {
-                asrReminderSent = false;
-            }
-        }
-
-        function getPrayerName(prayer) {
-            const names = {
-                fajr: 'Фаджр',
-                dhuhr: 'Зухр',
-                asr: 'Аср',
-                maghrib: 'Магриб',
-                isha: 'Иша'
-            };
-            return names[prayer] || prayer;
-        }
-
-        function loadPrayerTimes() {
-            const prayerList = document.getElementById('prayer-list');
-            if (!prayerList) return;
-            
-            // Проверяем кэш
-            if (cache.prayerTimes.times && isCacheValid('prayerTimes', 60)) {
-                console.log('Загружаем времена намазов из кэша');
-                displayPrayerTimes(cache.prayerTimes.times);
-                return;
-            }
-            
-            // Для демонстрации используем фиксированные времена
-            const prayerTimes = [
-                { name: 'Фаджр', time: '05:30', completed: false },
-                { name: 'Восход', time: '07:00', completed: false },
-                { name: 'Зухр', time: '12:00', completed: false },
-                { name: 'Аср', time: '15:30', completed: false },
-                { name: 'Магриб', time: '18:00', completed: false },
-                { name: 'Иша', time: '19:30', completed: false }
-            ];
-            
-            // Обновляем кэш
-            updateCache('prayerTimes', { times: prayerTimes, timestamp: Date.now() });
-            
-            displayPrayerTimes(prayerTimes);
-        }
-
-        function displayPrayerTimes(prayerTimes) {
-            const prayerList = document.getElementById('prayer-list');
-            if (!prayerList) return;
-            
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-            
-            prayerList.innerHTML = prayerTimes.map(prayer => {
-                const [hours, minutes] = prayer.time.split(':').map(Number);
-                const prayerTime = hours * 60 + minutes;
-                const isActive = Math.abs(currentTime - prayerTime) < 30; // ±30 минут
+                const now = new Date();
+                const hours = now.getHours();
                 
-                return `
-                    <div class="prayer-item ${isActive ? 'active' : ''}">
-                        <div class="prayer-name">
-                            ${prayer.completed ? '✅' : '🕌'} ${prayer.name}
-                        </div>
-                        <div class="prayer-time">${prayer.time}</div>
-                    </div>
-                `;
-            }).join('');
+                // Напоминания в определенное время (утро, день, вечер)
+                if (hours === 8 || hours === 14 || hours === 20) {
+                    showNotification('Время поминания Аллаха! Сделайте зикр и прочитайте дуа.', true);
+                }
+                
+                // Напоминание о чтении Корана
+                if (hours === 10 && !dailyTasks[new Date().toDateString()]) {
+                    showNotification('Не забудьте прочитать сегодняшнюю страницу Корана!', true);
+                }
+                
+            }, 60 * 60 * 1000); // Проверяем каждый час
         }
+
+        // === ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ===
 
         function loadAzkarsData() {
             const duaSection = document.getElementById('dua-section');
@@ -6152,6 +5848,7 @@ async function initializeBackgroundNotifications() {
                         </div>
                     `).join('')}
                 </div>
+                
                 <div class="dua-category">
                     <h3 class="category-title">Вечерние азкары</h3>
                     ${azkarsData.evening.map(dua => `
@@ -6163,6 +5860,101 @@ async function initializeBackgroundNotifications() {
                     `).join('')}
                 </div>
             `;
+        }
+
+        async function loadPrayerTimes() {
+            const prayerList = document.getElementById('prayer-list');
+            if (!prayerList) return;
+            
+            // Проверяем кэш
+            if (cache.prayerTimes.times && isCacheValid('prayerTimes', 60)) {
+                console.log('Загружаем времена намазов из кэша');
+                displayPrayerTimes(cache.prayerTimes.times);
+                return;
+            }
+            
+            try {
+                // Используем API для получения времен намазов
+                const now = Math.floor(Date.now() / 1000);
+                const response = await fetch(`https://api.aladhan.com/v1/timings/${now}?latitude=42.98&longitude=47.50&method=2`);
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    const timings = data.data.timings;
+                    const prayerTimes = [
+                        { name: 'Фаджр', time: timings.Fajr, completed: false },
+                        { name: 'Восход', time: timings.Sunrise, completed: false },
+                        { name: 'Зухр', time: timings.Dhuhr, completed: false },
+                        { name: 'Аср', time: timings.Asr, completed: false },
+                        { name: 'Магриб', time: timings.Maghrib, completed: false },
+                        { name: 'Иша', time: timings.Isha, completed: false }
+                    ];
+                    
+                    // Обновляем кэш
+                    updateCache('prayerTimes', { times: prayerTimes, timestamp: Date.now() });
+                    
+                    displayPrayerTimes(prayerTimes);
+                } else {
+                    throw new Error('Не удалось загрузить времена намазов');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки времен намазов:', error);
+                
+                // Пробуем загрузить из кэша
+                if (cache.prayerTimes.times) {
+                    console.log('Используем устаревший кэш времен намазов');
+                    displayPrayerTimes(cache.prayerTimes.times);
+                    return;
+                }
+                
+                // Запасной вариант - фиксированные времена
+                const fallbackTimes = [
+                    { name: 'Фаджр', time: '05:30', completed: false },
+                    { name: 'Восход', time: '07:00', completed: false },
+                    { name: 'Зухр', time: '12:00', completed: false },
+                    { name: 'Аср', time: '15:30', completed: false },
+                    { name: 'Магриб', time: '18:00', completed: false },
+                    { name: 'Иша', time: '19:30', completed: false }
+                ];
+                
+                displayPrayerTimes(fallbackTimes);
+            }
+        }
+
+        function displayPrayerTimes(prayerTimes) {
+            const prayerList = document.getElementById('prayer-list');
+            if (!prayerList) return;
+            
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            
+            prayerList.innerHTML = prayerTimes.map(prayer => {
+                const [hours, minutes] = prayer.time.split(':').map(Number);
+                const prayerTime = hours * 60 + minutes;
+                const isActive = currentTime >= prayerTime && currentTime < prayerTime + 30; // Активно 30 минут после времени намаза
+                
+                return `
+                    <div class="prayer-item ${isActive ? 'active' : ''}">
+                        <div class="prayer-name">
+                            <span>${getPrayerIcon(prayer.name)}</span>
+                            ${prayer.name}
+                        </div>
+                        <div class="prayer-time">${prayer.time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getPrayerIcon(prayerName) {
+            const icons = {
+                'Фаджр': '🌅',
+                'Восход': '☀️',
+                'Зухр': '🏙️',
+                'Аср': '🌇',
+                'Магриб': '🌄',
+                'Иша': '🌙'
+            };
+            return icons[prayerName] || '🕌';
         }
 
         function setupWarmLight() {
@@ -6178,8 +5970,155 @@ async function initializeBackgroundNotifications() {
             }
         }
 
-        // Инициализация при загрузке
-        window.addEventListener('load', initApp);
+        // === АУДИО ФУНКЦИИ ===
+
+        function playSurahAudio(surahNumber) {
+            showToast('Функция воспроизведения суры в разработке', 'info');
+        }
+
+        function playAyah(ayahNumber, surahNumber) {
+            if (!audioInitialized) {
+                showToast('Аудио инициализируется...', 'warning');
+                return;
+            }
+            
+            if (isPlaying && currentAyah === ayahNumber && currentSurah === surahNumber) {
+                stopAudio();
+                return;
+            }
+            
+            // Останавливаем текущее воспроизведение
+            stopAudio();
+            
+            // Создаем новый аудио элемент
+            currentAudio = new Audio();
+            currentAyah = ayahNumber;
+            currentSurah = surahNumber;
+            
+            // Формируем URL для аудио
+            const ayahFormatted = ayahNumber.toString().padStart(3, '0');
+            const surahFormatted = surahNumber.toString().padStart(3, '0');
+            const audioUrl = `${RECITERS[currentReciter].baseUrl}/${surahFormatted}${ayahFormatted}.mp3`;
+            
+            currentAudio.src = audioUrl;
+            currentAudio.preload = 'auto';
+            
+            currentAudio.oncanplaythrough = () => {
+                const playBtn = document.getElementById('play-btn');
+                if (playBtn) {
+                    playBtn.classList.add('playing');
+                    playBtn.textContent = '⏸️';
+                }
+                
+                currentAudio.play().then(() => {
+                    isPlaying = true;
+                    showToast(`Воспроизведение аята ${ayahNumber}`, 'success');
+                }).catch(error => {
+                    console.error('Ошибка воспроизведения:', error);
+                    showToast('Ошибка воспроизведения аудио', 'error');
+                });
+            };
+            
+            currentAudio.onended = () => {
+                stopAudio();
+                showToast('Воспроизведение завершено', 'info');
+            };
+            
+            currentAudio.onerror = () => {
+                console.error('Ошибка загрузки аудио');
+                showToast('Ошибка загрузки аудио', 'error');
+                stopAudio();
+            };
+        }
+
+        function toggleAudio() {
+            if (!currentAudio) return;
+            
+            if (isPlaying) {
+                stopAudio();
+            } else {
+                currentAudio.play().then(() => {
+                    isPlaying = true;
+                    const playBtn = document.getElementById('play-btn');
+                    if (playBtn) {
+                        playBtn.classList.add('playing');
+                        playBtn.textContent = '⏸️';
+                    }
+                }).catch(error => {
+                    console.error('Ошибка воспроизведения:', error);
+                    showToast('Ошибка воспроизведения аудио', 'error');
+                });
+            }
+        }
+
+        function stopAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            
+            isPlaying = false;
+            currentAyah = null;
+            
+            const playBtn = document.getElementById('play-btn');
+            if (playBtn) {
+                playBtn.classList.remove('playing');
+                playBtn.textContent = '▶️';
+            }
+        }
+
+        // === ИСПРАВЛЕНИЕ ПРОКРУТКИ ДЛЯ ANDROID ===
+
+        function fixAndroidScroll() {
+            // Принудительное включение smooth scrolling
+            document.querySelectorAll('.tab-content, .modal-body').forEach(element => {
+                element.style.webkitOverflowScrolling = 'touch';
+                element.style.overflowScrolling = 'touch';
+            });
+            
+            // Предотвращение блокировки скролла
+            document.addEventListener('touchmove', function(e) {
+                // Разрешаем скролл только для scrollable элементов
+                const scrollableElements = document.querySelectorAll('.tab-content, .modal-body');
+                let isScrollable = false;
+                
+                scrollableElements.forEach(el => {
+                    if (el.contains(e.target)) {
+                        isScrollable = true;
+                    }
+                });
+                
+                if (!isScrollable) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
+
+        // Инициализация исправления прокрутки
+        setTimeout(fixAndroidScroll, 1000);
+
+        // Дополнительные исправления для PWA
+        if ('standalone' in navigator || window.matchMedia('(display-mode: standalone)').matches) {
+            document.addEventListener('DOMContentLoaded', function() {
+                // Исправление viewport для PWA
+                const viewport = document.querySelector('meta[name="viewport"]');
+                if (viewport) {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+                }
+                
+                // Исправление высоты для мобильных браузеров
+                function fixHeight() {
+                    const vh = window.innerHeight * 0.01;
+                    document.documentElement.style.setProperty('--vh', `${vh}px`);
+                }
+                
+                window.addEventListener('resize', fixHeight);
+                window.addEventListener('orientationchange', fixHeight);
+                fixHeight();
+            });
+        }
+
     </script>
 </body>
 </html>
