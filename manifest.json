@@ -1,57 +1,54 @@
 {
   "name": "Путь к Рамадану",
-  "short_name": "Рамадан2026",
+  "short_name": "Рамадан",
   "description": "Подготовка к Рамадану 2026 - Коран, намаз, азкары, трекер привычек",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0B5B3F",
   "theme_color": "#0B5B3F",
   "orientation": "portrait",
-  "scope": "./",
-  "lang": "ru",
-  "categories": ["lifestyle", "productivity", "religious"],
-  "dir": "ltr",
-  "iarc_rating_id": "e58f23f1-689a-4c2d-b93f-5bc63c6c8b21",
-  
+  "permissions": [
+    "notifications",
+    "background"
+  ],
   "icons": [
     {
-      "src": "./icons/icon-72.png",
+      "src": "icons/icon-72.png",
       "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-96.png",
+      "src": "icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-128.png",
+      "src": "icons/icon-128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-144.png",
+      "src": "icons/icon-144.png",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-152.png",
+      "src": "icons/icon-152.png",
       "sizes": "152x152",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "./icons/icon-384.png",
+      "src": "icons/icon-384.png",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "./icons/icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
