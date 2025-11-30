@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ramadan-app-v1.4';
+const CACHE_NAME = 'ramadan-app-v1.5';
 const urlsToCache = [
   './',
   './index.html',
@@ -12,6 +12,9 @@ const urlsToCache = [
   './icons/icon-384.png',
   './icons/icon-512.png'
 ];
+
+// Firebase Messaging VAPID Key
+const VAPID_PUBLIC_KEY = 'BLPjbt6CQz6DFn39RQbdSDaM_AzXyWCJEaC4gWnGpBt9fyTpWeDYWN3fdQtFK6EzTN4CNfp87V_FcjH51S7xVFU';
 
 // Установка Service Worker
 self.addEventListener('install', function(event) {
@@ -56,7 +59,10 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', function(event) {
   // Пропускаем запросы к API
   if (event.request.url.includes('api.alquran.cloud') || 
-      event.request.url.includes('api.aladhan.com')) {
+      event.request.url.includes('api.aladhan.com') ||
+      event.request.url.includes('everyayah.com') ||
+      event.request.url.includes('firebase') ||
+      event.request.url.includes('googleapis')) {
     return;
   }
 
@@ -99,7 +105,7 @@ self.addEventListener('fetch', function(event) {
   );
 });
 
-// Обработка push-уведомлений - УЛУЧШЕННАЯ ВЕРСИЯ
+// Обработка push-уведомлений - УЛУЧШЕННАЯ ВЕРСИЯ С FIREBASE
 self.addEventListener('push', function(event) {
   console.log('Push notification received', event);
   
@@ -228,7 +234,34 @@ self.addEventListener('message', function(event) {
         })
     );
   }
+
+  // Обработка сообщений для Firebase Messaging
+  if (event.data && event.data.type === 'FIREBASE_MESSAGING') {
+    handleFirebaseMessage(event.data);
+  }
 });
+
+// Обработка сообщений Firebase
+function handleFirebaseMessage(data) {
+  console.log('Firebase message in service worker:', data);
+  
+  if (data.action === 'BACKGROUND_MESSAGE') {
+    // Обработка фоновых сообщений Firebase
+    const notificationOptions = {
+      body: data.body,
+      icon: './icons/icon-192.png',
+      badge: './icons/icon-72.png',
+      tag: 'firebase-notification',
+      requireInteraction: true,
+      data: {
+        url: data.url || './',
+        timestamp: Date.now()
+      }
+    };
+
+    self.registration.showNotification(data.title || 'Путь к Рамадану', notificationOptions);
+  }
+}
 
 // Фоновая синхронизация для обновления данных
 self.addEventListener('sync', function(event) {
@@ -237,6 +270,12 @@ self.addEventListener('sync', function(event) {
   if (event.tag === 'update-prayer-times') {
     event.waitUntil(
       updatePrayerTimes()
+    );
+  }
+
+  if (event.tag === 'update-quran-data') {
+    event.waitUntil(
+      updateQuranData()
     );
   }
 });
@@ -259,6 +298,23 @@ function updatePrayerTimes() {
     });
 }
 
+// Функция для обновления данных Корана в фоне
+function updateQuranData() {
+  return fetch('https://api.alquran.cloud/v1/surah')
+    .then(response => response.json())
+    .then(data => {
+      console.log('Quran data updated in background');
+      return self.registration.showNotification('Данные Корана обновлены', {
+        body: 'Актуальные данные Корана загружены',
+        icon: './icons/icon-192.png',
+        tag: 'quran-update'
+      });
+    })
+    .catch(error => {
+      console.error('Error updating Quran data:', error);
+    });
+}
+
 // Периодическая фоновая синхронизация (для браузеров, которые поддерживают)
 self.addEventListener('periodicsync', function(event) {
   if (event.tag === 'update-content') {
@@ -270,7 +326,17 @@ self.addEventListener('periodicsync', function(event) {
 function updateAppContent() {
   // Здесь можно обновлять контент приложения в фоне
   return Promise.all([
-    updatePrayerTimes()
+    updatePrayerTimes(),
+    updateQuranData()
     // Добавьте другие функции обновления по необходимости
   ]);
 }
+
+// Обработка ошибок Service Worker
+self.addEventListener('error', function(event) {
+  console.error('Service Worker error:', event.error);
+});
+
+self.addEventListener('unhandledrejection', function(event) {
+  console.error('Service Worker unhandled rejection:', event.reason);
+});
