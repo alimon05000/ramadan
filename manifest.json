@@ -1,56 +1,64 @@
 {
-  "name": "Путь к Рамадану",
-  "short_name": "Рамадан",
-  "description": "Подготовка к Рамадану 2026 - Коран, намаз, азкары, трекер привычек",
+  "name": "Путь к Рамадану - Ваш духовный спутник",
+  "short_name": "Путь к Рамадану",
+  "description": "Подготовка к Рамадану 2026 - Коран, намаз, азкары, трекер привычек, система уровней",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0B5B3F",
   "theme_color": "#0B5B3F",
-  "orientation": "portrait",
-  "permissions": [
-    "notifications",
-    "background"
-  ],
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "productivity", "religion"],
+  "lang": "ru",
+  "dir": "ltr",
+  
   "icons": [
     {
-      "src": "icons/icon-72.png",
+      "src": "./icons/icon-72.png",
       "sizes": "72x72",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-96.png",
+      "src": "./icons/icon-96.png",
       "sizes": "96x96",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-128.png",
+      "src": "./icons/icon-128.png",
       "sizes": "128x128",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-144.png",
+      "src": "./icons/icon-144.png",
       "sizes": "144x144",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-152.png",
+      "src": "./icons/icon-152.png",
       "sizes": "152x152",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-384.png",
+      "src": "./icons/icon-384.png",
       "sizes": "384x384",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   
@@ -59,22 +67,24 @@
       "src": "./screenshots/screenshot1.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "form_factor": "wide"
+      "form_factor": "wide",
+      "label": "Главный экран приложения"
     },
     {
       "src": "./screenshots/screenshot2.png",
       "sizes": "750x1334",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Чтение Корана"
     }
   ],
   
   "shortcuts": [
     {
       "name": "Сегодняшняя задача",
-      "short_name": "Задача",
-      "description": "Посмотреть задачу на сегодня",
-      "url": "./?shortcut=today",
+      "short_name": "Задача дня",
+      "description": "Посмотреть и выполнить сегодняшнюю задачу",
+      "url": "./?shortcut=today&source=shortcut",
       "icons": [
         {
           "src": "./icons/shortcut-task.png",
@@ -86,8 +96,8 @@
     {
       "name": "Время намаза",
       "short_name": "Намаз",
-      "description": "Посмотреть время намазов",
-      "url": "./?shortcut=prayer",
+      "description": "Посмотреть актуальное время намазов",
+      "url": "./?shortcut=prayer&source=shortcut",
       "icons": [
         {
           "src": "./icons/shortcut-prayer.png",
@@ -99,8 +109,8 @@
     {
       "name": "Чтение Корана",
       "short_name": "Коран",
-      "description": "Открыть Коран для чтения",
-      "url": "./?shortcut=quran",
+      "description": "Открыть Коран для чтения и изучения",
+      "url": "./?shortcut=quran&source=shortcut",
       "icons": [
         {
           "src": "./icons/shortcut-quran.png",
@@ -108,8 +118,35 @@
           "type": "image/png"
         }
       ]
+    },
+    {
+      "name": "Мои уровни",
+      "short_name": "Уровни",
+      "description": "Просмотр прогресса по системе уровней",
+      "url": "./?shortcut=levels&source=shortcut",
+      "icons": [
+        {
+          "src": "./icons/shortcut-levels.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ],
 
-  "gcm_sender_id": "456251207848"
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://alimon05000.github.io/ramadan//manifest.json"
+    }
+  ],
+
+  "prefer_related_applications": false,
+  
+  "scope": "./",
+  "id": "/?source=pwa",
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }
