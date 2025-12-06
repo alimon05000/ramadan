@@ -18,6 +18,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lateef&display=swap" rel="stylesheet">
+    <!-- Mushaf-стиль: KFGQPC Hafs (Web adaptation) -->
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -2839,6 +2841,365 @@
             -webkit-overflow-scrolling: touch !important;
             overflow-scrolling: touch !important;
         }
+
+        /* ====== СТИЛИ ДЛЯ НОВОГО КНИЖНОГО РЕЖИМА МУСХАФ ====== */
+        /* Фон (приглушённый, глубокий, с текстурой) */
+        .mushaf-body {
+            margin: 0;
+            padding: 0;
+            background: #0c0d10;
+            font-family: 'Scheherazade New', serif;
+            color: #f5f2e8;
+            position: relative;
+        }
+
+        /* Лёгкий шум поверх фона */
+        .mushaf-body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3e%3crect width='200' height='200' fill='%230c0d10'/%3e%3ccircle cx='10' cy='10' r='1' fill='rgba(255,255,255,0.02)'/%3e%3ccircle cx='50' cy='80' r='1' fill='rgba(255,255,255,0.015)'/%3e%3ccircle cx='120' cy='40' r='1' fill='rgba(255,255,255,0.02)'/%3e%3ccircle cx='180' cy='150' r='1' fill='rgba(255,255,255,0.02)'/%3e%3c/svg%3e");
+            opacity: 0.5;
+        }
+
+        .mushaf-screen {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 18px 14px 32px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Верхняя панель */
+        .mushaf-top-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #b7b9c5;
+            margin-bottom: 22px;
+            direction: ltr;
+        }
+
+        /* Заголовок суры */
+        .mushaf-surah-header-inner {
+            background: #1b1c20;
+            border: 1px solid #8c744b;
+            border-radius: 18px;
+            padding: 14px 40px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.03),
+                0 12px 20px rgba(0,0,0,0.55);
+            margin-bottom: 26px;
+        }
+
+        .mushaf-surah-title {
+            text-align: center;
+            font-size: 22px;
+            color: #fff7db;
+            font-family: 'Scheherazade New', serif;
+        }
+
+        /* Карточка с текстом */
+        .mushaf-card {
+            background: #1b1c20;
+            border-radius: 22px;
+            padding: 22px 20px 30px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.03),
+                0 20px 35px rgba(0,0,0,0.7);
+        }
+
+        /* Басмала — растянута, как в приложении */
+        .mushaf-bismillah {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 24px;
+            color: #f3e8cc;
+            transform: scaleX(1.55);
+            display: block;
+            opacity: 0.95;
+            font-family: 'Scheherazade New', serif;
+            line-height: 1.8;
+        }
+
+        /* Аяты */
+        .mushaf-ayahs {
+            direction: rtl;
+            text-align: justify;
+            font-size: 28px;
+            line-height: 2.1;
+            word-spacing: 0px;
+            letter-spacing: 0px;
+            font-family: 'Scheherazade New', serif;
+        }
+
+        .mushaf-ayah {
+            display: inline;
+        }
+
+        /* Номер аята */
+        .mushaf-ayah-num {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            color: #e8dcc0;
+            margin-left: 2px;
+            margin-right: 2px;
+            background: #4d3e25;
+            border: 1px solid #bfa06a;
+            box-shadow:
+                inset 0 0 3px rgba(255,255,255,0.06),
+                0 0 3px rgba(0,0,0,0.4);
+            font-family: 'Scheherazade New', serif;
+        }
+
+        /* Нижняя панель */
+        .mushaf-bottom-bar {
+            margin-top: 18px;
+            color: #b2b4c3;
+            font-size: 13px;
+            direction: ltr;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .mushaf-bookmark-icon {
+            width: 16px;
+            height: 18px;
+            border: 1px solid #b0b2c4;
+            border-radius: 3px;
+        }
+
+        .mushaf-loader, .mushaf-error {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .mushaf-loader { color: #b0b2c4; }
+        .mushaf-error { color: #ffb2b2; }
+
+        /* Контейнер для аятов */
+        .mushaf-content {
+            direction: rtl;
+            text-align: justify;
+            line-height: 2.1;
+            font-size: 28px;
+        }
+
+        /* Страница мусхафа */
+        .mushaf-page {
+            background: #1b1c20;
+            border-radius: 22px;
+            padding: 22px 20px 30px;
+            margin: 10px auto;
+            max-width: 430px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.03),
+                0 20px 35px rgba(0,0,0,0.7);
+            color: #f5f2e8;
+        }
+
+        /* Навигация страниц */
+        .mushaf-page-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #1b1c20;
+            border-radius: 22px;
+            margin: 10px auto;
+            max-width: 430px;
+        }
+
+        .mushaf-page-info {
+            color: #b7b9c5;
+            font-size: 14px;
+        }
+
+        /* Управление размером шрифта для мусхафа */
+        .mushaf-font-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: #1b1c20;
+            border-radius: 12px;
+            margin: 10px auto;
+            max-width: 430px;
+        }
+
+        .mushaf-font-btn {
+            background: #8c744b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .mushaf-font-btn:hover {
+            background: #bfa06a;
+        }
+
+        .mushaf-font-size-display {
+            color: #f5f2e8;
+            font-size: 14px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Аудио плеер для мусхафа */
+        .mushaf-audio-player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: #1b1c20;
+            border-radius: 22px;
+            margin: 10px auto;
+            max-width: 430px;
+        }
+
+        .mushaf-audio-btn {
+            background: #8c744b;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .mushaf-audio-btn:hover {
+            background: #bfa06a;
+        }
+
+        .mushaf-audio-btn.playing {
+            background: #4d3e25;
+        }
+
+        .mushaf-audio-progress {
+            flex: 1;
+            height: 4px;
+            background: #4d3e25;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mushaf-audio-progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #bfa06a;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .mushaf-audio-time {
+            color: #b7b9c5;
+            font-size: 12px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* Модальное окно мусхафа */
+        .mushaf-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0c0d10;
+            z-index: 3000;
+            overflow-y: auto;
+        }
+
+        .mushaf-modal.active {
+            display: block;
+        }
+
+        .mushaf-modal-header {
+            position: sticky;
+            top: 0;
+            background: #1b1c20;
+            padding: 15px 20px;
+            border-bottom: 1px solid #4d3e25;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mushaf-modal-title {
+            color: #fff7db;
+            font-size: 18px;
+            font-family: 'Scheherazade New', serif;
+        }
+
+        .mushaf-modal-close {
+            background: none;
+            border: none;
+            color: #b7b9c5;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .mushaf-modal-close:hover {
+            background: #4d3e25;
+            color: #fff7db;
+        }
+
+        .mushaf-modal-body {
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Кнопка переключения в книжный режим мусхафа */
+        .mushaf-mode-toggle {
+            background: #8c744b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mushaf-mode-toggle:hover {
+            background: #bfa06a;
+        }
     </style>
 </head>
 <body>
@@ -2987,6 +3348,9 @@
                     <button class="font-size-btn" onclick="changeTranslationFontSize(-1)">A-</button>
                     <button class="font-size-btn" onclick="changeTranslationFontSize(1)">A+</button>
                 </div>
+                <button class="mushaf-mode-toggle" onclick="openMushafMode()">
+                    <span>📖</span> Мусхаф
+                </button>
             </div>
 
             <div class="reading-progress-container">
@@ -3312,38 +3676,65 @@
         </div>
     </div>
 
-    <!-- Модальное окно для книжного режима Корана -->
-    <div class="modal" id="book-mode-modal">
-        <div class="modal-content" id="book-modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="book-modal-title">Чтение Корана - Страница 1</h3>
-                <div>
-                    <button class="theme-toggle-quran" id="bookThemeToggle">Приятная тема</button>
-                    <button class="book-mode-toggle" id="exitBookMode">Обычный режим</button>
-                    <button class="modal-close" onclick="closeBookModeModal()">×</button>
+    <!-- Модальное окно для книжного режима мусхафа -->
+    <div class="mushaf-modal" id="mushaf-modal">
+        <div class="mushaf-modal-header">
+            <h3 class="mushaf-modal-title" id="mushaf-modal-title">Мусхаф - Сура Ан-Нас</h3>
+            <button class="mushaf-modal-close" onclick="closeMushafModal()">×</button>
+        </div>
+        
+        <div class="mushaf-font-controls">
+            <button class="mushaf-font-btn" onclick="changeMushafFontSize(-1)">A-</button>
+            <span class="mushaf-font-size-display" id="mushaf-font-size-display">28px</span>
+            <button class="mushaf-font-btn" onclick="changeMushafFontSize(1)">A+</button>
+            <button class="mushaf-mode-toggle" onclick="toggleMushafAudio()" id="mushaf-audio-toggle">
+                <span>🔊</span> Аудио
+            </button>
+        </div>
+        
+        <div id="mushaf-audio-container" style="display: none;">
+            <div class="mushaf-audio-player">
+                <button class="mushaf-audio-btn" id="mushaf-play-btn">▶️</button>
+                <div class="mushaf-audio-progress">
+                    <div class="mushaf-audio-progress-fill" id="mushaf-audio-progress"></div>
+                </div>
+                <span class="mushaf-audio-time" id="mushaf-audio-time">0:00</span>
+                <select id="mushaf-reciter-select" style="background: #4d3e25; color: white; border: none; border-radius: 8px; padding: 5px;">
+                    <option value="ar.alafasy">Аль-Афаси</option>
+                    <option value="ar.husary">Аль-Хусари</option>
+                    <option value="ar.hudhaify">Аль-Хузейфи</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="mushaf-modal-body">
+            <div class="mushaf-page">
+                <div class="mushaf-top-bar">
+                    <span id="mushaf-surah-name">Ан-Нас</span>
+                    <span id="mushaf-juz-info">джуз 30</span>
+                </div>
+                
+                <div class="mushaf-surah-header-inner">
+                    <div class="mushaf-surah-title" id="mushaf-surah-title">سورة النبأ</div>
+                </div>
+                
+                <div class="mushaf-card">
+                    <div class="mushaf-bismillah" id="mushaf-bismillah" style="display: none;">﷽</div>
+                    <div id="mushaf-ayahs" class="mushaf-ayahs"></div>
+                    <div id="mushaf-loader" class="mushaf-loader">Загрузка аятов...</div>
+                    <div id="mushaf-error" class="mushaf-error" style="display:none;"></div>
+                </div>
+                
+                <div class="mushaf-bottom-bar">
+                    <div class="mushaf-bookmark-icon"></div>
+                    <span id="mushaf-page-number">1</span>
                 </div>
             </div>
             
-            <div class="book-mode-controls">
-                <div class="page-nav-buttons">
-                    <button class="nav-button" id="prev-page" onclick="navigatePage(-1)">← Предыдущая</button>
-                    <button class="nav-button" id="next-page" onclick="navigatePage(1)">Следующая →</button>
-                </div>
-                <div class="font-size-control">
-                    <span class="font-size-label">Шрифт:</span>
-                    <button class="font-size-btn" onclick="changeBookFontSize(-1)">A-</button>
-                    <button class="font-size-btn" onclick="changeBookFontSize(1)">A+</button>
-                </div>
-            </div>
-            
-            <div class="modal-body touch-scroll-fix scroll-fix prevent-scroll-lock">
-                <div class="book-mode-page" id="book-page-content">
-                    <!-- Содержимое страницы будет загружено здесь -->
-                </div>
-                <div class="page-number" id="page-number">Страница 1</div>
-                <button class="page-mark-button" id="page-mark-button" onclick="togglePageMark()">
-                    <span>📌</span> Отметить страницу
-                </button>
+            <div class="mushaf-page-nav">
+                <button class="nav-button" id="mushaf-prev-btn" onclick="navigateMushafSurah(-1)">← Предыдущая</button>
+                <div class="mushaf-page-info" id="mushaf-page-info">Страница 1 из 604</div>
+                <button class="nav-button" id="mushaf-next-btn" onclick="navigateMushafSurah(1)">Следующая →</button>
             </div>
         </div>
     </div>
@@ -3428,15 +3819,15 @@
         const RECITERS = {
             'ar.alafasy': {
                 name: 'Мишари Рашид Аль-Афаси',
-                baseUrl: `https://everyayah.com/data/Alafasy_128kbps`
+                baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.alafasy`
             },
             'ar.husary': {
                 name: 'Махмуд Халиль Аль-Хусари', 
-                baseUrl: `https://everyayah.com/data/Husary_128kbps`
+                baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.husary`
             },
             'ar.hudhaify': {
                 name: 'Али ибн Абдуррахман Аль-Хузейфи',
-                baseUrl: `https://everyayah.com/data/Hudhaify_128kbps`
+                baseUrl: `https://cdn.islamic.network/quran/audio/128/ar.hudhaify`
             }
         };
         
@@ -3879,6 +4270,13 @@
         let markedPages = JSON.parse(localStorage.getItem('markedPages')) || [];
         let currentPageMarked = false;
 
+        // === ПЕРЕМЕННЫЕ ДЛЯ МУСХАФА ===
+        let currentMushafSurah = 78; // Сура Ан-Наба
+        let mushafFontSize = parseInt(localStorage.getItem('mushafFontSize')) || 28;
+        let mushafAudio = null;
+        let isMushafAudioPlaying = false;
+        let currentMushafReciter = 'ar.alafasy';
+
         // === FIREBASE И PUSH УВЕДОМЛЕНИЯ ===
 
         // Инициализация Firebase
@@ -4061,19 +4459,6 @@
         function sendTokenToServer(token) {
             // В реальном приложении здесь должен быть запрос к вашему серверу
             console.log('Отправка токена на сервер:', token);
-            
-            // Пример отправки на сервер:
-            // fetch('/api/save-token', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         token: token,
-            //         userId: 'user123', // Замените на реальный ID пользователя
-            //         app: 'ramadan-app'
-            //     })
-            // });
         }
 
         // Проверка подписки на push-уведомления
@@ -4557,31 +4942,35 @@
                 modalClose.addEventListener('click', closeSurahModal);
             }
             
-            // Обработчики для книжного режима
-            const bookModeModal = document.getElementById('book-mode-modal');
-            if (bookModeModal) {
-                bookModeModal.addEventListener('click', function(e) {
+            // Обработчики для мусхаф режима
+            const mushafModal = document.getElementById('mushaf-modal');
+            if (mushafModal) {
+                mushafModal.addEventListener('click', function(e) {
                     if (e.target === this) {
-                        closeBookModeModal();
+                        closeMushafModal();
                     }
                 });
             }
             
-            const bookModalContent = document.getElementById('book-modal-content');
-            if (bookModalContent) {
-                bookModalContent.addEventListener('click', function(e) {
-                    e.stopPropagation();
+            const mushafModalClose = document.querySelector('.mushaf-modal-close');
+            if (mushafModalClose) {
+                mushafModalClose.addEventListener('click', closeMushafModal);
+            }
+            
+            const mushafPlayBtn = document.getElementById('mushaf-play-btn');
+            if (mushafPlayBtn) {
+                mushafPlayBtn.addEventListener('click', toggleMushafAudioPlayback);
+            }
+            
+            const mushafReciterSelect = document.getElementById('mushaf-reciter-select');
+            if (mushafReciterSelect) {
+                mushafReciterSelect.addEventListener('change', function() {
+                    currentMushafReciter = this.value;
+                    if (isMushafAudioPlaying) {
+                        stopMushafAudio();
+                        playMushafAudio();
+                    }
                 });
-            }
-            
-            const bookThemeToggle = document.getElementById('bookThemeToggle');
-            if (bookThemeToggle) {
-                bookThemeToggle.addEventListener('click', toggleBookTheme);
-            }
-            
-            const exitBookMode = document.getElementById('exitBookMode');
-            if (exitBookMode) {
-                exitBookMode.addEventListener('click', closeBookModeModal);
             }
         }
 
@@ -4613,7 +5002,7 @@
             audioInitialized = true;
             // Создаем и сразу останавливаем пустой аудио элемент
             const silentAudio = new Audio();
-            silentAudio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSw=';
+            silentAudio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUgBjiN1/LMeSw=';
             silentAudio.volume = 0.01;
             
             const playPromise = silentAudio.play();
@@ -4649,21 +5038,6 @@
                 }
                 
                 localStorage.setItem('quranReadingTheme', quranReadingTheme);
-            }
-        }
-
-        function toggleBookTheme() {
-            const modalContent = document.getElementById('book-modal-content');
-            const toggleButton = document.getElementById('bookThemeToggle');
-            
-            if (modalContent && toggleButton) {
-                if (modalContent.classList.contains('quran-reading-theme')) {
-                    modalContent.classList.remove('quran-reading-theme');
-                    toggleButton.textContent = 'Приятная тема';
-                } else {
-                    modalContent.classList.add('quran-reading-theme');
-                    toggleButton.textContent = 'Обычная тема';
-                }
             }
         }
 
@@ -4736,6 +5110,13 @@
             showToast(`Размер шрифта: ${bookFontSize}px`);
         }
 
+        function changeMushafFontSize(delta) {
+            mushafFontSize = Math.max(20, Math.min(40, mushafFontSize + delta));
+            localStorage.setItem('mushafFontSize', mushafFontSize);
+            applyMushafFontSize();
+            showToast(`Размер шрифта мусхафа: ${mushafFontSize}px`);
+        }
+
         function updateFontSizes() {
             document.documentElement.style.setProperty('--arabic-font-size', arabicFontSize + 'px');
             document.documentElement.style.setProperty('--translation-font-size', translationFontSize + 'px');
@@ -4745,6 +5126,19 @@
             const pageContent = document.getElementById('book-page-content');
             if (pageContent) {
                 pageContent.style.fontSize = `${bookFontSize}px`;
+            }
+        }
+
+        function applyMushafFontSize() {
+            const ayahsElement = document.getElementById('mushaf-ayahs');
+            const fontDisplay = document.getElementById('mushaf-font-size-display');
+            
+            if (ayahsElement) {
+                ayahsElement.style.fontSize = `${mushafFontSize}px`;
+            }
+            
+            if (fontDisplay) {
+                fontDisplay.textContent = `${mushafFontSize}px`;
             }
         }
 
@@ -5327,145 +5721,224 @@
             updateReadingProgress(); // Обновляем прогресс чтения
         }
 
-        // === ФУНКЦИИ ДЛЯ КНИЖНОГО РЕЖИМА КОРАНА ===
+        // === ФУНКЦИИ ДЛЯ КНИЖНОГО РЕЖИМА МУСХАФА ===
 
-        function openBookMode(surahNumber = null, pageNumber = 1) {
-            currentPage = pageNumber;
-            
-            // ИСПРАВЛЕНИЕ: Определяем правильную страницу для суры Ан-Нас (114)
-            if (surahNumber === 114) {
-                // Сура Ан-Нас находится на странице 604
-                currentPage = 604;
-            } else if (surahNumber) {
-                // Для других сур используем приблизительное определение
-                // Здесь должна быть логика определения страницы по номеру суры
-                // Для простоты используем приблизительные значения
-                currentPage = Math.min(Math.max(1, surahNumber * 2), totalPages);
+        function openMushafMode(surahNumber = null) {
+            if (surahNumber) {
+                currentMushafSurah = surahNumber;
             }
             
-            loadQuranPage(currentPage);
-            const bookModal = document.getElementById('book-mode-modal');
-            if (bookModal) {
-                bookModal.classList.add('active');
+            const mushafModal = document.getElementById('mushaf-modal');
+            if (mushafModal) {
+                mushafModal.classList.add('active');
+                loadMushafSurah(currentMushafSurah);
+                document.body.style.overflow = 'hidden';
             }
-            document.body.style.overflow = 'hidden';
         }
 
-        function closeBookModeModal() {
-            const bookModal = document.getElementById('book-mode-modal');
-            if (bookModal) {
-                bookModal.classList.remove('active');
+        function closeMushafModal() {
+            const mushafModal = document.getElementById('mushaf-modal');
+            if (mushafModal) {
+                mushafModal.classList.remove('active');
             }
+            stopMushafAudio();
             document.body.style.overflow = '';
         }
 
-        async function loadQuranPage(pageNumber) {
+        function toArabicIndic(num) {
+            return String(num).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+        }
+
+        async function loadMushafSurah(surahNumber) {
+            const ayahsEl = document.getElementById('mushaf-ayahs');
+            const loaderEl = document.getElementById('mushaf-loader');
+            const errorEl = document.getElementById('mushaf-error');
+            const surahNameEl = document.getElementById('mushaf-surah-name');
+            const surahTitleEl = document.getElementById('mushaf-surah-title');
+            const bismillahEl = document.getElementById('mushaf-bismillah');
+            
             try {
-                // Используем API для получения страницы Корана
-                const response = await fetch(`https://api.alquran.cloud/v1/page/${pageNumber}/quran-uthmani`);
-                const data = await response.json();
+                loaderEl.style.display = 'block';
+                errorEl.style.display = 'none';
+                ayahsEl.innerHTML = '';
                 
-                if (data.code === 200) {
-                    const pageData = data.data;
+                // Получаем информацию о суре
+                const surahInfo = allSurahs.find(s => s.number === surahNumber);
+                if (surahInfo) {
+                    if (surahNameEl) surahNameEl.textContent = surahInfo.englishName;
+                    if (surahTitleEl) surahTitleEl.textContent = surahInfo.name;
+                }
+                
+                // Показываем или скрываем басмалу
+                if (bismillahEl) {
+                    bismillahEl.style.display = surahNumber !== 9 ? 'block' : 'none';
+                }
+                
+                // Загружаем аяты
+                const url = `https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('API error ' + res.status);
+
+                const data = await res.json();
+                loaderEl.style.display = 'none';
+
+                if (data.code === 200 && data.data && data.data.length > 0) {
+                    const surah = data.data[0];
                     
-                    // Обновляем заголовок
-                    const modalTitle = document.getElementById('book-modal-title');
-                    const pageNumberEl = document.getElementById('page-number');
+                    // Отображаем аяты
+                    surah.ayahs.forEach((ayah, index) => {
+                        const ayahElement = document.createElement('span');
+                        ayahElement.className = 'mushaf-ayah';
+
+                        ayahElement.innerHTML =
+                            ayah.text +
+                            ` <span class="mushaf-ayah-num">${toArabicIndic(index + 1)}</span> `;
+
+                        ayahsEl.appendChild(ayahElement);
+                    });
                     
-                    if (modalTitle) modalTitle.textContent = `Чтение Корана - Страница ${pageNumber}`;
-                    if (pageNumberEl) pageNumberEl.textContent = `Страница ${pageNumber}`;
+                    // Обновляем информацию о странице
+                    updateMushafPageInfo(surahNumber);
                     
-                    // Отображаем аяты страницы
-                    const pageContent = document.getElementById('book-page-content');
-                    if (pageContent) {
-                        pageContent.innerHTML = '';
-                        
-                        // Группируем аяты по строкам для правильного отображения
-                        let currentLine = '';
-                        let ayahsInLine = [];
-                        
-                        pageData.ayahs.forEach(ayah => {
-                            const ayahText = ayah.text;
-                            const ayahNumber = ayah.numberInSurah;
-                            
-                            // Добавляем аят к текущей строке
-                            currentLine += `<span class="ayah">${ayahText}<span class="ayah-number">${ayahNumber}</span></span>`;
-                            ayahsInLine.push(ayah.number);
-                            
-                            // Если строка заполнена или это последний аят, создаем новую строку
-                            if (ayah.words && ayah.words[ayah.words.length - 1].lineEnd || 
-                                ayah === pageData.ayahs[pageData.ayahs.length - 1]) {
-                                
-                                const lineDiv = document.createElement('div');
-                                lineDiv.className = 'quran-line';
-                                lineDiv.innerHTML = currentLine;
-                                pageContent.appendChild(lineDiv);
-                                
-                                // Сбрасываем для следующей строки
-                                currentLine = '';
-                                ayahsInLine = [];
-                            }
-                        });
-                    }
-                    
-                    // Обновляем навигацию
-                    const prevPage = document.getElementById('prev-page');
-                    const nextPage = document.getElementById('next-page');
-                    
-                    if (prevPage) prevPage.disabled = pageNumber <= 1;
-                    if (nextPage) nextPage.disabled = pageNumber >= totalPages;
-                    
-                    // Применяем сохраненный размер шрифта
-                    applyBookFontSize();
-                    
-                    // Обновляем состояние кнопки отметки страницы
-                    updatePageMarkButton();
+                    // Применяем размер шрифта
+                    applyMushafFontSize();
                     
                 } else {
-                    throw new Error('Не удалось загрузить страницу Корана');
+                    throw new Error('Данные суры не получены');
                 }
-            } catch (error) {
-                console.error('Ошибка загрузки страницы Корана:', error);
-                showToast('Ошибка загрузки страницы Корана', 'error');
-                // Запасной вариант - сообщение об ошибке
-                const pageContent = document.getElementById('book-page-content');
-                if (pageContent) {
-                    pageContent.innerHTML = 
-                        '<div style="text-align: center; padding: 2rem;">Не удалось загрузить страницу Корана. Пожалуйста, проверьте подключение к интернету.</div>';
-                }
+
+            } catch (err) {
+                loaderEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.textContent = 'Ошибка загрузки аятов.';
+                console.error('Ошибка загрузки суры для мусхафа:', err);
             }
         }
 
-        function navigatePage(direction) {
-            const newPage = currentPage + direction;
-            if (newPage >= 1 && newPage <= totalPages) {
-                currentPage = newPage;
-                loadQuranPage(currentPage);
-                
-                // Обновляем прогресс чтения
-                updateReadingProgressAfterPage();
-            }
-        }
-
-        function updateReadingProgressAfterPage() {
-            // Обновляем количество прочитанных страниц
-            if (!userProgress.pagesReadHistory) {
-                userProgress.pagesReadHistory = [];
+        function updateMushafPageInfo(surahNumber) {
+            const pageInfoEl = document.getElementById('mushaf-page-info');
+            const pageNumberEl = document.getElementById('mushaf-page-number');
+            
+            if (pageInfoEl) {
+                pageInfoEl.textContent = `Сура ${surahNumber} из 114`;
             }
             
-            // Добавляем страницу в историю, если ее там еще нет
-            if (!userProgress.pagesReadHistory.includes(currentPage)) {
-                userProgress.pagesReadHistory.push(currentPage);
-                userProgress.pagesRead = userProgress.pagesReadHistory.length;
+            if (pageNumberEl) {
+                // Примерная логика определения номера страницы
+                // В реальном приложении нужно использовать API для определения страницы
+                const estimatedPage = Math.min(Math.max(1, Math.floor(surahNumber * 5.3)), 604);
+                pageNumberEl.textContent = estimatedPage;
+            }
+        }
+
+        function navigateMushafSurah(direction) {
+            const newSurah = currentMushafSurah + direction;
+            if (newSurah >= 1 && newSurah <= 114) {
+                currentMushafSurah = newSurah;
+                loadMushafSurah(currentMushafSurah);
+            }
+        }
+
+        function toggleMushafAudio() {
+            const audioContainer = document.getElementById('mushaf-audio-container');
+            const audioToggle = document.getElementById('mushaf-audio-toggle');
+            
+            if (audioContainer.style.display === 'none') {
+                audioContainer.style.display = 'block';
+                audioToggle.innerHTML = '<span>🔇</span> Скрыть аудио';
+            } else {
+                audioContainer.style.display = 'none';
+                audioToggle.innerHTML = '<span>🔊</span> Аудио';
+                stopMushafAudio();
+            }
+        }
+
+        function toggleMushafAudioPlayback() {
+            if (isMushafAudioPlaying) {
+                stopMushafAudio();
+            } else {
+                playMushafAudio();
+            }
+        }
+
+        async function playMushafAudio() {
+            try {
+                // Формируем URL для аудио суры
+                const audioUrl = `${RECITERS[currentMushafReciter].baseUrl}/${currentMushafSurah}.mp3`;
                 
-                // Сохраняем прогресс
-                localStorage.setItem('userProgress', JSON.stringify(userProgress));
+                // Останавливаем предыдущее аудио
+                stopMushafAudio();
                 
-                // Обновляем отображение прогресса
-                updateQuranProgressDisplay();
+                // Создаем новый аудио элемент
+                mushafAudio = new Audio(audioUrl);
+                mushafAudio.preload = 'auto';
                 
-                // Проверяем выполнение требований уровней
-                checkLevelRequirements();
+                // Настройка обработчиков событий
+                mushafAudio.onplay = () => {
+                    isMushafAudioPlaying = true;
+                    const playBtn = document.getElementById('mushaf-play-btn');
+                    if (playBtn) playBtn.textContent = '⏸️';
+                };
+                
+                mushafAudio.onpause = () => {
+                    isMushafAudioPlaying = false;
+                    const playBtn = document.getElementById('mushaf-play-btn');
+                    if (playBtn) playBtn.textContent = '▶️';
+                };
+                
+                mushafAudio.onended = () => {
+                    isMushafAudioPlaying = false;
+                    const playBtn = document.getElementById('mushaf-play-btn');
+                    if (playBtn) playBtn.textContent = '▶️';
+                };
+                
+                mushafAudio.onerror = (error) => {
+                    console.error('Ошибка загрузки аудио для мусхафа:', error);
+                    showToast('Ошибка загрузки аудио', 'error');
+                    stopMushafAudio();
+                };
+                
+                // Обновление прогресса воспроизведения
+                mushafAudio.ontimeupdate = () => {
+                    updateMushafAudioProgress();
+                };
+                
+                // Воспроизводим аудио
+                await mushafAudio.play();
+                showToast(`Воспроизведение суры ${currentMushafSurah}`, 'success');
+                
+            } catch (error) {
+                console.error('Ошибка воспроизведения аудио для мусхафа:', error);
+                showToast('Ошибка воспроизведения аудио', 'error');
+            }
+        }
+
+        function stopMushafAudio() {
+            if (mushafAudio) {
+                mushafAudio.pause();
+                mushafAudio.currentTime = 0;
+                mushafAudio = null;
+            }
+            isMushafAudioPlaying = false;
+            
+            const playBtn = document.getElementById('mushaf-play-btn');
+            if (playBtn) playBtn.textContent = '▶️';
+        }
+
+        function updateMushafAudioProgress() {
+            if (!mushafAudio) return;
+            
+            const progressFill = document.getElementById('mushaf-audio-progress');
+            const audioTime = document.getElementById('mushaf-audio-time');
+            
+            if (progressFill && audioTime) {
+                const progress = (mushafAudio.currentTime / mushafAudio.duration) * 100;
+                progressFill.style.width = `${progress}%`;
+                
+                // Форматирование времени
+                const currentMinutes = Math.floor(mushafAudio.currentTime / 60);
+                const currentSeconds = Math.floor(mushafAudio.currentTime % 60);
+                audioTime.textContent = `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')}`;
             }
         }
 
